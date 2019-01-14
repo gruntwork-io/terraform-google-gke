@@ -81,4 +81,4 @@ MINOR, and PATCH versions on each release to indicate any incompatibilities.
 
 Please see [LICENSE](/LICENSE) for how the code in this repo is licensed.
 
-Copyright &copy; 2018 Gruntwork, Inc.
+Copyright &copy; 2019 Gruntwork, Inc.
