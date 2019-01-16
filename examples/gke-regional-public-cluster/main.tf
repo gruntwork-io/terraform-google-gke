@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 provider "google" {
-  project = "${var.project_id}"
+  project = "${var.project}"
   region  = "${var.region}"
 }
 
@@ -21,9 +21,9 @@ module "gke_cluster" {
   # source = "git::git@github.com:gruntwork-io/gke-cluster.git//modules/gke-cluster?ref=v0.0.1"
   source = "../../modules/gke-cluster"
 
-  project_id = "${var.project_id}"
-  region     = "${var.region}"
-  name       = "example-cluster"
+  project = "${var.project}"
+  region  = "${var.region}"
+  name    = "example-cluster"
 
   network           = "${google_compute_network.main.name}"
   subnetwork        = "${google_compute_subnetwork.main.name}"

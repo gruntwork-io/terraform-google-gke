@@ -3,7 +3,7 @@
 # These variables are expected to be passed in by the operator
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "project_id" {
+variable "project" {
   description = "The project ID to host the cluster in (required)"
 }
 
@@ -47,7 +47,7 @@ variable "zones" {
   default     = []
 }
 
-variable "network_project_id" {
+variable "network_project" {
   description = "The project ID of the shared VPC's host (for shared vpc support)"
   default     = ""
 }

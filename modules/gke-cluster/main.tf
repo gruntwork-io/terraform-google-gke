@@ -1,7 +1,7 @@
 resource "google_container_cluster" "cluster" {
   name        = "${var.name}"
   description = "${var.description}"
-  project     = "${var.project_id}"
+  project     = "${var.project}"
 
   region           = "${var.region}"
   additional_zones = ["${coalescelist(compact(var.zones), sort(random_shuffle.available_zones.result))}"]
@@ -62,7 +62,7 @@ resource "google_container_cluster" "cluster" {
 resource "google_container_node_pool" "pools" {
   count              = "${length(var.node_pools)}"
   name               = "${lookup(var.node_pools[count.index], "name")}"
-  project            = "${var.project_id}"
+  project            = "${var.project}"
   region             = "${var.region}"
   cluster            = "${var.name}"
   version            = "${lookup(var.node_pools[count.index], "auto_upgrade", false) ? "" : lookup(var.node_pools[count.index], "version", local.node_version)}"
@@ -116,23 +116,23 @@ resource "google_container_node_pool" "pools" {
 locals {
   kubernetes_version = "${var.kubernetes_version != "latest" ? var.kubernetes_version : data.google_container_engine_versions.region.latest_node_version}"
   node_version       = "${var.node_version != "" ? var.node_version : local.kubernetes_version}"
-  network_project_id = "${var.network_project_id != "" ? var.network_project_id : var.project_id}"
+  network_project    = "${var.network_project != "" ? var.network_project : var.project}"
 }
 
 data "google_compute_zones" "available" {
-  project = "${var.project_id}"
+  project = "${var.project}"
   region  = "${var.region}"
 }
 
 data "google_compute_network" "gke_network" {
   name    = "${var.network}"
-  project = "${local.network_project_id}"
+  project = "${local.network_project}"
 }
 
 data "google_compute_subnetwork" "gke_subnetwork" {
   name    = "${var.subnetwork}"
   region  = "${var.region}"
-  project = "${local.network_project_id}"
+  project = "${local.network_project}"
 }
 
 resource "random_shuffle" "available_zones" {
@@ -145,5 +145,5 @@ resource "random_shuffle" "available_zones" {
  *****************************************/
 data "google_container_engine_versions" "region" {
   zone    = "${data.google_compute_zones.available.names[0]}"
-  project = "${var.project_id}"
+  project = "${var.project}"
 }
