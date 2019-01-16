@@ -3,7 +3,7 @@
 # These parameters must be supplied when consuming this module.
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "project_id" {
+variable "project" {
   description = "The name of the GCP Project where all resources will be launched."
 }
 
