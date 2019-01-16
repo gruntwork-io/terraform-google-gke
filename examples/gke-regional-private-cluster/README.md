@@ -20,7 +20,9 @@ traffic, or an internal load balancer from within your VPC network.
 
 Private clusters use [Private Google Access](https://cloud.google.com/vpc/docs/private-access-options)
 to access Google APIs such as Stackdriver, and to pull container images from
-Google Container Registry.
+Google Container Registry. To use other APIs and services over the internet, you
+can use a [`gke-regional-public-cluster`](../gke-regional-public-cluster).
+Private clusters are recommended for running most apps and services.
 
 ## Limitations
 

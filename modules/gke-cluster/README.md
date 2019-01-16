@@ -3,8 +3,9 @@
 The GKE Cluster module is a configurable module used to administer a
 [Google Kubernetes Engine (GKE) Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
 
-The module is responsible for managing configuration of the [GKE cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
-which runs the Kubernetes API used by `kubectl`, and the [GKE node pools](https://cloud.google.com/kubernetes-engine/docs/concepts/node-pools),
+The module is responsible for managing the configuration of the
+[GKE cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
+which runs the Kubernetes API used by `kubectl`, as well as the [GKE node pools](https://cloud.google.com/kubernetes-engine/docs/concepts/node-pools),
 whose [nodes](https://kubernetes.io/docs/concepts/architecture/nodes/) are the
 Kubernetes "worker machines".
 
