@@ -10,6 +10,18 @@ resource "google_container_cluster" "cluster" {
   subnetwork         = "${replace(data.google_compute_subnetwork.gke_subnetwork.self_link, "https://www.googleapis.com/compute/v1/", "")}"
   min_master_version = "${local.kubernetes_version}"
 
+  # We want to make a cluster with no node pools, and manage them all with the
+  # fine-grained google_container_node_pool resource. The API requires a node
+  # pool or an initial count to be defined; that initial count creates the
+  # "default node pool" with that # of nodes.
+  #
+  # So, we need to set an initial_node_count of 1. This will make a default node
+  # pool with server-defined defaults that Terraform will immediately delete as
+  # part of Create. This leaves us in our desired state- with a cluster master
+  # with no node pools.
+  remove_default_node_pool = true
+  initial_node_count       = 1
+
   logging_service    = "${var.logging_service}"
   monitoring_service = "${var.monitoring_service}"
 
@@ -54,8 +66,6 @@ resource "google_container_cluster" "cluster" {
     update = "30m"
     delete = "30m"
   }
-
-  remove_default_node_pool = true
 }
 
 // Node Pool Resource
