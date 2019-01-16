@@ -18,11 +18,6 @@ output "region" {
   value       = "${local.cluster_region}"
 }
 
-output "zones" {
-  description = "List of zones in which the cluster resides"
-  value       = "${local.cluster_zones}"
-}
-
 output "endpoint" {
   sensitive   = true
   description = "Cluster endpoint"
@@ -49,43 +44,7 @@ output "master_authorized_networks_config" {
   value       = "${var.master_authorized_networks_config}"
 }
 
-output "master_version" {
-  description = "Current master kubernetes version"
-  value       = "${local.cluster_master_version}"
-}
-
-output "ca_certificate" {
-  sensitive   = true
-  description = "Cluster ca certificate (base64 encoded)"
-  value       = "${local.cluster_ca_certificate}"
-}
-
-output "network_policy_enabled" {
-  description = "Whether network policy enabled"
-  value       = "${local.cluster_network_policy_enabled}"
-}
-
-output "http_load_balancing_enabled" {
-  description = "Whether http load balancing enabled"
-  value       = "${local.cluster_http_load_balancing_enabled}"
-}
-
-output "horizontal_pod_autoscaling_enabled" {
-  description = "Whether horizontal pod autoscaling enabled"
-  value       = "${local.cluster_horizontal_pod_autoscaling_enabled}"
-}
-
 output "kubernetes_dashboard_enabled" {
   description = "Whether kubernetes dashboard enabled"
-  value       = "${local.cluster_kubernetes_dashboard_enabled}"
-}
-
-output "node_pools_names" {
-  description = "List of node pools names"
-  value       = "${local.cluster_node_pools_names}"
-}
-
-output "node_pools_versions" {
-  description = "List of node pools versions"
-  value       = "${local.cluster_node_pools_versions}"
+  value       = "${element(concat(google_container_cluster.cluster.*.addons_config.0.kubernetes_dashboard.0.disabled, list("")), 0)}"
 }

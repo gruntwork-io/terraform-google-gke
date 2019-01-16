@@ -187,7 +187,7 @@ variable "monitoring_service" {
   default     = "monitoring.googleapis.com"
 }
 
-variable "service_account" {
-  description = "The service account to default running nodes as if not overridden in `node_pools`. Defaults to the compute engine default service account"
-  default     = ""
-}
+#variable "service_account" {
+#  description = "The service account to default running nodes as if not overridden in `node_pools`. Defaults to the compute engine default service account"
+#  default     = ""
+#}

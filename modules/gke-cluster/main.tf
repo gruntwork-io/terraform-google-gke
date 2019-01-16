@@ -86,10 +86,11 @@ resource "google_container_node_pool" "pools" {
     taint        = "${concat(var.node_pools_taints["all"], var.node_pools_taints[lookup(var.node_pools[count.index], "name")])}"
     tags         = ["${concat(list("gke-${var.name}"), list("gke-${var.name}-${lookup(var.node_pools[count.index], "name")}"), var.node_pools_tags["all"], var.node_pools_tags[lookup(var.node_pools[count.index], "name")])}"]
 
-    disk_size_gb    = "${lookup(var.node_pools[count.index], "disk_size_gb", 100)}"
-    disk_type       = "${lookup(var.node_pools[count.index], "disk_type", "pd-standard")}"
-    service_account = "${lookup(var.node_pools[count.index], "service_account", var.service_account)}"
-    preemptible     = "${lookup(var.node_pools[count.index], "preemptible", false)}"
+    disk_size_gb = "${lookup(var.node_pools[count.index], "disk_size_gb", 100)}"
+    disk_type    = "${lookup(var.node_pools[count.index], "disk_type", "pd-standard")}"
+
+    #service_account = "${lookup(var.node_pools[count.index], "service_account", var.service_account)}"
+    preemptible = "${lookup(var.node_pools[count.index], "preemptible", false)}"
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
@@ -117,6 +118,22 @@ locals {
   kubernetes_version = "${var.kubernetes_version != "latest" ? var.kubernetes_version : data.google_container_engine_versions.region.latest_node_version}"
   node_version       = "${var.node_version != "" ? var.node_version : local.kubernetes_version}"
   network_project    = "${var.network_project != "" ? var.network_project : var.project}"
+
+  cluster_master_auth_map = "${concat(google_container_cluster.cluster.*.master_auth, list())}"
+
+  # cluster locals
+  cluster_type                = "regional"
+  cluster_name                = "${element(concat(google_container_cluster.cluster.*.name, list("")), 0)}"
+  cluster_location            = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
+  cluster_region              = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
+  cluster_endpoint            = "${element(concat(google_container_cluster.cluster.*.endpoint, list("")), 0)}"
+  cluster_ca_certificate      = "${lookup(local.cluster_master_auth_map, "cluster_ca_certificate")}"
+  cluster_master_version      = "${element(concat(google_container_cluster.cluster.*.master_version, list("")), 0)}"
+  cluster_min_master_version  = "${element(concat(google_container_cluster.primary.*.min_master_version, list("")), 0)}"
+  cluster_logging_service     = "${element(concat(google_container_cluster.cluster.*.logging_service, list("")), 0)}"
+  cluster_monitoring_service  = "${element(concat(google_container_cluster.cluster.*.monitoring_service, list("")), 0)}"
+  cluster_node_pools_names    = "${concat(google_container_node_pool.pools.*.name, list(""))}"
+  cluster_node_pools_versions = "${concat(google_container_node_pool.pools.*.version, list(""))}"
 }
 
 data "google_compute_zones" "available" {
