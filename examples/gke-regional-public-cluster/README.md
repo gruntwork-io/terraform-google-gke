@@ -14,8 +14,9 @@ you're interested in how nodes are distributed in regional clusters, read the
 GCP docs about [balancing across zones](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler#balancing_across_zones).
 
 Nodes in a public cluster are accessible from the public internet; try using a
-private cluster such as in `gke-regional-private-cluster` to limit access to
-your nodes.
+private cluster such as in [`gke-regional-private-cluster`](../gke-regional-private-cluster)
+to limit access to/from your nodes. Private clusters are recommended for running
+most apps and services.
 
 ## Limitations
 
