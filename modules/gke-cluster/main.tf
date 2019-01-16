@@ -127,7 +127,6 @@ locals {
   cluster_location            = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
   cluster_region              = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
   cluster_endpoint            = "${element(concat(google_container_cluster.cluster.*.endpoint, list("")), 0)}"
-  cluster_ca_certificate      = "${lookup(local.cluster_master_auth_map, "cluster_ca_certificate")}"
   cluster_master_version      = "${element(concat(google_container_cluster.cluster.*.master_version, list("")), 0)}"
   cluster_min_master_version  = "${element(concat(google_container_cluster.primary.*.min_master_version, list("")), 0)}"
   cluster_logging_service     = "${element(concat(google_container_cluster.cluster.*.logging_service, list("")), 0)}"
