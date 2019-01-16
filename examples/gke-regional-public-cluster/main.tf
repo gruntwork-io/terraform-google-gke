@@ -4,7 +4,7 @@
 # Load Balancer in front of it.
 # ---------------------------------------------------------------------------------------------------------------------
 
-provider "google" {
+provider "google-beta" {
   project = "${var.project}"
   region  = "${var.region}"
 }
@@ -27,9 +27,10 @@ module "gke_cluster" {
 
   network           = "${google_compute_network.main.name}"
   subnetwork        = "${google_compute_subnetwork.main.name}"
-  ip_range_pods     = "${var.ip_range_pods}"
-  ip_range_services = "${var.ip_range_services}"
-  service_account   = "${var.compute_engine_service_account}"
+  ip_range_pods     = "${google_compute_subnetwork.main.secondary_ip_range.0.range_name}"
+  ip_range_services = "${google_compute_subnetwork.main.secondary_ip_range.1.range_name}"
+
+  #service_account   = "${var.compute_engine_service_account}"
 }
 
 # Network
