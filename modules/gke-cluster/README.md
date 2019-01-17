@@ -1,13 +1,12 @@
 # GKE Cluster Module
 
-The GKE Cluster module is a configurable module used to administer a
-[Google Kubernetes Engine (GKE) Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
+The GKE Cluster module is used to administer the [cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
+for a [Google Kubernetes Engine (GKE) Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
 
-The module is responsible for managing the configuration of the
-[GKE cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
-which runs the Kubernetes API used by `kubectl`, as well as the [GKE node pools](https://cloud.google.com/kubernetes-engine/docs/concepts/node-pools),
-whose [nodes](https://kubernetes.io/docs/concepts/architecture/nodes/) are the
-Kubernetes "worker machines".
+The cluster master is the "control plane" of the cluster; for example, it runs
+the Kubernetes API used by `kubectl`. Worker machines are configured by
+attaching [GKE node pools](https://cloud.google.com/kubernetes-engine/docs/concepts/node-pools)
+to the cluster module.
 
 ## How do you use this module?
 
@@ -28,15 +27,22 @@ cluster via Kubernetes API calls, such as by using `kubectl`. The GKE cluster
 is responsible for running workloads on nodes, as well as scaling/upgrading
 nodes.
 
-## What is a GKE Node Pool?
+## How do I attach worker machines using a GKE node pool?
 
-A [node](https://kubernetes.io/docs/concepts/architecture/nodes/) is
-a worker machine in Kubernetes; in
-GKE, nodes are provisioned as [Google Compute Engine VM instances](https://cloud.google.com/compute/docs/instances/).
+A "[node](https://kubernetes.io/docs/concepts/architecture/nodes/)" is
+a worker machine in Kubernetes; in GKE, nodes are provisioned as
+[Google Compute Engine VM instances](https://cloud.google.com/compute/docs/instances/).
 
 [GKE Node Pools](https://cloud.google.com/kubernetes-engine/docs/concepts/node-pools)
 are a group of nodes who share the same configuration, defined as a [NodeConfig](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/NodeConfig).
-A GKE Cluster can have multiple node pools defined.
+Node pools also control the autoscaling of their nodes, and autoscaling
+configuration is done inline, alongside the node config definition. A GKE
+Cluster can have multiple node pools defined.
+
+Node pools are configured directly with the
+[`google_container_node_pool`](https://www.terraform.io/docs/providers/google/r/container_node_pool.html)
+Terraform resource by providing a reference to the cluster you configured with
+this module as the `cluster` field.
 
 ## What VPC network will this cluster use?
 
