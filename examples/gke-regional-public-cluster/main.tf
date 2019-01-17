@@ -23,7 +23,7 @@ module "gke_cluster" {
 
   project = "${var.project}"
   region  = "${var.region}"
-  name    = "example-cluster"
+  name    = "${var.cluster_name}"
 
   network           = "${google_compute_network.main.name}"
   subnetwork        = "${google_compute_subnetwork.main.name}"
@@ -31,6 +31,68 @@ module "gke_cluster" {
   ip_range_services = "${google_compute_subnetwork.main.secondary_ip_range.1.range_name}"
 
   #service_account   = "${var.compute_engine_service_account}"
+}
+
+# Node Pool
+
+// Node Pool Resource
+resource "google_container_node_pool" "node_pool" {
+  name               = "main-pool"
+  project            = "${var.project}"
+  region             = "${var.region}"
+  cluster            = "${var.cluster_name}"
+  version            = "latest"
+  initial_node_count = "1"
+
+  autoscaling {
+    min_node_count = "1"
+    max_node_count = "5"
+  }
+
+  management {
+    auto_repair  = "true"
+    auto_upgrade = "true"
+  }
+
+  node_config {
+    image_type   = "COS"
+    machine_type = "n1-standard-1"
+
+    labels = {
+      all-pools-example = "true"
+    }
+
+    # for custom shutdown scripts etc
+    # metadata = ""
+
+
+    #[DEPRECATED] This field is in beta and will be removed from this provider. Use it in the the google-beta provider instead.
+    # See https://terraform.io/docs/providers/google/provider_versions.html for more details.
+    #taint = {
+    #  key    = "main-pool-example"
+    #  value  = "true"
+    #  effect = "PREFER_NO_SCHEDULE"
+    #}
+
+    tags         = ["main-pool-example"]
+    disk_size_gb = "30"
+    disk_type    = "pd-standard"
+    #service_account = "${lookup(var.node_pools[count.index], "service_account", var.service_account)}"
+    preemptible = false
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+  }
+
+  lifecycle {
+    ignore_changes = ["initial_node_count"]
+  }
+
+  timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 }
 
 # Network

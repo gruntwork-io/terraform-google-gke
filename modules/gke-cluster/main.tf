@@ -20,7 +20,8 @@ resource "google_container_cluster" "cluster" {
   # part of Create. This leaves us in our desired state- with a cluster master
   # with no node pools.
   remove_default_node_pool = true
-  initial_node_count       = 1
+
+  initial_node_count = 1
 
   logging_service    = "${var.logging_service}"
   monitoring_service = "${var.monitoring_service}"
@@ -68,58 +69,6 @@ resource "google_container_cluster" "cluster" {
   }
 }
 
-// Node Pool Resource
-resource "google_container_node_pool" "pools" {
-  count              = "${length(var.node_pools)}"
-  name               = "${lookup(var.node_pools[count.index], "name")}"
-  project            = "${var.project}"
-  region             = "${var.region}"
-  cluster            = "${var.name}"
-  version            = "${lookup(var.node_pools[count.index], "auto_upgrade", false) ? "" : lookup(var.node_pools[count.index], "version", local.node_version)}"
-  initial_node_count = "${lookup(var.node_pools[count.index], "initial_node_count", lookup(var.node_pools[count.index], "min_count", 1))}"
-
-  autoscaling {
-    min_node_count = "${lookup(var.node_pools[count.index], "min_count", 1)}"
-    max_node_count = "${lookup(var.node_pools[count.index], "max_count", 100)}"
-  }
-
-  management {
-    auto_repair  = "${lookup(var.node_pools[count.index], "auto_repair", true)}"
-    auto_upgrade = "${lookup(var.node_pools[count.index], "auto_upgrade", true)}"
-  }
-
-  node_config {
-    image_type   = "${lookup(var.node_pools[count.index], "image_type", "COS")}"
-    machine_type = "${lookup(var.node_pools[count.index], "machine_type", "n1-standard-2")}"
-    labels       = "${merge(map("cluster_name", var.name), map("node_pool", lookup(var.node_pools[count.index], "name")), var.node_pools_labels["all"], var.node_pools_labels[lookup(var.node_pools[count.index], "name")])}"
-    metadata     = "${merge(map("cluster_name", var.name), map("node_pool", lookup(var.node_pools[count.index], "name")), var.node_pools_metadata["all"], var.node_pools_metadata[lookup(var.node_pools[count.index], "name")])}"
-    taint        = "${concat(var.node_pools_taints["all"], var.node_pools_taints[lookup(var.node_pools[count.index], "name")])}"
-    tags         = ["${concat(list("gke-${var.name}"), list("gke-${var.name}-${lookup(var.node_pools[count.index], "name")}"), var.node_pools_tags["all"], var.node_pools_tags[lookup(var.node_pools[count.index], "name")])}"]
-
-    disk_size_gb = "${lookup(var.node_pools[count.index], "disk_size_gb", 100)}"
-    disk_type    = "${lookup(var.node_pools[count.index], "disk_type", "pd-standard")}"
-
-    #service_account = "${lookup(var.node_pools[count.index], "service_account", var.service_account)}"
-    preemptible = "${lookup(var.node_pools[count.index], "preemptible", false)}"
-
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform",
-    ]
-  }
-
-  lifecycle {
-    ignore_changes = ["initial_node_count"]
-  }
-
-  timeouts {
-    create = "30m"
-    update = "30m"
-    delete = "30m"
-  }
-
-  depends_on = ["google_container_cluster.cluster"]
-}
-
 // TODO
 // Add Data Source to get the latest k8s version
 // Use this is k8s version is not set.
@@ -132,17 +81,15 @@ locals {
   cluster_master_auth_map = "${concat(google_container_cluster.cluster.*.master_auth, list())}"
 
   # cluster locals
-  cluster_type                = "regional"
-  cluster_name                = "${element(concat(google_container_cluster.cluster.*.name, list("")), 0)}"
-  cluster_location            = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
-  cluster_region              = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
-  cluster_endpoint            = "${element(concat(google_container_cluster.cluster.*.endpoint, list("")), 0)}"
-  cluster_master_version      = "${element(concat(google_container_cluster.cluster.*.master_version, list("")), 0)}"
-  cluster_min_master_version  = "${element(concat(google_container_cluster.primary.*.min_master_version, list("")), 0)}"
-  cluster_logging_service     = "${element(concat(google_container_cluster.cluster.*.logging_service, list("")), 0)}"
-  cluster_monitoring_service  = "${element(concat(google_container_cluster.cluster.*.monitoring_service, list("")), 0)}"
-  cluster_node_pools_names    = "${concat(google_container_node_pool.pools.*.name, list(""))}"
-  cluster_node_pools_versions = "${concat(google_container_node_pool.pools.*.version, list(""))}"
+  cluster_type               = "regional"
+  cluster_name               = "${element(concat(google_container_cluster.cluster.*.name, list("")), 0)}"
+  cluster_location           = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
+  cluster_region             = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
+  cluster_endpoint           = "${element(concat(google_container_cluster.cluster.*.endpoint, list("")), 0)}"
+  cluster_master_version     = "${element(concat(google_container_cluster.cluster.*.master_version, list("")), 0)}"
+  cluster_min_master_version = "${element(concat(google_container_cluster.cluster.*.min_master_version, list("")), 0)}"
+  cluster_logging_service    = "${element(concat(google_container_cluster.cluster.*.logging_service, list("")), 0)}"
+  cluster_monitoring_service = "${element(concat(google_container_cluster.cluster.*.monitoring_service, list("")), 0)}"
 }
 
 data "google_compute_zones" "available" {

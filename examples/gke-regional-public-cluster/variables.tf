@@ -16,6 +16,10 @@ variable "region" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "cluster_name" {
+  description = "The name of the Kubernetes cluster."
+  default     = "example-cluster"
+}
 
 #variable "ip_range_pods" {
 #  description = "The secondary ip range to use for pods"
