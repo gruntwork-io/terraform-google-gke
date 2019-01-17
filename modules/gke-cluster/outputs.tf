@@ -48,3 +48,18 @@ output "kubernetes_dashboard_enabled" {
   description = "Whether kubernetes dashboard enabled"
   value       = "${element(concat(google_container_cluster.cluster.*.addons_config.0.kubernetes_dashboard.0.disabled, list("")), 0)}"
 }
+
+output "client_certificate" {
+  description = "TODO"
+  value       = "${google_container_cluster.cluster.master_auth.0.client_certificate}"
+}
+
+output "client_key" {
+  description = "TODO"
+  value       = "${google_container_cluster.cluster.master_auth.0.client_key}"
+}
+
+output "cluster_ca_certificate" {
+  description = "TODO"
+  value       = "${google_container_cluster.cluster.master_auth.0.cluster_ca_certificate}"
+}
