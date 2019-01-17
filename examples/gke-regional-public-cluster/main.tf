@@ -9,6 +9,16 @@ provider "google-beta" {
   region  = "${var.region}"
 }
 
+module "install-tiller" {
+  source = "../../modules/gke-helm-tiller"
+
+  gke_host_endpoint      = "module.gke_cluster.endpoint"
+  access_token           = "a"
+  client_certificate     = "b"
+  client_key             = "c"
+  cluster_ca_certificate = "d"
+}
+
 # Use Terraform 0.10.x so that we can take advantage of Terraform GCP functionality as a separate provider via
 # https://github.com/terraform-providers/terraform-provider-google
 terraform {
