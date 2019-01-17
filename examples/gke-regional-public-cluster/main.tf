@@ -41,7 +41,6 @@ resource "google_container_node_pool" "node_pool" {
   project            = "${var.project}"
   region             = "${var.region}"
   cluster            = "${var.cluster_name}"
-  version            = "latest"
   initial_node_count = "1"
 
   autoscaling {
