@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/gruntwork-io/terratest/modules/test-structure"
 )
@@ -14,8 +15,8 @@ func TestGKECluster(t *testing.T) {
 	testFolder := test_structure.CopyTerraformFolderToTemp(t, "..", "examples")
 	terraformModulePath := filepath.Join(testFolder, "gke-regional-public-cluster")
 
-	project := "graphite-test-rileykarson"
-	region := "us-central1"
+	project := gcp.GetGoogleProjectIDFromEnvVar(t)
+	region := gcp.GetRandomRegion(t, project, nil, nil)
 	terratestOptions := createGKEClusterTerraformOptions(t, project, region, terraformModulePath)
 	defer terraform.Destroy(t, terratestOptions)
 
