@@ -40,7 +40,7 @@ resource "google_container_node_pool" "node_pool" {
   name               = "main-pool"
   project            = "${var.project}"
   region             = "${var.region}"
-  cluster            = "${var.cluster_name}"
+  cluster            = "${module.gke_cluster.name}"
   initial_node_count = "1"
 
   autoscaling {

@@ -117,6 +117,6 @@ resource "random_shuffle" "available_zones" {
   Get available container engine versions
  *****************************************/
 data "google_container_engine_versions" "region" {
-  zone    = "${data.google_compute_zones.available.names[0]}"
+  region  = "${var.region}"
   project = "${var.project}"
 }
