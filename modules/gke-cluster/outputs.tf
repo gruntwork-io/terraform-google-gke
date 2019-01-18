@@ -1,42 +1,32 @@
 output "name" {
   description = "Cluster name"
-  value       = "${local.cluster_name}"
-}
-
-output "type" {
-  description = "Cluster type (regional / zonal)"
-  value       = "${local.cluster_type}"
-}
-
-output "location" {
-  description = "Cluster location (region if regional cluster, zone if zonal cluster)"
-  value       = "${local.cluster_location}"
+  value       = "${google_container_cluster.cluster.name}"
 }
 
 output "region" {
   description = "Cluster region"
-  value       = "${local.cluster_region}"
+  value       = "${google_container_cluster.cluster.region}"
 }
 
 output "endpoint" {
   sensitive   = true
   description = "Cluster endpoint"
-  value       = "${local.cluster_endpoint}"
+  value       = "${google_container_cluster.cluster.endpoint}"
 }
 
 output "min_master_version" {
   description = "Minimum master kubernetes version"
-  value       = "${local.cluster_min_master_version}"
+  value       = "${google_container_cluster.cluster.min_master_version}"
 }
 
 output "logging_service" {
   description = "Logging service used"
-  value       = "${local.cluster_logging_service}"
+  value       = "${google_container_cluster.cluster.logging_service}"
 }
 
 output "monitoring_service" {
   description = "Monitoring service used"
-  value       = "${local.cluster_monitoring_service}"
+  value       = "${google_container_cluster.cluster.monitoring_service}"
 }
 
 output "master_authorized_networks_config" {

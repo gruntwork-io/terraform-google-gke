@@ -57,11 +57,6 @@ variable "kubernetes_version" {
   default     = "latest"
 }
 
-variable "node_version" {
-  description = "The Kubernetes version of the node pools. Defaults kubernetes_version (master) variable and can be overridden for individual node pools by setting the `version` key on them. Must be empyty or set the same as master at cluster creation."
-  default     = ""
-}
-
 variable "master_authorized_networks_config" {
   type = "list"
 
@@ -102,57 +97,6 @@ variable "network_policy" {
 variable "maintenance_start_time" {
   description = "Time window specified for daily maintenance operations in RFC3339 format"
   default     = "05:00"
-}
-
-variable "node_pools" {
-  type        = "list"
-  description = "List of maps containing node pools"
-
-  default = [
-    {
-      name = "default-node-pool"
-    },
-  ]
-}
-
-variable "node_pools_labels" {
-  type        = "map"
-  description = "Map of maps containing node labels by node-pool name"
-
-  default = {
-    all               = {}
-    default-node-pool = {}
-  }
-}
-
-variable "node_pools_metadata" {
-  type        = "map"
-  description = "Map of maps containing node metadata by node-pool name"
-
-  default = {
-    all               = {}
-    default-node-pool = {}
-  }
-}
-
-variable "node_pools_taints" {
-  type        = "map"
-  description = "Map of lists containing node taints by node-pool name"
-
-  default = {
-    all               = []
-    default-node-pool = []
-  }
-}
-
-variable "node_pools_tags" {
-  type        = "map"
-  description = "Map of lists containing node network tags by node-pool name"
-
-  default = {
-    all               = []
-    default-node-pool = []
-  }
 }
 
 variable "stub_domains" {

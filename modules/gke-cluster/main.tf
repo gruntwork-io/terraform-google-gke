@@ -72,24 +72,9 @@ resource "google_container_cluster" "cluster" {
 // TODO
 // Add Data Source to get the latest k8s version
 // Use this is k8s version is not set.
-
 locals {
   kubernetes_version = "${var.kubernetes_version != "latest" ? var.kubernetes_version : data.google_container_engine_versions.region.latest_node_version}"
-  node_version       = "${var.node_version != "" ? var.node_version : local.kubernetes_version}"
   network_project    = "${var.network_project != "" ? var.network_project : var.project}"
-
-  cluster_master_auth_map = "${concat(google_container_cluster.cluster.*.master_auth, list())}"
-
-  # cluster locals
-  cluster_type               = "regional"
-  cluster_name               = "${element(concat(google_container_cluster.cluster.*.name, list("")), 0)}"
-  cluster_location           = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
-  cluster_region             = "${element(concat(google_container_cluster.cluster.*.region, list("")), 0)}"
-  cluster_endpoint           = "${element(concat(google_container_cluster.cluster.*.endpoint, list("")), 0)}"
-  cluster_master_version     = "${element(concat(google_container_cluster.cluster.*.master_version, list("")), 0)}"
-  cluster_min_master_version = "${element(concat(google_container_cluster.cluster.*.min_master_version, list("")), 0)}"
-  cluster_logging_service    = "${element(concat(google_container_cluster.cluster.*.logging_service, list("")), 0)}"
-  cluster_monitoring_service = "${element(concat(google_container_cluster.cluster.*.monitoring_service, list("")), 0)}"
 }
 
 data "google_compute_zones" "available" {
