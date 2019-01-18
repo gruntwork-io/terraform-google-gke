@@ -1,0 +1,56 @@
+workspace_root: &workspace_root
+  /go/src/github.com/hashicorp/terraform-google-gke
+
+defaults: &defaults
+  working_directory: *workspace_root
+  docker:
+  - image: gruntwork/circle-ci-test-image-base:latest
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+    - checkout
+    - attach_workspace:
+        at: *workspace_root
+    - restore_cache:
+        keys:
+        - dep-{{ checksum "test/Gopkg.lock" }}
+    - run: configure-environment-for-gruntwork-module --go-src-path test --use-go-dep --circle-ci-2
+    - save_cache:
+        key: dep-{{ checksum "test/Gopkg.lock" }}
+        paths:
+        - /go/src/github.com/hashicorp/terraform-google-gke/test/vendor
+    - persist_to_workspace:
+        root: *workspace_root
+        paths: test/vendor
+  test:
+    <<: *defaults
+    steps:
+    - checkout
+    - run: echo 'export PATH=$HOME/terraform:$HOME/packer:$PATH' >> $BASH_ENV
+    - attach_workspace:
+        at: *workspace_root
+    # Write service account creds to disk where the API expects them
+    - run: mkdir -p /tmp/logs
+    - run: |
+        export GOOGLE_APPLICATION_CREDENTIALS="/tmp/gcloud.json" && \
+        echo $GCLOUD_SERVICE_KEY > /tmp/gcloud.json && \
+        run-go-tests --circle-ci-2 --path test | tee /tmp/logs/all.log
+    - run:
+        command: terratest_log_parser --testlog /tmp/logs/all.log --outputdir /tmp/logs
+        when: always
+    - store_artifacts:
+        path: /tmp/logs
+    - store_test_results:
+        path: /tmp/logs
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+    - build
+    - test:
+        requires:
+        - build
