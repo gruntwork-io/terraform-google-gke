@@ -5,9 +5,6 @@ provider "helm" {
   kubernetes {
     host                   = "${data.template_file.gke_host_endpoint.rendered}"
 
-    username = "abc"
-    password = "def"
-
     token                  = "${data.template_file.access_token.rendered}"
     client_certificate     = "${data.template_file.client_certificate.rendered}"
     client_key             = "${data.template_file.client_key.rendered}"
@@ -18,6 +15,11 @@ provider "helm" {
 resource "helm_repository" "incubator" {
     name = "incubator"
     url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+}
+
+resource "helm_release" "release" {
+  name = "test"
+  chart = "stable/kibana"
 }
 
 # Workaround for Terraform limitation where you cannot directly set a depends on directive or interpolate from resources

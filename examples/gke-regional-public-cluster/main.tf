@@ -12,11 +12,12 @@ provider "google-beta" {
 module "install-tiller" {
   source = "../../modules/gke-helm-tiller"
 
-  gke_host_endpoint      = "module.gke_cluster.endpoint"
+  gke_host_endpoint      = "${module.gke_cluster.endpoint}"
   access_token           = "${data.google_client_config.client.access_token}"
-  client_certificate     = "module.gke_cluster.client_certificate"
-  client_key             = "module.gke_cluster.client_key"
-  cluster_ca_certificate = "module.gke_cluster.cluster_ca_certificate"
+
+  client_certificate     = "${module.gke_cluster.client_certificate}"
+  client_key             = "${module.gke_cluster.client_key}"
+  cluster_ca_certificate = "${module.gke_cluster.cluster_ca_certificate}"
 }
 
 # Use Terraform 0.10.x so that we can take advantage of Terraform GCP functionality as a separate provider via

@@ -51,15 +51,15 @@ output "kubernetes_dashboard_enabled" {
 
 output "client_certificate" {
   description = "TODO"
-  value       = "${google_container_cluster.cluster.master_auth.0.client_certificate}"
+  value       = "${base64decode(google_container_cluster.cluster.master_auth.0.client_certificate)}"
 }
 
 output "client_key" {
   description = "TODO"
-  value       = "${google_container_cluster.cluster.master_auth.0.client_key}"
+  value       = "${base64decode(google_container_cluster.cluster.master_auth.0.client_key)}"
 }
 
 output "cluster_ca_certificate" {
   description = "TODO"
-  value       = "${google_container_cluster.cluster.master_auth.0.cluster_ca_certificate}"
+  value       = "${base64decode(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
 }
