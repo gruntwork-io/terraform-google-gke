@@ -33,8 +33,8 @@ Node Pools cannot be created in zones without a master cluster; you can update
 the zones of your cluster master provided your new zones are within the
 region your cluster is present in.
 
-<!–– TODO(rileykarson): Clarify what this means when we find out- this is pulled
-from the GKE docs. ––>
+<!-- TODO(rileykarson): Clarify what this means when we find out- this is pulled
+from the GKE docs. -->
 Currently, you cannot use a proxy to reach the cluster master of a regional
 cluster through its private IP address.
 
