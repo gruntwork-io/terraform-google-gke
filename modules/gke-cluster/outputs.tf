@@ -1,40 +1,30 @@
 output "name" {
-  description = "Cluster name"
+  # This may seem redundant with the `name` input, but it serves an important
+  # purpose. Terraform won't establish a dependency graph without this to interpolate on.
+  description = "The name of the cluster master. This output is used for interpolation with node pools, other modules."
   value       = "${google_container_cluster.cluster.name}"
 }
 
-output "region" {
-  description = "Cluster region"
-  value       = "${google_container_cluster.cluster.region}"
+
+output "master_version" {
+  description = "The Kubernetes master version."
+  value       = "${google_container_cluster.cluster.master_version}"
 }
 
 output "endpoint" {
+  description = "The IP address of the cluster master."
   sensitive   = true
-  description = "Cluster endpoint"
   value       = "${google_container_cluster.cluster.endpoint}"
 }
 
-output "min_master_version" {
-  description = "Minimum master kubernetes version"
-  value       = "${google_container_cluster.cluster.min_master_version}"
+output "cluster_ca_certificate" {
+  description = "The public certificate that is the root of trust for the cluster. Encoded as base64."
+  sensitive   = true
+  value       = "${google_container_cluster.cluster.master_auth.0.cluster_ca_certificate}"
 }
 
-output "logging_service" {
-  description = "Logging service used"
-  value       = "${google_container_cluster.cluster.logging_service}"
-}
-
-output "monitoring_service" {
-  description = "Monitoring service used"
-  value       = "${google_container_cluster.cluster.monitoring_service}"
-}
-
+// TODO(robmorgan): Is this a useful output?
 output "master_authorized_networks_config" {
   description = "Networks from which access to master is permitted"
   value       = "${var.master_authorized_networks_config}"
-}
-
-output "kubernetes_dashboard_enabled" {
-  description = "Whether kubernetes dashboard enabled"
-  value       = "${element(concat(google_container_cluster.cluster.*.addons_config.0.kubernetes_dashboard.0.disabled, list("")), 0)}"
 }
