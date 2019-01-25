@@ -1,43 +1,92 @@
-workspace_root: &workspace_root
-  /go/src/github.com/hashicorp/terraform-google-gke
-
 defaults: &defaults
-  working_directory: *workspace_root
-  docker:
-  - image: gruntwork/circle-ci-test-image-base:latest
+  machine: true
+  environment:
+    GRUNTWORK_INSTALLER_VERSION: v0.0.21
+    TERRATEST_LOG_PARSER_VERSION: v0.13.13
+    MODULE_CI_VERSION: v0.13.3
+    TERRAFORM_VERSION: 0.11.8
+    TERRAGRUNT_VERSION: NONE
+    PACKER_VERSION: NONE
+    GOLANG_VERSION: 1.11.2
+    K8S_VERSION: v1.10.0
+    KUBECONFIG: /home/circleci/.kube/config
+
+install_gruntwork_utils: &install_gruntwork_utils
+  name: install gruntwork utils
+  command: |
+    curl -Ls https://raw.githubusercontent.com/gruntwork-io/gruntwork-installer/master/bootstrap-gruntwork-installer.sh | bash /dev/stdin --version "${GRUNTWORK_INSTALLER_VERSION}"
+    gruntwork-install --module-name "gruntwork-module-circleci-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "${MODULE_CI_VERSION}"
+    gruntwork-install --binary-name "terratest_log_parser" --repo "https://github.com/gruntwork-io/terratest" --tag "${TERRATEST_LOG_PARSER_VERSION}"
+    configure-environment-for-gruntwork-module \
+      --circle-ci-2-machine-executor \
+      --terraform-version ${TERRAFORM_VERSION} \
+      --terragrunt-version ${TERRAGRUNT_VERSION} \
+      --packer-version ${PACKER_VERSION} \
+      --use-go-dep \
+      --go-version ${GOLANG_VERSION} \
+      --go-src-path test
 
 version: 2
 jobs:
   build:
     <<: *defaults
     steps:
-    - checkout
-    - attach_workspace:
-        at: *workspace_root
-    - restore_cache:
-        keys:
-        - dep-{{ checksum "test/Gopkg.lock" }}
-    - run: configure-environment-for-gruntwork-module --go-src-path test --use-go-dep --circle-ci-2
-    - save_cache:
-        key: dep-{{ checksum "test/Gopkg.lock" }}
-        paths:
-        - /go/src/github.com/hashicorp/terraform-google-gke/test/vendor
-    - persist_to_workspace:
-        root: *workspace_root
-        paths: test/vendor
+      - checkout
+      - restore_cache:
+          keys:
+          - dep-v1-{{ checksum "test/Gopkg.lock" }}
+
+      # Install gruntwork utilities
+      - run:
+          <<: *install_gruntwork_utils
+
+      - save_cache:
+          key: dep-v1-{{ checksum "test/Gopkg.lock" }}
+          paths:
+          - ./test/vendor
+
+      # Fail the build if the pre-commit hooks don't pass. Note: if you run pre-commit install locally, these hooks will
+      # execute automatically every time before you commit, ensuring the build never fails at this step!
+      - run: pip install pre-commit==1.11.2
+      - run: pre-commit install
+      - run: pre-commit run --all-files
+
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - project
+            - terraform
+            - packer
+
   test:
     <<: *defaults
     steps:
+    - attach_workspace:
+        at: /home/circleci
     - checkout
     - run: echo 'export PATH=$HOME/terraform:$HOME/packer:$PATH' >> $BASH_ENV
-    - attach_workspace:
-        at: *workspace_root
-    # Write service account creds to disk where the API expects them
-    - run: mkdir -p /tmp/logs
-    - run: |
-        export GOOGLE_APPLICATION_CREDENTIALS="/tmp/gcloud.json" && \
-        echo $GCLOUD_SERVICE_KEY > /tmp/gcloud.json && \
-        run-go-tests --circle-ci-2 --path test | tee /tmp/logs/all.log
+    - run:
+          <<: *install_gruntwork_utils
+    - run:
+        name: update gcloud
+        command: |
+          sudo apt-get remove -y google-cloud-sdk
+          sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
+          sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update beta kubectl
+    - run:
+        name: run tests
+        command: |
+          mkdir -p /tmp/logs
+          # required for gcloud and kubectl to authenticate correctly
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+          gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+          # required for terraform and terratest to authenticate correctly
+          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/gcloud.json"
+          echo $GCLOUD_SERVICE_KEY > /tmp/gcloud.json
+          # run the tests
+          run-go-tests --path test --timeout 60m | tee /tmp/logs/all.log
+        no_output_timeout: 3600s
     - run:
         command: terratest_log_parser --testlog /tmp/logs/all.log --outputdir /tmp/logs
         when: always
