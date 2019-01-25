@@ -20,17 +20,3 @@ variable "cluster_name" {
   description = "The name of the Kubernetes cluster."
   default     = "example-cluster"
 }
-
-#variable "ip_range_pods" {
-#  description = "The secondary ip range to use for pods"
-#}
-
-
-#variable "ip_range_services" {
-#  description = "The secondary ip range to use for pods"
-#}
-
-
-#variable "compute_engine_service_account" {
-#  description = "Service account to associate to the nodes in the cluster"
-#}

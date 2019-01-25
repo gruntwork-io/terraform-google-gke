@@ -8,27 +8,19 @@ variable "project" {
 }
 
 variable "region" {
-  description = "The region to host the cluster in (required)"
+  description = "The region to host the cluster in"
 }
 
 variable "name" {
-  description = "The name of the cluster (required)"
+  description = "The name of the cluster"
 }
 
 variable "network" {
-  description = "The VPC network to host the cluster in (required)"
+  description = "The VPC network to host the cluster in"
 }
 
 variable "subnetwork" {
-  description = "The subnetwork to host the cluster in (required)"
-}
-
-variable "ip_range_pods" {
-  description = "The secondary ip range to use for pods"
-}
-
-variable "ip_range_services" {
-  description = "The secondary ip range to use for pods"
+  description = "The subnetwork to host the cluster in"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -41,20 +33,36 @@ variable "description" {
   default     = ""
 }
 
-variable "zones" {
-  type        = "list"
-  description = "TODO"
-  default     = []
+variable "kubernetes_version" {
+  description = "The Kubernetes version of the masters. If set to 'latest' it will pull latest available version in the selected region."
+  default     = "latest"
 }
+
+variable "logging_service" {
+  description = "The logging service that the cluster should write logs to. Available options include logging.googleapis.com, logging.googleapis.com/kubernetes (beta), and none"
+  default     = "logging.googleapis.com"
+}
+
+variable "monitoring_service" {
+  description = "The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Google Cloud Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting Available options include monitoring.googleapis.com, monitoring.googleapis.com/kubernetes (beta) and none"
+  default     = "monitoring.googleapis.com"
+}
+
+variable "horizontal_pod_autoscaling" {
+  description = "Whether to enable the horizontal pod autoscaling addon"
+  default     = true
+}
+
+variable "http_load_balancing" {
+  description = "Whether to enable the http (L7) load balancing addon"
+  default     = true
+}
+
+// TODO(robmorgan): Are we using these values below? We should understand them more fully before adding them to configs.
 
 variable "network_project" {
   description = "The project ID of the shared VPC's host (for shared vpc support)"
   default     = ""
-}
-
-variable "kubernetes_version" {
-  description = "The Kubernetes version of the masters. If set to 'latest' it will pull latest available version in the selected region."
-  default     = "latest"
 }
 
 variable "master_authorized_networks_config" {
@@ -72,26 +80,6 @@ variable "master_authorized_networks_config" {
   EOF
 
   default = []
-}
-
-variable "horizontal_pod_autoscaling" {
-  description = "Enable horizontal pod autoscaling addon"
-  default     = true
-}
-
-variable "http_load_balancing" {
-  description = "Enable httpload balancer addon"
-  default     = true
-}
-
-variable "kubernetes_dashboard" {
-  description = "Enable kubernetes dashboard addon"
-  default     = false
-}
-
-variable "network_policy" {
-  description = "Enable network policy addon"
-  default     = false
 }
 
 variable "maintenance_start_time" {
@@ -121,17 +109,37 @@ variable "ip_masq_link_local" {
   default     = "false"
 }
 
-variable "logging_service" {
-  description = "The logging service that the cluster should write logs to. Available options include logging.googleapis.com, logging.googleapis.com/kubernetes (beta), and none"
-  default     = "logging.googleapis.com"
+# ---------------------------------------------------------------------------------------------------------------------
+# OPTIONAL PARAMETERS - RECOMMENDED DEFAULTS
+# These values shouldn't be changed; they're following the best practices defined at https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster
+# ---------------------------------------------------------------------------------------------------------------------
+
+variable "enable_kubernetes_dashboard" {
+  description = "Whether to enable the Kubernetes Web UI (Dashboard). The Web UI requires a highly privileged security account."
+  default     = false
 }
 
-variable "monitoring_service" {
-  description = "The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Google Cloud Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting Available options include monitoring.googleapis.com, monitoring.googleapis.com/kubernetes (beta) and none"
-  default     = "monitoring.googleapis.com"
+variable "enable_legacy_abac" {
+  description = "Whether to enable legacy Attribute-Based Access Control (ABAC). RBAC has significant security advantages over ABAC."
+  default     = false
 }
 
-#variable "service_account" {
-#  description = "The service account to default running nodes as if not overridden in `node_pools`. Defaults to the compute engine default service account"
-#  default     = ""
-#}
+variable "enable_network_policy" {
+  description = "Whether to enable Kubernetes NetworkPolicy on the master, which is required to be enabled to be used on Nodes."
+  default     = true
+}
+
+variable "basic_auth_username" {
+  description = "The username used for basic auth; set both this and `basic_auth_password` to \"\" to disable basic auth."
+  default     = ""
+}
+
+variable "basic_auth_password" {
+  description = "The password used for basic auth; set both this and `basic_auth_username` to \"\" to disable basic auth."
+  default     = ""
+}
+
+variable "enable_client_certificate_authentication" {
+  description = "Whether to enable authentication by x509 certificates. With ABAC disabled, these certificates are effectively useless."
+  default     = false
+}
