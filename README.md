@@ -1,13 +1,17 @@
 [![Maintained by Gruntwork.io](https://img.shields.io/badge/maintained%20by-gruntwork.io-%235849a6.svg)](https://gruntwork.io/?ref=repo_google_gke)
 
-# GKE Modules
+# Google Kubernetes Engine (GKE) Modules
 
-This repo contains a Module for running Kubernetes clusters on [GCP](https://cloud.google.com/) using [Google Kubernetes
-Engine](https://cloud.google.com/kubernetes-engine/) with [Terraform](https://www.terraform.io). 
+This repo contains modules for running Kubernetes clusters on 
+[Google Cloud Platform (GCP)](https://cloud.google.com/) using
+[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/)
+with [Terraform](https://www.terraform.io). 
 
 ## Code included in this Module
 
- * `gke-cluster`: TODO
+ * `gke-cluster`: The GKE Cluster module is used to administer the
+[cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
+for a [GKE Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
 
 
 ## What is Kubernetes?
@@ -19,6 +23,17 @@ built in support for common operational tasks such as replication, autoscaling, 
 
 You can learn more about Kubernetes from [the official documentation](https://kubernetes.io/docs/tutorials/kubernetes-basics/).
 
+## What is GKE?
+
+Google Kubernetes Engine or "GKE" is a Google-managed Kubernetes environment.
+GKE is a fully managed experience; it handles the management/upgrading of the
+Kubernetes cluster master as well as autoscaling of "nodes" through "node pool"
+templates.
+
+Through GKE, your Kubernetes deployments will have first-class
+support for GCP IAM identities, built-in configuration of high-availability and
+secured clusters, and native access to GCP's networking feeatures such as load
+balancers.
 
 ## <a name="how-to-run-applications"></a>How do you run applications on Kubernetes?
 
