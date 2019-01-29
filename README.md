@@ -32,7 +32,7 @@ templates.
 
 Through GKE, your Kubernetes deployments will have first-class
 support for GCP IAM identities, built-in configuration of high-availability and
-secured clusters, and native access to GCP's networking feeatures such as load
+secured clusters, as well as native access to GCP's networking features such as load
 balancers.
 
 ## <a name="how-to-run-applications"></a>How do you run applications on Kubernetes?
