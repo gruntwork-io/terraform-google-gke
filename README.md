@@ -2,17 +2,13 @@
 
 # Google Kubernetes Engine (GKE) Modules
 
-This repo contains modules for running Kubernetes clusters on 
-[Google Cloud Platform (GCP)](https://cloud.google.com/) using
-[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/)
-with [Terraform](https://www.terraform.io). 
+This repo contains modules for running Kubernetes clusters on [Google Cloud Platform (GCP)](https://cloud.google.com/)
+using [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/) with [Terraform](https://www.terraform.io). 
 
 ## Code included in this Module
 
- * `gke-cluster`: The GKE Cluster module is used to administer the
-[cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
+ * `gke-cluster`: The GKE Cluster module is used to administer the [cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
 for a [GKE Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
-
 
 ## What is Kubernetes?
 
@@ -25,15 +21,12 @@ You can learn more about Kubernetes from [the official documentation](https://ku
 
 ## What is GKE?
 
-Google Kubernetes Engine or "GKE" is a Google-managed Kubernetes environment.
-GKE is a fully managed experience; it handles the management/upgrading of the
-Kubernetes cluster master as well as autoscaling of "nodes" through "node pool"
+Google Kubernetes Engine or "GKE" is a Google-managed Kubernetes environment. GKE is a fully managed experience; it
+handles the management/upgrading of the Kubernetes cluster master as well as autoscaling of "nodes" through "node pool"
 templates.
 
-Through GKE, your Kubernetes deployments will have first-class
-support for GCP IAM identities, built-in configuration of high-availability and
-secured clusters, as well as native access to GCP's networking features such as load
-balancers.
+Through GKE, your Kubernetes deployments will have first-class support for GCP IAM identities, built-in configuration of
+high-availability and secured clusters, as well as native access to GCP's networking features such as load balancers.
 
 ## <a name="how-to-run-applications"></a>How do you run applications on Kubernetes?
 
