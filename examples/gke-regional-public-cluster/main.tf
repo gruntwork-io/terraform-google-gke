@@ -99,3 +99,48 @@ resource "google_compute_subnetwork" "main" {
   region        = "${var.region}"
   network       = "${google_compute_network.main.self_link}"
 }
+
+data "google_client_config" "client" {}
+
+data "template_file" "gke_host_endpoint" {
+  template = "${module.gke_cluster.endpoint}"
+}
+
+data "template_file" "access_token" {
+  template = "${data.google_client_config.client.access_token}"
+}
+
+data "template_file" "cluster_ca_certificate" {
+  template = "${module.gke_cluster.cluster_ca_certificate}"
+}
+
+
+provider "kubernetes" {
+    load_config_file = false
+
+    host                   = "${data.template_file.gke_host_endpoint.rendered}"
+    token                  = "${data.template_file.access_token.rendered}"
+    cluster_ca_certificate = "${base64decode(data.template_file.cluster_ca_certificate.rendered)}"
+}
+
+resource "kubernetes_cluster_role_binding" "user" {
+  metadata {
+    name = "admin-me"
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+
+  subject {
+    kind      = "User"
+    name      = "tf-153@graphite-test-rileykarson.iam.gserviceaccount.com"
+  }
+}
+
+module "namespace" {
+  source = "git::git@github.com:gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-namespace?ref=master"
+  name = "my-new-namespace"
+}
