@@ -21,5 +21,8 @@ out/
 # Go best practices dictate that libraries should not include the vendor directory
 vendor
 
-# Ignore test data
-.test_data/
+# Folder used to store temporary test data by Terratest
+.test-data
+
+# Mock user-data log file
+mock-user-data.log
