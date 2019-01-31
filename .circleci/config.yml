@@ -82,8 +82,8 @@ jobs:
           gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
           gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
           # required for terraform and terratest to authenticate correctly
-          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/gcloud.json"
           echo $GCLOUD_SERVICE_KEY > /tmp/gcloud.json
+          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/gcloud.json"
           # run the tests
           run-go-tests --path test --timeout 60m | tee /tmp/logs/all.log
         no_output_timeout: 3600s
