@@ -1,11 +1,11 @@
 [![Maintained by Gruntwork.io](https://img.shields.io/badge/maintained%20by-gruntwork.io-%235849a6.svg)](https://gruntwork.io/?ref=repo_google_gke)
 
-# Google Kubernetes Engine (GKE) Modules
+# Google Kubernetes Engine (GKE) Module
 
-This repo contains modules for running Kubernetes clusters on [Google Cloud Platform (GCP)](https://cloud.google.com/)
-using [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/) with [Terraform](https://www.terraform.io). 
+This repo contains a [Terraform](https://www.terraform.io) module for running a Kubernetes cluster on [Google Cloud Platform (GCP)](https://cloud.google.com/)
+using [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/).
 
-## Code included in this Module
+## This Module includes the following submodules:
 
  * `gke-cluster`: The GKE Cluster module is used to administer the [cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
 for a [GKE Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
