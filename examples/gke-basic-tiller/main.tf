@@ -186,7 +186,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 # DEPLOY TILLER TO THE GKE CLUSTER USING KUBERGRUNT
 # ---------------------------------------------------------------------------------------------------------------------
 
-# use an old version of Tiller because the provider expects this
+# We install an older version of Tiller as the provider expects this
 resource "null_resource" "tiller" {
   provisioner "local-exec" {
     command = "kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_config} ${local.client_tls_config} --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${var.iam_user}"
