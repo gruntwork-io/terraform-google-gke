@@ -51,16 +51,6 @@ jobs:
       - run:
           <<: *install_gruntwork_utils
 
-      # Install helm
-      - run:
-          <<: *install_helm
-
-      # Install kubergrunt
-      - run:
-        name: Install kubergrunt
-        command: gruntwork-install --binary-name "kubergrunt" --repo "https://github.com/gruntwork-io/kubergrunt" --tag "${KUBERGRUNT_VERSION}"
-
-
       - save_cache:
           key: dep-v1-{{ checksum "test/Gopkg.lock" }}
           paths:
@@ -87,7 +77,17 @@ jobs:
     - checkout
     - run: echo 'export PATH=$HOME/terraform:$HOME/packer:$PATH' >> $BASH_ENV
     - run:
-          <<: *install_gruntwork_utils
+        <<: *install_gruntwork_utils
+
+    # Install helm
+    - run:
+        <<: *install_helm
+
+    # Install kubergrunt
+    - run:
+        name: Install kubergrunt
+        command: gruntwork-install --binary-name "kubergrunt" --repo "https://github.com/gruntwork-io/kubergrunt" --tag "${KUBERGRUNT_VERSION}"
+
     - run:
         name: update gcloud
         command: |
