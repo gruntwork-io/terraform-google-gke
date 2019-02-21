@@ -3,6 +3,8 @@ defaults: &defaults
   environment:
     GRUNTWORK_INSTALLER_VERSION: v0.0.21
     TERRATEST_LOG_PARSER_VERSION: v0.13.13
+    KUBERGRUNT_VERSION: v0.3.1
+    HELM_VERSION: v2.11.0
     MODULE_CI_VERSION: v0.13.3
     TERRAFORM_VERSION: 0.11.8
     TERRAGRUNT_VERSION: NONE
@@ -26,6 +28,15 @@ install_gruntwork_utils: &install_gruntwork_utils
       --go-version ${GOLANG_VERSION} \
       --go-src-path test
 
+install_helm: &install_helm
+  name: install helm
+  command: |
+    # install helm
+    curl -Lo helm.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz
+    tar -xvf helm.tar.gz
+    chmod +x linux-amd64/helm
+    sudo mv linux-amd64/helm /usr/local/bin/
+
 version: 2
 jobs:
   build:
@@ -39,6 +50,16 @@ jobs:
       # Install gruntwork utilities
       - run:
           <<: *install_gruntwork_utils
+
+      # Install helm
+      - run:
+          <<: *install_helm
+
+      # Install kubergrunt
+      - run:
+        name: Install kubergrunt
+        command: gruntwork-install --binary-name "kubergrunt" --repo "https://github.com/gruntwork-io/kubergrunt" --tag "${KUBERGRUNT_VERSION}"
+
 
       - save_cache:
           key: dep-v1-{{ checksum "test/Gopkg.lock" }}
