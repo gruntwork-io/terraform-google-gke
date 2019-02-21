@@ -9,6 +9,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/retry"
+	"github.com/stretchr/testify/assert"
 )
 
 // kubeWaitUntilNumNodes continuously polls the Kubernetes cluster until there are the expected number of nodes
@@ -36,4 +37,12 @@ func kubeWaitUntilNumNodes(t *testing.T, numNodes int, retries int, sleepBetween
 		t.Fatal(err)
 	}
 	logger.Logf(t, message)
+}
+
+// Verify that all the nodes in the cluster reach the Ready state.
+func verifyGkeNodesAreReady(t *testing.T) {
+	kubeWaitUntilNumNodes(t, 3, 30, 10*time.Second)
+	k8s.WaitUntilAllNodesReady(t, 30, 10*time.Second)
+	readyNodes := k8s.GetReadyNodes(t)
+	assert.Equal(t, len(readyNodes), 3)
 }
