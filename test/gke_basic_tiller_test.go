@@ -12,8 +12,6 @@ import (
 )
 
 func TestGKEBasicTiller(t *testing.T) {
-	t.Parallel()
-
 	// Uncomment any of the following to skip that section during the test
 	// os.Setenv("SKIP_create_test_copy_of_examples", "true")
 	// os.Setenv("SKIP_create_terratest_options", "true")
