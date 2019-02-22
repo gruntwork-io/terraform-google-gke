@@ -43,10 +43,12 @@ func TestGKEBasicTiller(t *testing.T) {
 		uniqueID := random.UniqueId()
 		project := gcp.GetGoogleProjectIDFromEnvVar(t)
 		region := gcp.GetRandomRegion(t, project, nil, nil)
-		gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region, gkeBasicTillerTerraformModulePath)
+		iamUser := getIAMUserFromEnv()
+		gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region, iamUser, gkeBasicTillerTerraformModulePath)
 		test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 		test_structure.SaveString(t, workingDir, "project", project)
 		test_structure.SaveString(t, workingDir, "region", region)
+		test_structure.SaveString(t, workingDir, "iamUser", iamUser)
 		test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)
 	})
 
