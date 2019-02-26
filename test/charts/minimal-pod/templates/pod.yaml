@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "minimal-pod.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "minimal-pod.name" . }}
+    helm.sh/chart: {{ include "minimal-pod.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  containers:
+    - name: {{ .Chart.Name }}
+      image: "{{ .Values.image }}"
+      ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+
