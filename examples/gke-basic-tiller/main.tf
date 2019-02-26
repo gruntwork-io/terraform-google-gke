@@ -167,7 +167,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 
   subject {
     # this is a workaround for https://github.com/terraform-providers/terraform-provider-kubernetes/issues/204.
-    # we have to set an empty api_group or the k8s call will fail.
+    # we have to set an empty api_group or the k8s call will fail. It will be fixed in v1.5.2 of the k8s provider.
     api_group = ""
 
     kind      = "ServiceAccount"
