@@ -3,20 +3,20 @@ package test
 import (
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
-	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/gruntwork-io/terratest/modules/test-structure"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGKECluster(t *testing.T) {
-	t.Parallel()
+	// We are temporarily stopping the tests from running in parallel due to conflicting
+	// kubectl configs. This is a limitation in the current Terratest functions and will
+	// be fixed in a later release.
+	//t.Parallel()
 
 	// Uncomment any of the following to skip that section during the test
 	// os.Setenv("SKIP_create_test_copy_of_examples", "true")
@@ -41,10 +41,12 @@ func TestGKECluster(t *testing.T) {
 		uniqueID := random.UniqueId()
 		project := gcp.GetGoogleProjectIDFromEnvVar(t)
 		region := gcp.GetRandomRegion(t, project, nil, nil)
-		gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region, gkeClusterTerraformModulePath)
+		iamUser := getIAMUserFromEnv()
+		gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region, iamUser, gkeClusterTerraformModulePath)
 		test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 		test_structure.SaveString(t, workingDir, "project", project)
 		test_structure.SaveString(t, workingDir, "region", region)
+		test_structure.SaveString(t, workingDir, "iamUser", iamUser)
 		test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)
 	})
 
@@ -76,12 +78,4 @@ func TestGKECluster(t *testing.T) {
 	test_structure.RunTestStage(t, "wait_for_workers", func() {
 		verifyGkeNodesAreReady(t)
 	})
-}
-
-// Verify that all the nodes in the cluster reach the Ready state.
-func verifyGkeNodesAreReady(t *testing.T) {
-	kubeWaitUntilNumNodes(t, 3, 30, 10*time.Second)
-	k8s.WaitUntilAllNodesReady(t, 30, 10*time.Second)
-	readyNodes := k8s.GetReadyNodes(t)
-	assert.Equal(t, len(readyNodes), 3)
 }

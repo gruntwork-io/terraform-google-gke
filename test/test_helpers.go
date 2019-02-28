@@ -3,13 +3,26 @@ package test
 import (
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/retry"
+	"github.com/stretchr/testify/assert"
 )
+
+// At the moment we need to inject the current IAM user from the environment.
+// If this PR is merged we can use a solution directly within Terraform code:
+// https://github.com/GoogleCloudPlatform/magic-modules/pull/1422.
+func getIAMUserFromEnv() string {
+	if value := os.Getenv("GOOGLE_IAM_USER"); value != "" {
+		return value
+	}
+
+	return ""
+}
 
 // kubeWaitUntilNumNodes continuously polls the Kubernetes cluster until there are the expected number of nodes
 // registered (regardless of readiness).
@@ -36,4 +49,12 @@ func kubeWaitUntilNumNodes(t *testing.T, numNodes int, retries int, sleepBetween
 		t.Fatal(err)
 	}
 	logger.Logf(t, message)
+}
+
+// Verify that all the nodes in the cluster reach the Ready state.
+func verifyGkeNodesAreReady(t *testing.T) {
+	kubeWaitUntilNumNodes(t, 3, 30, 10*time.Second)
+	k8s.WaitUntilAllNodesReady(t, 30, 10*time.Second)
+	readyNodes := k8s.GetReadyNodes(t)
+	assert.Equal(t, len(readyNodes), 3)
 }
