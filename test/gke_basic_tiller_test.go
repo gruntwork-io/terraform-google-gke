@@ -18,6 +18,9 @@ import (
 )
 
 func TestGKEBasicTiller(t *testing.T) {
+	// We are temporarily stopping the tests from running in parallel due to conflicting
+	// kubectl configs. This is a limitation in the current Terratest functions and will
+	// be fixed in a later release.
 	//t.Parallel()
 
 	// Uncomment any of the following to skip that section during the test
@@ -26,6 +29,7 @@ func TestGKEBasicTiller(t *testing.T) {
 	// os.Setenv("SKIP_terraform_apply", "true")
 	// os.Setenv("SKIP_configure_kubectl", "true")
 	// os.Setenv("SKIP_wait_for_workers", "true")
+	// os.Setenv("SKIP_helm_install", "true")
 	// os.Setenv("SKIP_cleanup", "true")
 
 	// Create a directory path that won't conflict

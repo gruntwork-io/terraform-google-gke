@@ -13,6 +13,9 @@ import (
 )
 
 func TestGKECluster(t *testing.T) {
+	// We are temporarily stopping the tests from running in parallel due to conflicting
+	// kubectl configs. This is a limitation in the current Terratest functions and will
+	// be fixed in a later release.
 	//t.Parallel()
 
 	// Uncomment any of the following to skip that section during the test
