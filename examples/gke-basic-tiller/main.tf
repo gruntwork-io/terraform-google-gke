@@ -10,7 +10,14 @@ terraform {
   required_version = ">= 0.10.3"
 }
 
+provider "google" {
+  version = "~> 2.0.0"
+  project = "${var.project}"
+  region  = "${var.region}"
+}
+
 provider "google-beta" {
+  version = "~> 2.0.0"
   project = "${var.project}"
   region  = "${var.region}"
 }
