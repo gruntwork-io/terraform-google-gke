@@ -54,6 +54,19 @@ The modules in the [`terraform-google-network`](https://github.com/gruntwork-io/
 Gruntwork module are a useful tool for configuring your VPC network and 
 subnetworks in GCP.
 
+## What is a VPC-native cluster? 
+
+A VPC-native cluster is a GKE Cluster uses [alias IP ranges](https://cloud.google.com/vpc/docs/alias-ip), in that it
+allocates IP addresses from a block known to GCP. When using an alias range, pod addresses are natively routable within
+GCP, and VPC networks can ensure that the IP range the cluster uses is reserved.
+
+When using a network in the same project as your GKE cluster, you can allow GKE to manage choosing alias ip ranges to
+make your cluster VPC-native; if using a shared VPC network (a network from another GCP project) the secondary range
+must be created in the host project and specified explicitly in the service project where the GKE cluster is created.
+
+See [considerations for clsuter sizing](https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips#cluster_sizing)
+for more information on sizing secondary ranges for your VPC-native cluster.
+
 ## What IAM roles does this module configure? (unimplemented)
 
 Given a service account, this module will enable the following IAM roles:

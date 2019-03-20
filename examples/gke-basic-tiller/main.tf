@@ -73,6 +73,8 @@ module "gke_cluster" {
   region     = "${var.region}"
   network    = "${google_compute_network.main.name}"
   subnetwork = "${google_compute_subnetwork.main.name}"
+
+  cluster_secondary_range_name = "${google_compute_subnetwork.main.secondary_ip_range.0.range_name}"
 }
 
 # Deploy a Node Pool
@@ -143,6 +145,11 @@ resource "google_compute_subnetwork" "main" {
   ip_cidr_range = "10.0.0.0/17"
   region        = "${var.region}"
   network       = "${google_compute_network.main.self_link}"
+
+  secondary_ip_range {
+    range_name    = "cluster-pods"
+    ip_cidr_range = "10.1.0.0/18"
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
