@@ -13,7 +13,7 @@ or may not have permissions to use other GCP APIs. GKE also assigns some limited
 instances. Updating the default service account's permissions or assigning more access scopes to compute instances is
 not the recommended way to authenticate to other Cloud Platform services from Pods running on GKE.
 
-The recommended way to authenticate to Google Cloud Platform services from applications running on GKE is to create
+The recommended way to authenticate to GCP services from applications running on GKE is to create
 your own service accounts. Ideally you must create a new service account for each application that makes requests to
 Cloud Platform APIs.
 
