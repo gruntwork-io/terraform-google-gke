@@ -1,6 +1,6 @@
 # GKE Custom Service Account
 
-This example demonstrates how to use a custom, user provided service account
+This example demonstrates how to use a custom, user provided service account with your Google Kubernetes Engine (GKE) cluster.
 
 ## Why use Service Accounts?
 
