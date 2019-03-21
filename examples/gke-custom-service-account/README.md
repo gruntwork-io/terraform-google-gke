@@ -4,7 +4,7 @@ This example demonstrates how to use a custom, user provided service account
 
 ## Why use Service Accounts?
 
-Each node in a container cluster is a Compute Engine instance. Therefore, applications running on a container cluster
+Each node in a GKE cluster is a Compute Engine instance. Therefore, applications running on a GKE cluster
 by default inherit the scopes of the Compute Engine instances to which they are deployed.
 
 Google Cloud Platform automatically creates a service account named "Compute Engine default service account" and GKE
