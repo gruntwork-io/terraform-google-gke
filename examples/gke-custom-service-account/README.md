@@ -9,7 +9,7 @@ by default inherit the scopes of the Compute Engine instances to which they are 
 
 Google Cloud Platform automatically creates a service account named "Compute Engine default service account" and GKE
 associates it with the nodes it creates. Depending on how your project is configured, the default service account may
-or may not have permissions to use other Cloud Platform APIs. GKE also assigns some limited access scopes to compute
+or may not have permissions to use other GCP APIs. GKE also assigns some limited access scopes to compute
 instances. Updating the default service account's permissions or assigning more access scopes to compute instances is
 not the recommended way to authenticate to other Cloud Platform services from Pods running on GKE.
 
