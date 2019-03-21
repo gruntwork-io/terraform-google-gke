@@ -92,7 +92,10 @@ data "google_compute_subnetwork" "gke_subnetwork" {
 
 // Get available master versions in our region to determine the latest version
 data "google_container_engine_versions" "region" {
-  region         = "${var.region}"
-  project        = "${var.project}"
+  region  = "${var.region}"
+  project = "${var.project}"
+
+  # Note: we are temporarily locking the GKE version to an older version as the current version
+  # has been disabled by Google. See: https://cloud.google.com/kubernetes-engine/docs/release-notes#march-14-2019
   version_prefix = "1.12.5-gke.5"
 }
