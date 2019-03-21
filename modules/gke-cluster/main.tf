@@ -92,6 +92,7 @@ data "google_compute_subnetwork" "gke_subnetwork" {
 
 // Get available master versions in our region to determine the latest version
 data "google_container_engine_versions" "region" {
-  region  = "${var.region}"
-  project = "${var.project}"
+  region         = "${var.region}"
+  project        = "${var.project}"
+  version_prefix = "1.12.5-gke.5"
 }
