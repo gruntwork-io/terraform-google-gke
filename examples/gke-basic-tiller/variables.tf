@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # REQUIRED PARAMETERS
-# These parameters must be supplied when consuming this module.
+# These variables are expected to be passed in by the operator
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "project" {
