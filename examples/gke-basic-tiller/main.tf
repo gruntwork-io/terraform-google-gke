@@ -11,13 +11,13 @@ terraform {
 }
 
 provider "google" {
-  version = "~> 2.0.0"
+  version = "~> 2.2.0"
   project = "${var.project}"
   region  = "${var.region}"
 }
 
 provider "google-beta" {
-  version = "~> 2.0.0"
+  version = "~> 2.2.0"
   project = "${var.project}"
   region  = "${var.region}"
 }
@@ -65,6 +65,9 @@ module "gke_cluster" {
   source = "../../modules/gke-cluster"
 
   name = "${var.cluster_name}"
+
+  // TODO(rileykarson): Update this when a new version comes out
+  kubernetes_version = "1.12.5-gke.5"
 
   project    = "${var.project}"
   region     = "${var.region}"
