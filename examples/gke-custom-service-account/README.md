@@ -7,7 +7,7 @@ This example demonstrates how to use a custom, user provided service account
 Each node in a GKE cluster is a Compute Engine instance. Therefore, applications running on a GKE cluster
 by default inherit the scopes of the Compute Engine instances to which they are deployed.
 
-Google Cloud Platform automatically creates a service account named "Compute Engine default service account" and GKE
+Google Cloud Platform (GCP) automatically creates a service account named "Compute Engine default service account" and GKE
 associates it with the nodes it creates. Depending on how your project is configured, the default service account may
 or may not have permissions to use other GCP APIs. GKE also assigns some limited access scopes to compute
 instances. Updating the default service account's permissions or assigning more access scopes to compute instances is
