@@ -60,9 +60,9 @@ A VPC-native cluster is a GKE Cluster that uses [alias IP ranges](https://cloud.
 it allocates IP addresses from a block known to GCP. When using an alias range, pod addresses are natively routable
 within GCP, and VPC networks can ensure that the IP range the cluster uses is reserved.
 
-While using a secondary IP range is recommended, when using a network in the same project as your GKE cluster you can
-specify a blank range name to draw alias IPs from your subnetwork's primary IP range. If using a shared VPC network (a
-network from another GCP project) using an explicit secondary range is required.
+While using a secondary IP range is recommended [in order to to separate cluster master and pod IPs](https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#how-is-a-secondary-range-connected-to-an-alias-ip-range),
+when using a network in the same project as your GKE cluster you can specify a blank range name to draw alias IPs from your subnetwork's primary IP range. If
+using a shared VPC network (a network from another GCP project) using an explicit secondary range is required.
 
 See [considerations for cluster sizing](https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips#cluster_sizing)
 for more information on sizing secondary ranges for your VPC-native cluster.
