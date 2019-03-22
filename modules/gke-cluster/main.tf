@@ -25,9 +25,6 @@ resource "google_container_cluster" "cluster" {
   initial_node_count = 1
 
   ip_allocation_policy {
-    // Opt-in early to an upcoming GKE default
-    // use_ip_aliases = true
-
     // Choose the range, but let GCP pick the IPs within the range
     cluster_secondary_range_name  = "${var.cluster_secondary_range_name}"
     services_secondary_range_name = "${var.cluster_secondary_range_name}"

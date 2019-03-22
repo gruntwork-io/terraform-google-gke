@@ -54,7 +54,7 @@ The modules in the [`terraform-google-network`](https://github.com/gruntwork-io/
 Gruntwork module are a useful tool for configuring your VPC network and 
 subnetworks in GCP.
 
-## What is a VPC-native cluster? 
+## What is a VPC-native cluster?
 
 A VPC-native cluster is a GKE Cluster uses [alias IP ranges](https://cloud.google.com/vpc/docs/alias-ip), in that it
 allocates IP addresses from a block known to GCP. When using an alias range, pod addresses are natively routable within
