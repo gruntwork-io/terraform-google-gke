@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY A GKE REGIONAL PUBLIC CLUSTER IN GOOGLE CLOUD
+# DEPLOY A GKE CLUSTER IN GCP WITH A CUSTOM SERVICE ACCOUNT
 # This is an example of how to use the gke-cluster module to deploy a regional public Kubernetes cluster in GCP with a
-# Load Balancer in front of it.
+# Load Balancer in front of it. The GKE nodes are configured to use a custom service account.
 # ---------------------------------------------------------------------------------------------------------------------
 
 # Use Terraform 0.10.x so that we can take advantage of Terraform GCP functionality as a separate provider via
@@ -72,7 +72,7 @@ resource "google_container_node_pool" "node_pool" {
     disk_type    = "pd-standard"
     preemptible  = false
 
-    service_account = "${google_service_account.cluster_service_account.email}"
+    service_account = "${module.gke_service_account.email}"
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
@@ -94,29 +94,15 @@ resource "google_container_node_pool" "node_pool" {
 # CREATE A CUSTOM SERVICE ACCOUNT TO USE WITH THE GKE CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource "google_service_account" "cluster_service_account" {
-  project      = "${var.project}"
-  account_id   = "${var.cluster_service_account_name}"
-  display_name = "${var.cluster_service_account_description}"
-}
+module "gke_service_account" {
+  # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
+  # to a specific version of the modules, such as the following example:
+  # source = "git::git@github.com:gruntwork-io/gke-cluster.git//modules/gke-service-account?ref=v0.0.1"
+  source = "../../modules/gke-service-account"
 
-# Grant the service account the minimum necessary roles and permissions in order to run the GKE cluster
-resource "google_project_iam_member" "cluster_service_account-log_writer" {
-  project = "${google_service_account.cluster_service_account.project}"
-  role    = "roles/logging.logWriter"
-  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
-}
-
-resource "google_project_iam_member" "cluster_service_account-metric_writer" {
-  project = "${google_project_iam_member.cluster_service_account-log_writer.project}"
-  role    = "roles/monitoring.metricWriter"
-  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
-}
-
-resource "google_project_iam_member" "cluster_service_account-monitoring_viewer" {
-  project = "${google_project_iam_member.cluster_service_account-metric_writer.project}"
-  role    = "roles/monitoring.viewer"
-  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
+  name        = "${var.cluster_service_account_name}"
+  project     = "${var.project}"
+  description = "${var.cluster_service_account_description}"
 }
 
 # TODO(rileykarson): Add proper VPC network config once we've made a VPC module

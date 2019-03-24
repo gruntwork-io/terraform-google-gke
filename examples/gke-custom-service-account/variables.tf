@@ -27,6 +27,6 @@ variable "cluster_service_account_name" {
 }
 
 variable "cluster_service_account_description" {
-  description = "The name of the custom service account used for the GKE cluster."
+  description = "A description of the custom service account used for the GKE cluster."
   default     = "Example GKE Cluster Service Account managed by Terraform"
 }

@@ -1,6 +1,9 @@
 # GKE Custom Service Account
 
-This example demonstrates how to use a custom, user provided service account
+This example demonstrates how to use a custom service account with a GKE cluster.
+
+You will need to ensure that the Identity and Access Management (IAM) API has been enabled for the given project. This
+can be enabled in the Google API Console: https://console.developers.google.com/apis/api/iam.googleapis.com/overview.
 
 ## Why use Service Accounts?
 
