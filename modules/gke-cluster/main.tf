@@ -24,6 +24,12 @@ resource "google_container_cluster" "cluster" {
 
   initial_node_count = 1
 
+  ip_allocation_policy {
+    // Choose the range, but let GCP pick the IPs within the range
+    cluster_secondary_range_name  = "${var.cluster_secondary_range_name}"
+    services_secondary_range_name = "${var.cluster_secondary_range_name}"
+  }
+
   addons_config {
     http_load_balancing {
       disabled = "${var.http_load_balancing ? 0 : 1}"

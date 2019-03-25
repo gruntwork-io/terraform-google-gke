@@ -23,6 +23,10 @@ variable "subnetwork" {
   description = "The subnetwork to host the cluster in"
 }
 
+variable "cluster_secondary_range_name" {
+  description = "The name of the secondary range within the subnetwork for the cluster to use"
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # Generally, these values won't need to be changed.
