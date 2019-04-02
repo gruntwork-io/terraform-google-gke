@@ -20,6 +20,7 @@ func createGKEClusterTerraformOptions(
 
 	terraformVars := map[string]interface{}{
 		"region":       region,
+		"location":     region,
 		"project":      project,
 		"cluster_name": gkeClusterName,
 		"iam_user":     iamUser,
