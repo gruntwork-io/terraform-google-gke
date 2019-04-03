@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY A GKE REGIONAL PUBLIC CLUSTER IN GOOGLE CLOUD
-# This is an example of how to use the gke-cluster module to deploy a regional public Kubernetes cluster in GCP with a
+# DEPLOY A GKE PUBLIC CLUSTER IN GOOGLE CLOUD
+# This is an example of how to use the gke-cluster module to deploy a public Kubernetes cluster in GCP with a
 # Load Balancer in front of it.
 # ---------------------------------------------------------------------------------------------------------------------
 
