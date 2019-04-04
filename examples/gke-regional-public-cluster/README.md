@@ -34,7 +34,7 @@ your own service accounts. Ideally you must create a new service account for eac
 Cloud Platform APIs.
 
 GCP automatically creates a default service account, the "Compute Engine default service account" that GKE
-associates it with the nodes it creates. Depending on how your project is configured, the default service account comes
+associates it with the nodes it creates by default. Depending on how your project is configured, the default service account comes
 pre-configured with project-wide permissions meaning that any given node will have access to every service every other
 node has. Updating the default service account's permissions or assigning more access scopes to compute instances is
 not the recommended way to authenticate to other Cloud Platform services from Pods running on GKE. In general, we
