@@ -30,7 +30,7 @@ Each node in a GKE cluster is a Compute Engine instance. Therefore, applications
 by default inherit the scopes of the Compute Engine instances to which they are deployed.
 
 The recommended way to authenticate to GCP services from applications running on GKE is to create
-your own service accounts. Ideally you must create a new service account for each application that makes requests to
+your own service accounts. Ideally you must create a new service account for each application/service that makes requests to
 Cloud Platform APIs.
 
 By default, GCP automatically creates a service account named "Compute Engine default service account" and GKE
