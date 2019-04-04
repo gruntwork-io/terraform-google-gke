@@ -3,7 +3,7 @@ resource "google_container_cluster" "cluster" {
   description = "${var.description}"
 
   project    = "${var.project}"
-  region     = "${var.region}"
+  location   = "${var.location}"
   network    = "${replace(data.google_compute_network.gke_network.self_link, "https://www.googleapis.com/compute/v1/", "")}"
   subnetwork = "${replace(data.google_compute_subnetwork.gke_subnetwork.self_link, "https://www.googleapis.com/compute/v1/", "")}"
 
@@ -81,7 +81,7 @@ resource "google_container_cluster" "cluster" {
 }
 
 locals {
-  kubernetes_version = "${var.kubernetes_version != "latest" ? var.kubernetes_version : data.google_container_engine_versions.region.latest_node_version}"
+  kubernetes_version = "${var.kubernetes_version != "latest" ? var.kubernetes_version : data.google_container_engine_versions.location.latest_node_version}"
   network_project    = "${var.network_project != "" ? var.network_project : var.project}"
 }
 
@@ -91,13 +91,11 @@ data "google_compute_network" "gke_network" {
 }
 
 data "google_compute_subnetwork" "gke_subnetwork" {
-  name    = "${var.subnetwork}"
-  region  = "${var.region}"
-  project = "${local.network_project}"
+  self_link = "${var.subnetwork}"
 }
 
-// Get available master versions in our region to determine the latest version
-data "google_container_engine_versions" "region" {
-  region  = "${var.region}"
-  project = "${var.project}"
+// Get available master versions in our location to determine the latest version
+data "google_container_engine_versions" "location" {
+  location = "${var.location}"
+  project  = "${var.project}"
 }

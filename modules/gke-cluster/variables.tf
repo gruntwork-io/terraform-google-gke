@@ -7,8 +7,8 @@ variable "project" {
   description = "The project ID to host the cluster in"
 }
 
-variable "region" {
-  description = "The region to host the cluster in"
+variable "location" {
+  description = "The location (region or zone) to host the cluster in"
 }
 
 variable "name" {
@@ -20,7 +20,7 @@ variable "network" {
 }
 
 variable "subnetwork" {
-  description = "The subnetwork to host the cluster in"
+  description = "A reference (self link) to the subnetwork to host the cluster in"
 }
 
 variable "cluster_secondary_range_name" {

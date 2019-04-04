@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY A GKE REGIONAL PUBLIC CLUSTER IN GOOGLE CLOUD
-# This is an example of how to use the gke-cluster module to deploy a regional public Kubernetes cluster in GCP with a
+# DEPLOY A GKE PUBLIC CLUSTER IN GOOGLE CLOUD
+# This is an example of how to use the gke-cluster module to deploy a public Kubernetes cluster in GCP with a
 # Load Balancer in front of it.
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -11,13 +11,13 @@ terraform {
 }
 
 provider "google" {
-  version = "~> 2.2.0"
+  version = "~> 2.3.0"
   project = "${var.project}"
   region  = "${var.region}"
 }
 
 provider "google-beta" {
-  version = "~> 2.2.0"
+  version = "~> 2.3.0"
   project = "${var.project}"
   region  = "${var.region}"
 }
@@ -34,9 +34,9 @@ module "gke_cluster" {
   kubernetes_version = "1.12.5-gke.5"
 
   project    = "${var.project}"
-  region     = "${var.region}"
+  location   = "${var.location}"
   network    = "${google_compute_network.main.name}"
-  subnetwork = "${google_compute_subnetwork.main.name}"
+  subnetwork = "${google_compute_subnetwork.main.self_link}"
 
   cluster_secondary_range_name = "${google_compute_subnetwork.main.secondary_ip_range.0.range_name}"
 }
@@ -47,10 +47,10 @@ module "gke_cluster" {
 resource "google_container_node_pool" "node_pool" {
   provider = "google-beta"
 
-  name    = "main-pool"
-  project = "${var.project}"
-  region  = "${var.region}"
-  cluster = "${module.gke_cluster.name}"
+  name     = "main-pool"
+  project  = "${var.project}"
+  location = "${var.location}"
+  cluster  = "${module.gke_cluster.name}"
 
   initial_node_count = "1"
 
