@@ -33,7 +33,7 @@ The recommended way to authenticate to GCP services from applications running on
 your own service accounts. Ideally you must create a new service account for each application/service that makes requests to
 Cloud Platform APIs.
 
-By default, GCP automatically creates a service account named "Compute Engine default service account" and GKE
+GCP automatically creates a default service account, the "Compute Engine default service account" that GKE
 associates it with the nodes it creates. Depending on how your project is configured, the default service account comes
 pre-configured with project-wide permissions meaning that any given node will have access to every service every other
 node has. Updating the default service account's permissions or assigning more access scopes to compute instances is
