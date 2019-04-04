@@ -32,7 +32,7 @@ func TestGKECluster(t *testing.T) {
 	test_structure.RunTestStage(t, "create_test_copy_of_examples", func() {
 		testFolder := test_structure.CopyTerraformFolderToTemp(t, "..", "examples")
 		logger.Logf(t, "path to test folder %s\n", testFolder)
-		terraformModulePath := filepath.Join(testFolder, "gke-regional-public-cluster")
+		terraformModulePath := filepath.Join(testFolder, "gke-public-cluster")
 		test_structure.SaveString(t, workingDir, "gkeClusterTerraformModulePath", terraformModulePath)
 	})
 
