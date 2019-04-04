@@ -27,7 +27,7 @@ most apps and services.
 ## Why use Custom Service Accounts?
 
 Each node in a GKE cluster is a Compute Engine instance. Therefore, applications running on a GKE cluster
-by default inherit the scopes of the Compute Engine instances to which they are deployed.
+inherit the scopes of the Compute Engine instances to which they are deployed.
 
 The recommended way to authenticate to GCP services from applications running on GKE is to create
 your own service accounts. Ideally you must create a new service account for each application/service that makes requests to
