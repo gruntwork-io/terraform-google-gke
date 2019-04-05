@@ -7,8 +7,12 @@ variable "project" {
   description = "The name of the GCP Project where all resources will be launched."
 }
 
+variable "location" {
+  description = "The location (region or zone) of the GKE cluster."
+}
+
 variable "region" {
-  description = "The Region in which all GCP resources will be launched."
+  description = "The region for the network. If the cluster is regional, this must be the same region. Otherwise, it should be the region of the zone."
 }
 
 variable "iam_user" {
