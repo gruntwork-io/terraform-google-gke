@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # REQUIRED PARAMETERS
-# These variables are expected to be passed in by the operator
+# These variables are expected to be passed in by the operator.
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "project" {
@@ -53,6 +53,16 @@ variable "client_tls_subject" {
 variable "cluster_name" {
   description = "The name of the Kubernetes cluster."
   default     = "example-cluster"
+}
+
+variable "cluster_service_account_name" {
+  description = "The name of the custom service account used for the GKE cluster. This parameter is limited to a maximum of 28 characters."
+  default     = "example-cluster-sa"
+}
+
+variable "cluster_service_account_description" {
+  description = "A description of the custom service account used for the GKE cluster."
+  default     = "Example GKE Cluster Service Account managed by Terraform"
 }
 
 # TLS algorithm configuration

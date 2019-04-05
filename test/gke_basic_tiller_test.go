@@ -27,7 +27,6 @@ func TestGKEBasicTiller(t *testing.T) {
 	// os.Setenv("SKIP_create_test_copy_of_examples", "true")
 	// os.Setenv("SKIP_create_terratest_options", "true")
 	// os.Setenv("SKIP_terraform_apply", "true")
-	// os.Setenv("SKIP_configure_kubectl", "true")
 	// os.Setenv("SKIP_wait_for_workers", "true")
 	// os.Setenv("SKIP_helm_install", "true")
 	// os.Setenv("SKIP_cleanup", "true")

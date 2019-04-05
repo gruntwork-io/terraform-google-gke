@@ -30,9 +30,6 @@ module "gke_cluster" {
 
   name = "${var.cluster_name}"
 
-  // TODO(rileykarson): Update this when a new version comes out
-  kubernetes_version = "1.12.5-gke.5"
-
   project    = "${var.project}"
   location   = "${var.location}"
   network    = "${google_compute_network.main.name}"
@@ -77,6 +74,8 @@ resource "google_container_node_pool" "node_pool" {
     disk_type    = "pd-standard"
     preemptible  = false
 
+    service_account = "${module.gke_service_account.email}"
+
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
     ]
@@ -91,6 +90,21 @@ resource "google_container_node_pool" "node_pool" {
     update = "30m"
     delete = "30m"
   }
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE A CUSTOM SERVICE ACCOUNT TO USE WITH THE GKE CLUSTER
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "gke_service_account" {
+  # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
+  # to a specific version of the modules, such as the following example:
+  # source = "git::git@github.com:gruntwork-io/gke-cluster.git//modules/gke-service-account?ref=v0.0.1"
+  source = "../../modules/gke-service-account"
+
+  name        = "${var.cluster_service_account_name}"
+  project     = "${var.project}"
+  description = "${var.cluster_service_account_description}"
 }
 
 # TODO(rileykarson): Add proper VPC network config once we've made a VPC module
