@@ -66,9 +66,6 @@ module "gke_cluster" {
 
   name = "${var.cluster_name}"
 
-  // TODO(rileykarson): Update this when a new version comes out
-  kubernetes_version = "1.12.5-gke.5"
-
   project    = "${var.project}"
   location   = "${var.location}"
   network    = "${google_compute_network.main.name}"
