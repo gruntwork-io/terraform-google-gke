@@ -67,7 +67,7 @@ variable "enable_private_nodes" {
   default     = "false"
 }
 
-variable "enable_private_endpoint" {
+variable "disable_public_endpoint" {
   description = "Control whether the master's internal IP address is used as the cluster endpoint. If set to 'true', the master can only be accessed from internal IP addresses."
   default     = "false"
 }
