@@ -65,7 +65,7 @@ func TestGKECluster(t *testing.T) {
 				gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 				uniqueID := random.UniqueId()
 				project := gcp.GetGoogleProjectIDFromEnvVar(t)
-				region := gcp.GetRandomRegion(t, project, []string{"europe-north1"}, nil)
+				region := gcp.GetRandomRegion(t, project, nil, nil)
 				iamUser := getIAMUserFromEnv()
 				gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region, iamUser, gkeClusterTerraformModulePath)
 				test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
