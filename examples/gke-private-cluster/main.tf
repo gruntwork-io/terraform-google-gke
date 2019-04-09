@@ -40,7 +40,7 @@ module "gke_cluster" {
   # This setting will make the cluster private
   enable_private_nodes = "true"
 
-  # For simplicity's sake we're not disabling the public endpoint
+  # To make testing easier, we keep the public endpoint available. In production, we highly recommend restricting access to only within the network boundary, requiring your users to use a bastion host or VPN.
   enable_private_endpoint = "false"
 
   # With a private cluster, it is highly recommended to restrict access to the cluster master
