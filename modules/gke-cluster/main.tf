@@ -1,3 +1,8 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# DEPLOY A GKE CLUSTER
+# This module deploys a GKE cluster, a managed, production-ready environment for deploying containerized applications.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 resource "google_container_cluster" "cluster" {
   name        = "${var.name}"
   description = "${var.description}"
@@ -24,10 +29,19 @@ resource "google_container_cluster" "cluster" {
 
   initial_node_count = 1
 
+  # ip_allocation_policy.use_ip_aliases defaults to true, since we define the block `ip_allocation_policy`
   ip_allocation_policy {
     // Choose the range, but let GCP pick the IPs within the range
     cluster_secondary_range_name  = "${var.cluster_secondary_range_name}"
     services_secondary_range_name = "${var.cluster_secondary_range_name}"
+  }
+
+  # We can optionally control access to the cluster
+  # See https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters
+  private_cluster_config {
+    enable_private_endpoint = "${var.enable_private_endpoint}"
+    enable_private_nodes    = "${var.enable_private_nodes}"
+    master_ipv4_cidr_block  = "${var.master_ipv4_cidr_block}"
   }
 
   addons_config {
