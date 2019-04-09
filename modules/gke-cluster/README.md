@@ -77,7 +77,8 @@ If you want your cluster nodes to be able to access the Internet, for example pu
 you will have to set up [Cloud NAT](https://cloud.google.com/nat/docs/overview). 
 See [Example GKE Setup](https://cloud.google.com/nat/docs/gke-example) for further information.
 
-You can create a private cluster by setting `enable_private_nodes` to `true`.
+You can create a private cluster by setting `enable_private_nodes` to `true`. Note that with a private cluster, setting
+the master CIDR range with `master_ipv4_cidr_block` is also required.
 
 ### How do I control access to the cluster master?
 
