@@ -44,7 +44,7 @@ module "gke_cluster" {
   enable_private_endpoint = "false"
 
   # With a private cluster, it is highly recommended to restrict access to the cluster master
-  # For testing purposes we will allow all inbound traffic
+  # However, for testing purposes we will allow all inbound traffic.
   master_authorized_networks_config = [{
     cidr_blocks = [{
       cidr_block   = "0.0.0.0/0"
