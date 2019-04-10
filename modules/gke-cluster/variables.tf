@@ -62,6 +62,21 @@ variable "http_load_balancing" {
   default     = true
 }
 
+variable "enable_private_nodes" {
+  description = "Control whether nodes have internal IP addresses only. If enabled, all nodes are given only RFC 1918 private addresses and communicate with the master via private networking."
+  default     = "false"
+}
+
+variable "disable_public_endpoint" {
+  description = "Control whether the master's internal IP address is used as the cluster endpoint. If set to 'true', the master can only be accessed from internal IP addresses."
+  default     = "false"
+}
+
+variable "master_ipv4_cidr_block" {
+  description = "The IP range in CIDR notation to use for the hosted master network. This range will be used for assigning internal IP addresses to the master or set of masters, as well as the ILB VIP. This range must not overlap with any other ranges in use within the cluster's network."
+  default     = ""
+}
+
 // TODO(robmorgan): Are we using these values below? We should understand them more fully before adding them to configs.
 
 variable "network_project" {

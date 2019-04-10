@@ -67,6 +67,45 @@ using a shared VPC network (a network from another GCP project) using an explici
 See [considerations for cluster sizing](https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips#cluster_sizing)
 for more information on sizing secondary ranges for your VPC-native cluster.
 
+## What is a private cluster?
+
+In a private cluster, the nodes have internal IP addresses only, which ensures that their workloads are isolated from the public Internet. 
+Private nodes do not have outbound Internet access, but Private Google Access provides private nodes and their workloads with 
+limited outbound access to Google Cloud Platform APIs and services over Google's private network.
+
+If you want your cluster nodes to be able to access the Internet, for example pull images from external container registries,
+you will have to set up [Cloud NAT](https://cloud.google.com/nat/docs/overview). 
+See [Example GKE Setup](https://cloud.google.com/nat/docs/gke-example) for further information.
+
+You can create a private cluster by setting `enable_private_nodes` to `true`. Note that with a private cluster, setting
+the master CIDR range with `master_ipv4_cidr_block` is also required.
+
+### How do I control access to the cluster master?
+
+In a private cluster, the master has two endpoints:
+
+* **Private endpoint:** This is the internal IP address of the master, behind an internal load balancer in the master's 
+VPC network. Nodes communicate with the master using the private endpoint. Any VM in your VPC network, and in the same 
+region as your private cluster, can use the private endpoint.
+
+* **Public endpoint:** This is the external IP address of the master. You can disable access to the public endpoint by setting
+`enable_private_endpoint` to `true`.
+
+You can relax the restrictions by authorizing certain address ranges to access the endpoints with the input variable
+`master_authorized_networks_config`.
+ 
+### Private cluster restrictions and limitations
+
+Private clusters have the following restrictions and limitations:
+
+* The size of the RFC 1918 block for the cluster master must be /28.
+* The nodes in a private cluster must run Kubernetes version 1.8.14-gke.0 or later.
+* You cannot convert an existing, non-private cluster to a private cluster.
+* Each private cluster you create uses a unique VPC Network Peering.
+* Deleting the VPC peering between the cluster master and the cluster nodes, deleting the firewall rules that allow 
+ingress traffic from the cluster master to nodes on port 10250, or deleting the default route to the default 
+Internet gateway, causes a private cluster to stop functioning.
+
 ## What IAM roles does this module configure? (unimplemented)
 
 Given a service account, this module will enable the following IAM roles:

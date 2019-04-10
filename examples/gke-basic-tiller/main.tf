@@ -10,6 +10,10 @@ terraform {
   required_version = ">= 0.10.3"
 }
 
+# ---------------------------------------------------------------------------------------------------------------------
+# PREPARE PROVIDERS
+# ---------------------------------------------------------------------------------------------------------------------
+
 provider "google" {
   version = "~> 2.3.0"
   project = "${var.project}"
@@ -74,7 +78,9 @@ module "gke_cluster" {
   cluster_secondary_range_name = "${google_compute_subnetwork.main.secondary_ip_range.0.range_name}"
 }
 
-# Deploy a Node Pool
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE A NODE POOL
+# ---------------------------------------------------------------------------------------------------------------------
 
 resource "google_container_node_pool" "node_pool" {
   provider = "google-beta"
