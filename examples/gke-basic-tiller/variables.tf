@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "project" {
-  description = "The name of the GCP Project where all resources will be launched."
+  description = "The project ID where all resources will be launched."
 }
 
 variable "location" {

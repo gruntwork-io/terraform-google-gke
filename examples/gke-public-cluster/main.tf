@@ -10,6 +10,10 @@ terraform {
   required_version = ">= 0.10.3"
 }
 
+# ---------------------------------------------------------------------------------------------------------------------
+# PREPARE PROVIDERS
+# ---------------------------------------------------------------------------------------------------------------------
+
 provider "google" {
   version = "~> 2.3.0"
   project = "${var.project}"
@@ -21,6 +25,10 @@ provider "google-beta" {
   project = "${var.project}"
   region  = "${var.region}"
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# DEPLOY A PUBLIC CLUSTER IN GOOGLE CLOUD
+# ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_cluster" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
@@ -38,9 +46,10 @@ module "gke_cluster" {
   cluster_secondary_range_name = "${google_compute_subnetwork.main.secondary_ip_range.0.range_name}"
 }
 
-# Node Pool
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE A NODE POOL
+# ---------------------------------------------------------------------------------------------------------------------
 
-// Node Pool Resource
 resource "google_container_node_pool" "node_pool" {
   provider = "google-beta"
 
@@ -107,6 +116,9 @@ module "gke_service_account" {
   description = "${var.cluster_service_account_description}"
 }
 
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE A NETWORK TO DEPLOY THE CLUSTER TO
+# ---------------------------------------------------------------------------------------------------------------------
 # TODO(rileykarson): Add proper VPC network config once we've made a VPC module
 resource "random_string" "suffix" {
   length  = 4
