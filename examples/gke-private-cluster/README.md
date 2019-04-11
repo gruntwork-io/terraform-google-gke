@@ -42,7 +42,20 @@ Currently, you cannot use a proxy to reach the cluster master of a regional clus
 1. Run `terraform get`.
 1. Run `terraform plan`.
 1. If the plan looks good, run `terraform apply`.
+
+#### Optional: Deploy a sample application
+
 1. To setup `kubectl` to access the deployed cluster, run `gcloud beta container clusters get-credentials $CLUSTER_NAME 
 --region $REGION --project $PROJECT`, where `CLUSTER_NAME`, `REGION` and `PROJECT` correspond to what you set for the 
 input variables.
+1. Run `kubectl apply -f example-app/nginx.yml` to create a deployment in your cluster.
+1. Run `kubectl get pods` to view the pod status and check that it is ready.
+1. Run `kubectl get deployment` to view the deployment status.
+1. Run `kubectl port-forward deployment/nginx 8080:80`
 
+Now you should be able to access your `nginx` deployment on http://localhost:8080
+
+#### Destroy the created resources
+
+1. If you deployed the sample application, run `kubectl delete -f example-app/nginx.yml`.
+1. Run `terraform destroy`.

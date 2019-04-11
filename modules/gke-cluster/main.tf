@@ -14,8 +14,8 @@ resource "google_container_cluster" "cluster" {
 
   project    = "${var.project}"
   location   = "${var.location}"
-  network    = "${replace(data.google_compute_network.gke_network.self_link, "https://www.googleapis.com/compute/v1/", "")}"
-  subnetwork = "${replace(data.google_compute_subnetwork.gke_subnetwork.self_link, "https://www.googleapis.com/compute/v1/", "")}"
+  network    = "${var.network}"
+  subnetwork = "${var.subnetwork}"
 
   logging_service    = "${var.logging_service}"
   monitoring_service = "${var.monitoring_service}"
@@ -108,15 +108,6 @@ locals {
 # ---------------------------------------------------------------------------------------------------------------------
 # Pull in data
 # ---------------------------------------------------------------------------------------------------------------------
-
-data "google_compute_network" "gke_network" {
-  name    = "${var.network}"
-  project = "${local.network_project}"
-}
-
-data "google_compute_subnetwork" "gke_subnetwork" {
-  self_link = "${var.subnetwork}"
-}
 
 // Get available master versions in our location to determine the latest version
 data "google_container_engine_versions" "location" {

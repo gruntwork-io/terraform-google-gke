@@ -40,7 +40,7 @@ module "gke_cluster" {
 
   project    = "${var.project}"
   location   = "${var.location}"
-  network    = "${google_compute_network.main.name}"
+  network    = "${google_compute_network.main.self_link}"
   subnetwork = "${google_compute_subnetwork.main.self_link}"
 
   cluster_secondary_range_name = "${google_compute_subnetwork.main.secondary_ip_range.0.range_name}"

@@ -16,7 +16,7 @@ variable "name" {
 }
 
 variable "network" {
-  description = "The VPC network to host the cluster in"
+  description = "A reference (self link) to the VPS network to host the cluster in"
 }
 
 variable "subnetwork" {
@@ -76,8 +76,6 @@ variable "master_ipv4_cidr_block" {
   description = "The IP range in CIDR notation to use for the hosted master network. This range will be used for assigning internal IP addresses to the master or set of masters, as well as the ILB VIP. This range must not overlap with any other ranges in use within the cluster's network."
   default     = ""
 }
-
-// TODO(robmorgan): Are we using these values below? We should understand them more fully before adding them to configs.
 
 variable "network_project" {
   description = "The project ID of the shared VPC's host (for shared vpc support)"
