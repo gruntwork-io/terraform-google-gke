@@ -32,14 +32,18 @@ provider "google-beta" {
 module "gke_cluster" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  # source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.0.4"
+  # source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.0.5"
   source = "../../modules/gke-cluster"
 
   name = "${var.cluster_name}"
 
-  project    = "${var.project}"
-  location   = "${var.location}"
-  network    = "${module.vpc_network.network}"
+  project  = "${var.project}"
+  location = "${var.location}"
+  network  = "${module.vpc_network.network}"
+
+  # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
+  # See the network access tier table for full details:
+  # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
   subnetwork = "${module.vpc_network.public_subnetwork}"
 
   # When creating a private cluster, the 'master_ipv4_cidr_block' has to be defined and the size must be /28
