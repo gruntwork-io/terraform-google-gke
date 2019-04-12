@@ -16,7 +16,7 @@ variable "name" {
 }
 
 variable "network" {
-  description = "A reference (self link) to the VPS network to host the cluster in"
+  description = "A reference (self link) to the VPC network to host the cluster in"
 }
 
 variable "subnetwork" {
