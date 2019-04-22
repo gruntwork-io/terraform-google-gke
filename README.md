@@ -10,6 +10,8 @@ using [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engin
  * `gke-cluster`: The GKE Cluster module is used to administer the [cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
 for a [GKE Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
 
+* `gke-service-account`: Used to configure a GCP service account for use with a GKE cluster.
+
 ## What is Kubernetes?
 
 [Kubernetes](https://kubernetes.io) is an open source container management system for deploying, scaling, and managing

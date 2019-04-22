@@ -78,8 +78,7 @@ module "gke_cluster" {
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
   network = "${module.vpc_network.network}"
 
-  subnetwork = "${module.vpc_network.public_subnetwork}"
-
+  subnetwork                   = "${module.vpc_network.public_subnetwork}"
   cluster_secondary_range_name = "${module.vpc_network.public_subnetwork_secondary_range_name}"
 }
 

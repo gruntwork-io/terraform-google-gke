@@ -105,19 +105,3 @@ Private clusters have the following restrictions and limitations:
 * Deleting the VPC peering between the cluster master and the cluster nodes, deleting the firewall rules that allow 
 ingress traffic from the cluster master to nodes on port 10250, or deleting the default route to the default 
 Internet gateway, causes a private cluster to stop functioning.
-
-## What IAM roles does this module configure? (unimplemented)
-
-Given a service account, this module will enable the following IAM roles:
-
-* roles/compute.viewer
-* roles/container.clusterAdmin
-* roles/container.developer
-* roles/iam.serviceAccountUser
-
-## What services does this module enable on my project? (unimplemented)
-
-This module will ensure the following services are active on your project:
-
-* Compute Engine API - compute.googleapis.com
-* Kubernetes Engine API - container.googleapis.com
