@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY A GKE PRIVATE CLUSTER IN GOOGLE CLOUD
-# This is an example of how to use the gke-cluster module to deploy a public Kubernetes cluster in GCP
+# This is an example of how to use the gke-cluster module to deploy a private Kubernetes cluster in GCP
 # ---------------------------------------------------------------------------------------------------------------------
 
 # Use Terraform 0.10.x so that we can take advantage of Terraform GCP functionality as a separate provider via
