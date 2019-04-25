@@ -33,7 +33,7 @@ and `helm` client utilities on the system `PATH`. Here are the installation guid
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 1. [`terraform`](https://learn.hashicorp.com/terraform/getting-started/install.html)
 1. [`helm` client](https://docs.helm.sh/using_helm/#installing-helm)
-1. [`kubergrunt`](https://github.com/gruntwork-io/kubergrunt#installation)
+1. [`kubergrunt`](https://github.com/gruntwork-io/kubergrunt#installation) (Minimum version: v0.3.6)
 
 Make sure the binaries are discoverable in your `PATH` variable. See [this Stack Overflow
 post](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) for instructions on
