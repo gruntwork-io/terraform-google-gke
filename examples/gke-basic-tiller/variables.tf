@@ -19,32 +19,6 @@ variable "iam_user" {
   description = "The name of the IAM user (email address) that will be granted the ability to create Kubernetes roles."
 }
 
-variable "tls_subject" {
-  description = "The issuer information that contains the identifying information for the Tiller server. Used to generate the TLS certificate keypairs."
-  type        = "map"
-
-  # Expects the following keys
-  # - common_name
-  # - org
-  # - org_unit
-  # - city
-  # - state
-  # - country
-}
-
-variable "client_tls_subject" {
-  description = "The issuer information that contains the identifying information for the helm client of the operator. Used to generate the TLS certificate keypairs."
-  type        = "map"
-
-  # Expects the following keys
-  # - common_name
-  # - org
-  # - org_unit
-  # - city
-  # - state
-  # - country
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
@@ -65,6 +39,44 @@ variable "cluster_service_account_description" {
   default     = "Example GKE Cluster Service Account managed by Terraform"
 }
 
+# Tiller TLS  settings
+
+variable "tls_subject" {
+  description = "The issuer information that contains the identifying information for the Tiller server. Used to generate the TLS certificate keypairs."
+  type        = "map"
+
+  default = {
+    common_name = "tiller"
+    org         = "Gruntwork"
+  }
+
+  # Expects the following keys
+  # - common_name (required)
+  # - org (required)
+  # - org_unit
+  # - city
+  # - state
+  # - country
+}
+
+variable "client_tls_subject" {
+  description = "The issuer information that contains the identifying information for the helm client of the operator. Used to generate the TLS certificate keypairs."
+  type        = "map"
+
+  default = {
+    common_name = "admin"
+    org         = "Gruntwork"
+  }
+
+  # Expects the following keys
+  # - common_name (required)
+  # - org (required)
+  # - org_unit
+  # - city
+  # - state
+  # - country
+}
+
 # TLS algorithm configuration
 
 variable "private_key_algorithm" {
@@ -82,7 +94,7 @@ variable "private_key_rsa_bits" {
   default     = "2048"
 }
 
-# Undeploy options
+# Tiller undeploy options
 
 variable "force_undeploy" {
   description = "If true, will remove the Tiller server resources even if there are releases deployed."
