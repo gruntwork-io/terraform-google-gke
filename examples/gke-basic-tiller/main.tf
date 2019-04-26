@@ -233,7 +233,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 # We install an older version of Tiller as the provider expects this.
 resource "null_resource" "tiller" {
   provisioner "local-exec" {
-    command = "kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_config} ${local.client_tls_config} --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${var.iam_user}"
+    command = "kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_algorithm_config} --tls-subject-json '${jsonencode(var.tls_subject)}' --client-tls-subject-json '${jsonencode(var.client_tls_subject)}' --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${var.iam_user}"
   }
 
   provisioner "local-exec" {
@@ -242,6 +242,13 @@ resource "null_resource" "tiller" {
   }
 
   depends_on = ["null_resource.configure_kubectl", "kubernetes_cluster_role_binding.user"]
+}
+
+# Interpolate and construct kubergrunt deploy command args
+locals {
+  tls_algorithm_config = "--tls-private-key-algorithm ${var.private_key_algorithm} ${var.private_key_algorithm == "ECDSA" ? "--tls-private-key-ecdsa-curve ${var.private_key_ecdsa_curve}" : "--tls-private-key-rsa-bits ${var.private_key_rsa_bits}"}"
+
+  undeploy_args = "${var.force_undeploy ? "--force" : ""} ${var.undeploy_releases ? "--undeploy-releases" : ""}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
