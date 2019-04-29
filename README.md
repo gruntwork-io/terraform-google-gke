@@ -1,94 +1,139 @@
-[![Maintained by Gruntwork.io](https://img.shields.io/badge/maintained%20by-gruntwork.io-%235849a6.svg)](https://gruntwork.io/?ref=repo_google_gke)
+# GKE Basic Helm Example
 
-# Google Kubernetes Engine (GKE) Module
-
-This repo contains a [Terraform](https://www.terraform.io) module for running a Kubernetes cluster on [Google Cloud Platform (GCP)](https://cloud.google.com/)
-using [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/).
-
-## This Module includes the following submodules:
-
- * `gke-cluster`: The GKE Cluster module is used to administer the [cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
-for a [GKE Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
-
-* `gke-service-account`: Used to configure a GCP service account for use with a GKE cluster.
-
-## What is Kubernetes?
-
-[Kubernetes](https://kubernetes.io) is an open source container management system for deploying, scaling, and managing
-containerized applications. Kubernetes is built by Google based on their internal proprietary container management
-systems (Borg and Omega). Kubernetes provides a cloud agnostic platform to deploy your containerized applications with
-built in support for common operational tasks such as replication, autoscaling, self-healing, and rolling deployments.
-
-You can learn more about Kubernetes from [the official documentation](https://kubernetes.io/docs/tutorials/kubernetes-basics/).
-
-## What is GKE?
-
-Google Kubernetes Engine or "GKE" is a Google-managed Kubernetes environment. GKE is a fully managed experience; it
-handles the management/upgrading of the Kubernetes cluster master as well as autoscaling of "nodes" through "node pool"
-templates.
-
-Through GKE, your Kubernetes deployments will have first-class support for GCP IAM identities, built-in configuration of
-high-availability and secured clusters, as well as native access to GCP's networking features such as load balancers.
-
-## <a name="how-to-run-applications"></a>How do you run applications on Kubernetes?
-
-There are three different ways you can schedule your application on a Kubernetes cluster. In all three, your application
-Docker containers are packaged as a [Pod](https://kubernetes.io/docs/concepts/workloads/pods/pod/), which are the
-smallest deployable unit in Kubernetes, and represent one or more Docker containers that are tightly coupled. Containers
-in a Pod share certain elements of the kernel space that are traditionally isolated between containers, such as the
-network space (the containers both share an IP and thus the available ports are shared), IPC namespace, and PIDs in some
-cases.
-
-Pods are considered to be relatively ephemeral disposable entities in the Kubernetes ecosystem. This is because Pods are
-designed to be mobile across the cluster so that you can design a scalable fault tolerant system. As such, Pods are
-generally scheduled with
-[Controllers](https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/#pods-and-controllers) that manage the
-lifecycle of a Pod. Using Controllers, you can schedule your Pods as:
-
-- Jobs, which are Pods with a controller that will guarantee the Pods run to completion.
-- Deployments behind a Service, which are Pods with a controller that implement lifecycle rules to provide replication
-  and self-healing capabilities. Deployments will automatically reprovision failed Pods, or migrate Pods to healthy
-  nodes off of failed nodes. A Service constructs a consistent endpoint that can be used to access the Deployment.
-- Daemon Sets, which are Pods that are scheduled on all worker nodes. Daemon Sets schedule exactly one instance of a Pod
-  on each node. Like Deployments, Daemon Sets will reprovision failed Pods and schedule new ones automatically on
-  new nodes that join the cluster.
+This example shows how to use Terraform to launch a GKE cluster with Helm configured and installed. We achieve this by calling out to our `kubergrunt` utility in order to securely deploy Tiller - the server component of Helm.
 
 
-<!-- TODO: ## What parts of the Production Grade Infrastructure Checklist are covered by this Module? -->
+## Background
+
+We strongly recommend reading [our guide on Helm](https://github.com/gruntwork-io/kubergrunt/blob/master/HELM_GUIDE.md)
+before continuing with this guide for a background on Helm, Tiller, and the security model backing it.
 
 
-## Who maintains this Module?
+## Overview
 
-This Module and its Submodules are maintained by [Gruntwork](http://www.gruntwork.io/). If you are looking for help or
-commercial support, send an email to
-[support@gruntwork.io](mailto:support@gruntwork.io?Subject=GKE%20Module).
+In this guide we will walk through the steps necessary to get up and running with deploying Tiller on GKE using this 
+module. Here are the steps:
 
-Gruntwork can help with:
+1. [Install the necessary tools](#installing-necessary-tools)
+1. [Apply the Terraform code](#apply-the-terraform-code)
+1. [Verify the deployment](#verify-tiller-deployment)
+1. [Granting access to additional roles](#granting-access-to-additional-users)
+1. [Upgrading the deployed Tiller instance](#upgrading-deployed-tiller)
 
-* Setup, customization, and support for this Module.
-* Modules and submodules for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous
-  integration.
-* Modules and Submodules that meet compliance requirements, such as HIPAA.
-* Consulting & Training on AWS, Terraform, and DevOps.
+## Installing necessary tools
 
+In addition to `terraform`, this guide relies on the `gcloud` and `kubectl` tools to manage the cluster. In addition
+we use `kubergrunt` to manage the deployment of Tiller. You can read more about the decision behind this approach in
+[the Appendix](#appendix-a-why-kubergrunt) of this guide.
 
-## How do I contribute to this Module?
+This means that your system needs to be configured to be able to find `terraform`, `gcloud`, `kubectl`, `kubergrunt`,
+and `helm` client utilities on the system `PATH`. Here are the installation guide for each tool:
 
-Contributions are very welcome! Check out the [Contribution Guidelines](/CONTRIBUTING.md) for instructions.
+1. [`gcloud`](https://cloud.google.com/sdk/gcloud/)
+1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+1. [`terraform`](https://learn.hashicorp.com/terraform/getting-started/install.html)
+1. [`helm` client](https://docs.helm.sh/using_helm/#installing-helm)
+1. [`kubergrunt`](https://github.com/gruntwork-io/kubergrunt#installation) (Minimum version: v0.3.6)
 
+Make sure the binaries are discoverable in your `PATH` variable. See [this Stack Overflow
+post](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) for instructions on
+setting up your `PATH` on Unix, and [this
+post](https://stackoverflow.com/questions/1618280/where-can-i-set-path-to-make-exe-on-windows) for instructions on
+Windows.
 
-## How is this Module versioned?
+## Apply the Terraform Code
 
-This Module follows the principles of [Semantic Versioning](http://semver.org/). You can find each new release, along
-with the changelog, in the [Releases Page](../../releases).
+Now that all the prerequisite tools are installed, we are ready to deploy the GKE cluster with Tiller installed!
 
-During initial development, the major version will be 0 (e.g., `0.x.y`), which indicates the code does not yet have a
-stable API. Once we hit `1.0.0`, we will make every effort to maintain a backwards compatible API and use the MAJOR,
-MINOR, and PATCH versions on each release to indicate any incompatibilities.
+1. If you haven't already, clone this repo:
+    - `git clone https://github.com/gruntwork-io/terraform-google-gke.git`
+1. Make sure you are in the `gke-basic-tiller` example folder:
+    - `cd examples/gke-basic-tiller`
+1. Initialize terraform:
+    - `terraform init`
+1. Check the terraform plan:
+    - `terraform plan`
+1. Apply the terraform code:
+    - `terraform apply`
+    - Fill in the required variables based on your needs. <!-- TODO: show example inputs here -->
 
+**Note:** For simplicity this example uses `kubergrunt` to install Tiller into the `kube-system` namespace. However in
+a production deployment we strongly recommend you segregate the Tiller resources into a separate namespace.
 
-## License
+As part of the deployment, `kubergrunt` will:
 
-Please see [LICENSE](/LICENSE) for how the code in this repo is licensed.
+- Create a new TLS certificate key pair to use as the CA and upload it to Kubernetes as a `Secret` in the `kube-system`
+  namespace.
+- Using the generated CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the
+  Tiller server and upload it to Kubernetes as a `Secret` in `kube-system`.
+- Deploy Tiller with the following configurations turned on:
+    - TLS verification
+    - `Secrets` as the storage engine
+    - Provisioned in the `kube-system` namespace using the `default` service account.
 
-Copyright &copy; 2019 Gruntwork, Inc.
+- Grant access to the provided RBAC entity and configure the local helm client to use those credentials:
+    - Using the CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the client.
+    - Upload the certificate key pair to the `kube-system`.
+    - Grant the RBAC entity access to:
+        - Get the client certificate `Secret` (`kubergrunt helm configure` uses this to install the client certificate
+          key pair locally)
+        - Get and List pods in `kube-system` namespace (the `helm` client uses this to find the Tiller pod)
+        - Create a port forward to the Tiller pod (the `helm` client uses this to make requests to the Tiller pod)
+
+    - Install the client certificate key pair to the helm home directory so the client can use it.
+
+You should now have a working Tiller deployment with your helm client configured to access it.
+So let's verify that in the next step!
+
+## Verify Tiller Deployment
+
+To start using `helm` with the configured credentials, you need to specify the following things:
+
+- enable TLS verification
+- use TLS credentials to authenticate
+- the namespace where Tiller is deployed
+
+These are specified through command line arguments. If everything is configured correctly, you should be able to access
+the Tiller that was deployed with the following args:
+
+```
+helm --tls --tls-verify --tiller-namespace NAMESPACE_OF_TILLER version
+```
+
+If you have access to Tiller, this should return you both the client version and the server version of Helm.
+
+Note that you need to pass the above CLI argument every time you want to use `helm`. This can be cumbersome, so
+`kubergrunt` installs an environment file into your helm home directory that you can dot source to set environment
+variables that guide `helm` to use those options:
+
+```
+. ~/.helm/env
+helm version
+```
+
+## Appendix A: Why kubergrunt?
+
+This Terraform example is not idiomatic Terraform code in that it relies on an external binary, `kubergrunt` as opposed
+to implementing the functionalities using pure Terraform providers. This approach has some noticeable drawbacks:
+
+- You have to install extra tools to use, so it is not a minimal `terraform init && terraform apply`.
+- Portability concerns to setup, as there is no guarantee the tools work cross platform. We make every effort to test
+  across the major operating systems (Linux, Mac OSX, and Windows), but we can't possibly test every combination and so
+  there are bound to be portability issues.
+- You don't have the declarative Terraform features that you come to love, such as `plan`, updates through `apply`, and
+  `destroy`.
+
+That said, we decided to use this approach because of limitations in the existing providers to implement the
+functionalities here in pure Terraform code:
+
+- The Helm provider does not have [a resource that manages
+  Tiller](https://github.com/terraform-providers/terraform-provider-helm/issues/134).
+- The [TLS provider](https://www.terraform.io/docs/providers/tls/index.html) stores the certificate key pairs in plain
+  text into the Terraform state.
+- The Kubernetes Secret resource in the provider [also stores the value in plain text in the Terraform
+  state](https://www.terraform.io/docs/providers/kubernetes/r/secret.html).
+- The grant and configure workflows are better suited as CLI tools than in Terraform.
+
+Note that [we intend to implement a pure Terraform version of this when the Helm provider is
+updated](https://github.com/gruntwork-io/terraform-kubernetes-helm/issues/13), but we plan to continue to maintain the
+`kubergrunt` approach for folks who are wary of leaking secrets into Terraform state.
