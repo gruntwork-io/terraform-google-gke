@@ -7,14 +7,6 @@ variable "project" {
   description = "The project ID where all resources will be launched."
 }
 
-variable "location" {
-  description = "The location (region or zone) of the GKE cluster."
-}
-
-variable "region" {
-  description = "The region for the network. If the cluster is regional, this must be the same region. Otherwise, it should be the region of the zone."
-}
-
 variable "iam_user" {
   description = "The name of the IAM user (email address) that will be granted the ability to create Kubernetes roles."
 }
@@ -23,6 +15,16 @@ variable "iam_user" {
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
+
+variable "location" {
+  description = "The location (region or zone) of the GKE cluster."
+  default     = "us-central1"
+}
+
+variable "region" {
+  description = "The region for the network. If the cluster is regional, this must be the same region. Otherwise, it should be the region of the zone."
+  default     = "us-central1"
+}
 
 variable "cluster_name" {
   description = "The name of the Kubernetes cluster."
