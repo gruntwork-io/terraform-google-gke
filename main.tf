@@ -4,60 +4,6 @@
 # Load Balancer in front of it.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# Use Terraform 0.10.x so that we can take advantage of Terraform GCP functionality as a separate provider via
-# https://github.com/terraform-providers/terraform-provider-google
-terraform {
-  required_version = ">= 0.10.3"
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# PREPARE PROVIDERS
-# ---------------------------------------------------------------------------------------------------------------------
-
-provider "google" {
-  version = "~> 2.3.0"
-  project = "${var.project}"
-  region  = "${var.region}"
-}
-
-provider "google-beta" {
-  version = "~> 2.3.0"
-  project = "${var.project}"
-  region  = "${var.region}"
-}
-
-# We use this data provider to expose an access token for communicating with the GKE cluster.
-data "google_client_config" "client" {}
-
-provider "kubernetes" {
-  load_config_file = false
-
-  host                   = "${data.template_file.gke_host_endpoint.rendered}"
-  token                  = "${data.template_file.access_token.rendered}"
-  cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
-}
-
-provider "helm" {
-  # We don't install Tiller automatically, but instead use Kubergrunt as it sets up the TLS certificates much easier.
-  install_tiller = false
-
-  # Enable TLS so Helm can communicate with Tiller securely.
-  enable_tls = true
-
-  # We can remove the following parameters after Yori's PR is released:
-  # https://github.com/terraform-providers/terraform-provider-helm/pull/210
-  client_key = "${pathexpand("~/.helm/key.pem")}"
-
-  client_certificate = "${pathexpand("~/.helm/cert.pem")}"
-  ca_certificate     = "${pathexpand("~/.helm/ca.pem")}"
-
-  kubernetes {
-    host                   = "${data.template_file.gke_host_endpoint.rendered}"
-    token                  = "${data.template_file.access_token.rendered}"
-    cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
-  }
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY A GKE REGIONAL PUBLIC CLUSTER IN GOOGLE CLOUD
 # ---------------------------------------------------------------------------------------------------------------------
@@ -177,6 +123,42 @@ module "vpc_network" {
 
   cidr_block           = "${var.vpc_cidr_block}"
   secondary_cidr_block = "${var.vpc_secondary_cidr_block}"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# PREPARE KUBERNETES PROVIDERS
+# ---------------------------------------------------------------------------------------------------------------------
+
+# We use this data provider to expose an access token for communicating with the GKE cluster.
+data "google_client_config" "client" {}
+
+provider "kubernetes" {
+  load_config_file = false
+
+  host                   = "${data.template_file.gke_host_endpoint.rendered}"
+  token                  = "${data.template_file.access_token.rendered}"
+  cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
+}
+
+provider "helm" {
+  # We don't install Tiller automatically, but instead use Kubergrunt as it sets up the TLS certificates much easier.
+  install_tiller = false
+
+  # Enable TLS so Helm can communicate with Tiller securely.
+  enable_tls = true
+
+  # We can remove the following parameters after Yori's PR is released:
+  # https://github.com/terraform-providers/terraform-provider-helm/pull/210
+  client_key = "${pathexpand("~/.helm/key.pem")}"
+
+  client_certificate = "${pathexpand("~/.helm/cert.pem")}"
+  ca_certificate     = "${pathexpand("~/.helm/ca.pem")}"
+
+  kubernetes {
+    host                   = "${data.template_file.gke_host_endpoint.rendered}"
+    token                  = "${data.template_file.access_token.rendered}"
+    cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
