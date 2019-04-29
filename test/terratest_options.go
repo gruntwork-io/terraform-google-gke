@@ -23,7 +23,6 @@ func createGKEClusterTerraformOptions(
 		"location":     region,
 		"project":      project,
 		"cluster_name": gkeClusterName,
-		"iam_user":     iamUser,
 		"tls_subject": map[string]string{
 			"common_name": "tiller",
 			"org":         "Gruntwork",
