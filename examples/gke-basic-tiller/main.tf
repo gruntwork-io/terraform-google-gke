@@ -44,13 +44,6 @@ provider "helm" {
   # Enable TLS so Helm can communicate with Tiller securely.
   enable_tls = true
 
-  # We can remove the following parameters after Yori's PR is released:
-  # https://github.com/terraform-providers/terraform-provider-helm/pull/210
-  client_key = "${pathexpand("~/.helm/key.pem")}"
-
-  client_certificate = "${pathexpand("~/.helm/cert.pem")}"
-  ca_certificate     = "${pathexpand("~/.helm/ca.pem")}"
-
   kubernetes {
     host                   = "${data.template_file.gke_host_endpoint.rendered}"
     token                  = "${data.template_file.access_token.rendered}"
