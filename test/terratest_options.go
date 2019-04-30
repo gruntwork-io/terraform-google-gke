@@ -13,7 +13,6 @@ func createGKEClusterTerraformOptions(
 	uniqueID,
 	project string,
 	region string,
-	iamUser string,
 	templatePath string,
 ) *terraform.Options {
 	gkeClusterName := strings.ToLower(fmt.Sprintf("gke-cluster-%s", uniqueID))
@@ -28,7 +27,7 @@ func createGKEClusterTerraformOptions(
 			"org":         "Gruntwork",
 		},
 		"client_tls_subject": map[string]string{
-			"common_name": iamUser,
+			"common_name": "helm",
 			"org":         "Gruntwork",
 		},
 		"force_undeploy":   true,
