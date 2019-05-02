@@ -17,16 +17,43 @@ provider "google" {
   version = "~> 2.3.0"
   project = "${var.project}"
   region  = "${var.region}"
+
+  scopes = [
+    # Default scopes
+    "https://www.googleapis.com/auth/compute",
+
+    "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
+    "https://www.googleapis.com/auth/devstorage.full_control",
+
+    # Required for google_client_openid_userinfo
+    "https://www.googleapis.com/auth/userinfo.email",
+  ]
 }
 
 provider "google-beta" {
   version = "~> 2.3.0"
   project = "${var.project}"
   region  = "${var.region}"
+
+  scopes = [
+    # Default scopes
+    "https://www.googleapis.com/auth/compute",
+
+    "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
+    "https://www.googleapis.com/auth/devstorage.full_control",
+
+    # Required for google_client_openid_userinfo
+    "https://www.googleapis.com/auth/userinfo.email",
+  ]
 }
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
 data "google_client_config" "client" {}
+
+# Use this datasource to access the Terraform account's email for Kubernetes permissions.
+data "google_client_openid_userinfo" "terraform_user" {}
 
 provider "kubernetes" {
   load_config_file = false
@@ -215,7 +242,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 
   subject {
     kind      = "User"
-    name      = "${var.iam_user}"
+    name      = "${data.google_client_openid_userinfo.terraform_user.email}"
     api_group = "rbac.authorization.k8s.io"
   }
 
@@ -243,7 +270,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 # We install an older version of Tiller as the provider expects this.
 resource "null_resource" "tiller" {
   provisioner "local-exec" {
-    command = "kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_algorithm_config} --tls-subject-json '${jsonencode(var.tls_subject)}' --client-tls-subject-json '${jsonencode(var.client_tls_subject)}' --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${var.iam_user}"
+    command = "kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_algorithm_config} --tls-subject-json '${jsonencode(var.tls_subject)}' --client-tls-subject-json '${jsonencode(var.client_tls_subject)}' --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${data.google_client_openid_userinfo.terraform_user.email}"
   }
 
   provisioner "local-exec" {

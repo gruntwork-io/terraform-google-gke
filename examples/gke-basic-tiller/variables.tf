@@ -15,10 +15,6 @@ variable "region" {
   description = "The region for the network. If the cluster is regional, this must be the same region. Otherwise, it should be the region of the zone."
 }
 
-variable "iam_user" {
-  description = "The name of the IAM user (email address) that will be granted the ability to create Kubernetes roles."
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
