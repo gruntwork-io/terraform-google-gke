@@ -1,13 +1,13 @@
-# GKE Basic Helm Example
+# GKE Private Helm Example
 
-This example shows how to use Terraform to launch a GKE cluster with Helm configured and installed. We achieve this by
-calling out to our `kubergrunt` utility in order to securely deploy Tiller - the server component of Helm.
+This example shows how to use Terraform to launch a GKE private cluster with Helm configured and installed. We achieve
+this by calling out to our [`kubergrunt`](https://github.com/gruntwork-io/kubergrunt) utility in order to securely
+deploy Tiller - the server component of Helm.
 
 ## Background
 
 We strongly recommend reading [our guide on Helm](https://github.com/gruntwork-io/kubergrunt/blob/master/HELM_GUIDE.md)
 before continuing with this guide for a background on Helm, Tiller, and the security model backing it.
-
 
 ## Overview
 

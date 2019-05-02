@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY A GKE PUBLIC CLUSTER IN GOOGLE CLOUD
+# DEPLOY A GKE PUBLIC CLUSTER IN GOOGLE CLOUD PLATFORM
 # This is an example of how to use the gke-cluster module to deploy a public Kubernetes cluster in GCP with a
 # Load Balancer in front of it.
 # ---------------------------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ provider "google-beta" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY A PUBLIC CLUSTER IN GOOGLE CLOUD
+# DEPLOY A PUBLIC CLUSTER IN GOOGLE CLOUD PLATFORM
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_cluster" {
