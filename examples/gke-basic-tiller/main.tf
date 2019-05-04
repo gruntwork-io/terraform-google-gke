@@ -321,7 +321,7 @@ resource "null_resource" "grant_and_configure_helm" {
     command = <<-EOF
     kubergrunt helm grant --tiller-namespace ${local.tiller_namespace} --tls-subject-json '${jsonencode(var.client_tls_subject)}' --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
 
-    kubergrunt helm configure --helm-home ${pathexpand("~/.helm")} --tiller-namespace ${local.tiller_namespace} --resource-namespace ${default} --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
+    kubergrunt helm configure --helm-home ${pathexpand("~/.helm")} --tiller-namespace ${local.tiller_namespace} --resource-namespace ${local.resource_namespace} --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
     EOF
   }
 
@@ -337,6 +337,9 @@ locals {
   # For this example, we hardcode our tiller namespace to kube-system. In production, you might want to consider using a
   # different Namespace.
   tiller_namespace = "kube-system"
+
+  # For this example, we setup Tiller to manage the default Namespace.
+  resource_namespace = "default"
 
   # We install an older version of Tiller to match the Helm library version used in the Terraform helm provider.
   tiller_version = "v2.11.0"
