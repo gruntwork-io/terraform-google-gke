@@ -229,6 +229,14 @@ resource "null_resource" "configure_kubectl" {
   depends_on = ["google_container_node_pool.node_pool"]
 }
 
+# Create a ServiceAccount for Tiller
+resource "kubernetes_service_account" "tiller" {
+  metadata {
+    name      = "tiller"
+    namespace = "${local.tiller_namespace}"
+  }
+}
+
 resource "kubernetes_cluster_role_binding" "user" {
   metadata {
     name = "admin-user"
@@ -246,14 +254,16 @@ resource "kubernetes_cluster_role_binding" "user" {
     api_group = "rbac.authorization.k8s.io"
   }
 
+  # We give the Tiller ServiceAccount cluster admin status so that we can deploy anything in any namespace using this
+  # Tiller instance for testing purposes. In production, you might want to use a more restricted role.
   subject {
     # this is a workaround for https://github.com/terraform-providers/terraform-provider-kubernetes/issues/204.
     # we have to set an empty api_group or the k8s call will fail. It will be fixed in v1.5.2 of the k8s provider.
     api_group = ""
 
     kind      = "ServiceAccount"
-    name      = "default"
-    namespace = "kube-system"
+    name      = "${kubernetes_service_account.tiller.metadata.0.name}"
+    namespace = "${local.tiller_namespace}"
   }
 
   subject {
