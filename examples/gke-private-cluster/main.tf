@@ -148,11 +148,11 @@ module "gke_service_account" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vpc_network" {
-  source = "git::git@github.com:gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.0.2"
+  source = "git::git@github.com:gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.0.3"
 
-  name    = "${var.cluster_name}-network-${random_string.suffix.result}"
-  project = "${var.project}"
-  region  = "${var.region}"
+  name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
+  project     = "${var.project}"
+  region      = "${var.region}"
 
   cidr_block           = "${var.vpc_cidr_block}"
   secondary_cidr_block = "${var.vpc_secondary_cidr_block}"
