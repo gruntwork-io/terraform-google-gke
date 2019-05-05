@@ -1,7 +1,10 @@
 # GKE Basic Helm Example
 
 This example shows how to use Terraform to launch a GKE cluster with Helm configured and installed. We achieve this by
-calling out to our `kubergrunt` utility in order to securely deploy Tiller - the server component of Helm.
+utilizing the [k8s-tiller module in the terraform-kubernetes-helm
+repository](https://github.com/gruntwork-io/terraform-kubernetes-helm/tree/master/modules/k8s-tiller).
+Note that we utilize our `kubergrunt` utility to securely manage TLS certificate key pairs used by Tiller - the server
+component of Helm.
 
 ## Background
 
@@ -11,7 +14,7 @@ before continuing with this guide for a background on Helm, Tiller, and the secu
 
 ## Overview
 
-In this guide we will walk through the steps necessary to get up and running with deploying Tiller on GKE using this 
+In this guide we will walk through the steps necessary to get up and running with deploying Tiller on GKE using this
 module. Here are the steps:
 
 1. [Install the necessary tools](#installing-necessary-tools)
@@ -23,8 +26,8 @@ module. Here are the steps:
 ## Installing necessary tools
 
 In addition to `terraform`, this guide relies on the `gcloud` and `kubectl` tools to manage the cluster. In addition
-we use `kubergrunt` to manage the deployment of Tiller. You can read more about the decision behind this approach in
-[the Appendix](#appendix-a-why-kubergrunt) of this guide.
+we use `kubergrunt` to manage the TLS certificate key pairs for Tiller. You can read more about the decision behind this
+approach in [the Appendix](#appendix-a-why-kubergrunt) of this guide.
 
 This means that your system needs to be configured to be able to find `terraform`, `gcloud`, `kubectl`, `kubergrunt`,
 and `helm` client utilities on the system `PATH`. Here are the installation guide for each tool:
@@ -33,7 +36,7 @@ and `helm` client utilities on the system `PATH`. Here are the installation guid
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 1. [`terraform`](https://learn.hashicorp.com/terraform/getting-started/install.html)
 1. [`helm` client](https://docs.helm.sh/using_helm/#installing-helm)
-1. [`kubergrunt`](https://github.com/gruntwork-io/kubergrunt#installation) (Minimum version: v0.3.6)
+1. [`kubergrunt`](https://github.com/gruntwork-io/kubergrunt#installation) (Minimum version: v0.3.8)
 
 Make sure the binaries are discoverable in your `PATH` variable. See [this Stack Overflow
 post](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) for instructions on
@@ -57,21 +60,26 @@ Now that all the prerequisite tools are installed, we are ready to deploy the GK
     - `terraform apply`
     - Fill in the required variables based on your needs. <!-- TODO: show example inputs here -->
 
-**Note:** For simplicity this example uses `kubergrunt` to install Tiller into the `kube-system` namespace. However in
-a production deployment we strongly recommend you segregate the Tiller resources into a separate namespace.
+**Note:** For simplicity this example installs Tiller into the `kube-system` namespace. However in a production
+deployment we strongly recommend you segregate the Tiller resources into a separate namespace.
 
-As part of the deployment, `kubergrunt` will:
+This Terraform code will:
 
-- Create a new TLS certificate key pair to use as the CA and upload it to Kubernetes as a `Secret` in the `kube-system`
-  namespace.
-- Using the generated CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the
-  Tiller server and upload it to Kubernetes as a `Secret` in `kube-system`.
+- Deploy a publicly accessible GKE cluster
+- Use `kubergrunt` to:
+    - Create a new TLS certificate key pair to use as the CA and upload it to Kubernetes as a `Secret` in the
+      `kube-system` namespace.
+    - Using the generated CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the
+      Tiller server and upload it to Kubernetes as a `Secret` in `kube-system`.
+
+- Create a new `ServiceAccount` for Tiller in the `kube-system` namespace and bind admin permissions to it.
 - Deploy Tiller with the following configurations turned on:
     - TLS verification
     - `Secrets` as the storage engine
     - Provisioned in the `kube-system` namespace using the `default` service account.
 
-- Grant access to the provided RBAC entity and configure the local helm client to use those credentials:
+- Once Tiller is deployed, once again call out to `kubergrunt` to grant access to the provided RBAC entity and configure
+  the local helm client to use those credentials:
     - Using the CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the client.
     - Upload the certificate key pair to the `kube-system`.
     - Grant the RBAC entity access to:
@@ -82,8 +90,8 @@ As part of the deployment, `kubergrunt` will:
 
     - Install the client certificate key pair to the helm home directory so the client can use it.
 
-You should now have a working Tiller deployment with your helm client configured to access it.
-So let's verify that in the next step!
+At the end of the `terraform apply`, you should now have a working Tiller deployment with your helm client configured to
+access it. So let's verify that in the next step!
 
 ## Verify Tiller Deployment
 
@@ -126,14 +134,11 @@ to implementing the functionalities using pure Terraform providers. This approac
 That said, we decided to use this approach because of limitations in the existing providers to implement the
 functionalities here in pure Terraform code:
 
-- The Helm provider does not have [a resource that manages
-  Tiller](https://github.com/terraform-providers/terraform-provider-helm/issues/134).
 - The [TLS provider](https://www.terraform.io/docs/providers/tls/index.html) stores the certificate key pairs in plain
   text into the Terraform state.
 - The Kubernetes Secret resource in the provider [also stores the value in plain text in the Terraform
   state](https://www.terraform.io/docs/providers/kubernetes/r/secret.html).
 - The grant and configure workflows are better suited as CLI tools than in Terraform.
 
-Note that [we intend to implement a pure Terraform version of this when the Helm provider is
-updated](https://github.com/gruntwork-io/terraform-kubernetes-helm/issues/13), but we plan to continue to maintain the
-`kubergrunt` approach for folks who are wary of leaking secrets into Terraform state.
+Note that we intend to implement a pure Terraform version of this in the near future, but we plan to continue to
+maintain the `kubergrunt` approach for folks who are wary of leaking secrets into Terraform state.
