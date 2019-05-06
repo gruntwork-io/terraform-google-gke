@@ -324,6 +324,13 @@ module "tiller" {
 resource "null_resource" "wait_for_tiller" {
   provisioner "local-exec" {
     command = "kubergrunt helm wait-for-tiller --tiller-namespace ${local.tiller_namespace} --tiller-deployment-name ${module.tiller.deployment_name} --expected-tiller-version ${local.tiller_version} ${local.kubectl_auth_config}"
+
+    # Use environment variables for Kubernetes credentials to avoid leaking into the logs
+    environment = {
+      KUBECTL_SERVER_ENDPOINT = "${data.template_file.gke_host_endpoint.rendered}"
+      KUBECTL_CA_DATA         = "${base64encode(data.template_file.cluster_ca_certificate.rendered)}"
+      KUBECTL_TOKEN           = "${data.template_file.access_token.rendered}"
+    }
   }
 }
 
