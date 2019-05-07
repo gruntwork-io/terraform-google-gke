@@ -8,3 +8,5 @@ curl -s https://api.github.com/repos/gruntwork-io/kubergrunt/releases/latest \
 
 mv kubergrunt_linux_amd64 kubergrunt
 chmod +x kubergrunt
+
+curl -L https://git.io/get_helm.sh | bash
