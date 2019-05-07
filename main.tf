@@ -91,7 +91,7 @@ resource "google_container_node_pool" "node_pool" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_service_account" {
-  source = "ithub.com/gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
+  source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
 
   name        = "${var.cluster_service_account_name}"
   project     = "${var.project}"
