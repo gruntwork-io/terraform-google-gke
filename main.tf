@@ -9,10 +9,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_cluster" {
-  # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
-  # to a specific version of the modules, such as the following example:
-  # source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.0.5"
-  source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.0.5"
+  source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.1.0"
 
   name = "${var.cluster_name}"
 
@@ -94,10 +91,7 @@ resource "google_container_node_pool" "node_pool" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_service_account" {
-  # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
-  # to a specific version of the modules, such as the following example:
-  # source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.0.5"
-  source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.0.5"
+  source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
 
   name        = "${var.cluster_service_account_name}"
   project     = "${var.project}"
@@ -215,11 +209,11 @@ resource "kubernetes_cluster_role_binding" "user" {
 # We install an older version of Tiller as the provider expects this.
 resource "null_resource" "tiller" {
   provisioner "local-exec" {
-    command = "kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_algorithm_config} --tls-subject-json '${jsonencode(var.tls_subject)}' --client-tls-subject-json '${jsonencode(var.client_tls_subject)}' --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${var.iam_user}"
+    command = "./kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_algorithm_config} --tls-subject-json '${jsonencode(var.tls_subject)}' --client-tls-subject-json '${jsonencode(var.client_tls_subject)}' --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${var.iam_user}"
   }
 
   provisioner "local-exec" {
-    command = "kubergrunt helm undeploy --helm-home ${pathexpand("~/.helm")} --tiller-namespace kube-system ${local.undeploy_args}"
+    command = "./kubergrunt helm undeploy --helm-home ${pathexpand("~/.helm")} --tiller-namespace kube-system ${local.undeploy_args}"
     when    = "destroy"
   }
 

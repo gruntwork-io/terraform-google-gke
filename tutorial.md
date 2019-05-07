@@ -20,16 +20,10 @@ the project name from the environment variable provided. Alternatively, you can 
 export TF_VAR_project={{project-id}}
 ```
 
-You'll want to do the same with the email of your current email account;
-
-```bash
-export TF_VAR_iam_user{{your-email-here}}
-```
-
 Next, install [`kubergrunt`](https://github.com/gruntwork-io/kubergrunt), a collection of helper scripts:
 
 ```bash
-gruntwork-install --binary-name "kubergrunt" --repo "https://github.com/gruntwork-io/kubergrunt" --tag "v0.3.6"
+./install_kubergrunt.sh
 ```
 
 After that, run the following to prepare the Terraform providers.
