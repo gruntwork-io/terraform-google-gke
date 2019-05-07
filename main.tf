@@ -9,7 +9,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_cluster" {
-  source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.1.0"
+  source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.1.0"
 
   name = "${var.cluster_name}"
 
@@ -91,7 +91,7 @@ resource "google_container_node_pool" "node_pool" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_service_account" {
-  source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
+  source = "ithub.com/gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
 
   name        = "${var.cluster_service_account_name}"
   project     = "${var.project}"
@@ -109,7 +109,7 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "git::git@github.com:gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.0.2"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.0.2"
 
   name    = "${var.cluster_name}-network-${random_string.suffix.result}"
   project = "${var.project}"
