@@ -8,7 +8,7 @@ using [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engin
 ## Quickstart
 
 If you want to quickly spin up a GKE Private Cluster with Tiller, you can run the example that is in the root of this
-repo. Check out the [gke-private-tiller example documentation](https://github.com/gruntwork-io/terraform-google-gkeblob/master/examples/gke-private-tiller)
+repo. Check out the [gke-private-tiller example documentation](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-private-tiller)
 for instructions.
 
 ## What's in this repo
