@@ -1,11 +1,9 @@
 # GKE Private Helm Example
 
-This example shows how to use Terraform to launch a GKE private cluster with Helm configured and installed. We achieve
-this by utilizing the [k8s-tiller module in the terraform-kubernetes-helm
-repository](https://github.com/gruntwork-io/terraform-kubernetes-helm/tree/master/modules/k8s-tiller). Note that we
+The root folder of this repo shows an example of Terraform code that launches a GKE private cluster with Helm configured
+and Tiller installed. We achieve this by utilizing the [k8s-tiller module in the terraform-kubernetes-helm repository](https://github.com/gruntwork-io/terraform-kubernetes-helm/tree/master/modules/k8s-tiller). Note that we
 utilize our `kubergrunt` utility to securely manage TLS certificate key pairs used by Tiller - the server component of
 Helm.
-
 
 ## Background
 
@@ -50,8 +48,7 @@ Now that all the prerequisite tools are installed, we are ready to deploy the GK
 
 1. If you haven't already, clone this repo:
     - `git clone https://github.com/gruntwork-io/terraform-google-gke.git`
-1. Make sure you are in the `gke-basic-tiller` example folder:
-    - `cd examples/gke-basic-tiller`
+1. Make sure you are in the root folder of the repo
 1. Initialize terraform:
     - `terraform init`
 1. Check the terraform plan:
