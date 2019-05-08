@@ -70,7 +70,7 @@ Using that value, you can visit the `/healthz` endpoint to see that nginx is ret
 a 200 status. For example, using curl;
 
 ```bash
-curl -v {{YOUR-EXTERNAL-IP}}/healthz
+curl -v YOUR-EXTERNAL-IP/healthz
 ```
 
 ## Cleanup
