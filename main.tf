@@ -109,11 +109,11 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.0.2"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.1.0"
 
-  name    = "${var.cluster_name}-network-${random_string.suffix.result}"
-  project = "${var.project}"
-  region  = "${var.region}"
+  name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
+  project     = "${var.project}"
+  region      = "${var.region}"
 
   cidr_block           = "${var.vpc_cidr_block}"
   secondary_cidr_block = "${var.vpc_secondary_cidr_block}"
@@ -125,6 +125,9 @@ module "vpc_network" {
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
 data "google_client_config" "client" {}
+
+# Use this datasource to access the Terraform account's email for Kubernetes permissions.
+data "google_client_openid_userinfo" "terraform_user" {}
 
 provider "kubernetes" {
   load_config_file = false
@@ -181,7 +184,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 
   subject {
     kind      = "User"
-    name      = "${var.iam_user}"
+    name      = "${data.google_client_openid_userinfo.terraform_user.email}"
     api_group = "rbac.authorization.k8s.io"
   }
 
@@ -209,11 +212,11 @@ resource "kubernetes_cluster_role_binding" "user" {
 # We install an older version of Tiller as the provider expects this.
 resource "null_resource" "tiller" {
   provisioner "local-exec" {
-    command = "./kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_algorithm_config} --tls-subject-json '${jsonencode(var.tls_subject)}' --client-tls-subject-json '${jsonencode(var.client_tls_subject)}' --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${var.iam_user}"
+    command = "./kubergrunt helm deploy --service-account default --resource-namespace default --tiller-namespace kube-system ${local.tls_algorithm_config} --tls-subject-json '${jsonencode(var.tls_subject)}' --client-tls-subject-json '${jsonencode(var.client_tls_subject)}' --helm-home ${pathexpand("~/.helm")} --tiller-version v2.11.0 --rbac-user ${data.google_client_openid_userinfo.terraform_user.email}"
   }
 
   provisioner "local-exec" {
-    command = "./kubergrunt helm undeploy --helm-home ${pathexpand("~/.helm")} --tiller-namespace kube-system ${local.undeploy_args}"
+    command = "./kubergrunt helm undeploy --force --helm-home ${pathexpand("~/.helm")} --tiller-namespace kube-system ${local.undeploy_args}"
     when    = "destroy"
   }
 

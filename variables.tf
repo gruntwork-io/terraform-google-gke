@@ -7,10 +7,6 @@ variable "project" {
   description = "The project ID where all resources will be launched."
 }
 
-variable "iam_user" {
-  description = "The name of the IAM user (email address) that will be granted the ability to create Kubernetes roles."
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
