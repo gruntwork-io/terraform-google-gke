@@ -48,13 +48,30 @@ Terraform will deploy the GKE cluster and configure Helm's server component, Til
 
 ## Releasing a Chart
 
-Now that the cluster has been provisioned and Tiller installed, we can create a Helm release.
+Now that the cluster has been provisioned and Tiller installed, you can install a Helm chart.
 
 ```bash
-helm --tls --tls-verify --tiller-namespace kube-system install stable/nginx
+helm --tls --tls-verify --tiller-namespace kube-system install stable/nginx-ingress
 ```
 
-We've instructed Helm to deploy `stable/nginx` into the cluster.
+With that command, you've instructed Helm to securely deploy the
+`stable/nginx-ingress` chart into the cluster's tiller instance, which will then
+apply the chart.
+
+After waiting a minute or two for that to be deployed, you can run
+
+```bash
+kubectl get services
+```
+
+And pull the `EXTERNAL-IP` value from the service with the `nginx-ingress-controller` suffix.
+
+Using that value, you can visit the `/healthz` endpoint to see that nginx is returning
+a 200 status. For example, using curl;
+
+```bash
+curl -v {{YOUR-EXTERNAL-IP}}/healthz
+```
 
 ## Cleanup
 
