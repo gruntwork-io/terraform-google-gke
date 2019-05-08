@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-curl -s https://api.github.com/repos/gruntwork-io/kubergrunt/releases/latest \
+curl -s https://api.github.com/repos/gruntwork-io/kubergrunt/releases/17178374 \
 | grep "browser_download_url.*linux_amd64" \
 | cut -d : -f 2,3 \
 | tr -d \" \
