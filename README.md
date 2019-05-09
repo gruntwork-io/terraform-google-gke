@@ -110,7 +110,8 @@ Gruntwork can help with:
 
 ## How do I contribute to this Module?
 
-Contributions are very welcome! Check out the [Contribution Guidelines](/CONTRIBUTING.md) for instructions.
+Contributions are very welcome! Check out the [Contribution Guidelines](https://github.com/gruntwork-io/terraform-google-gke/blob/master/CONTRIBUTING.md)
+for instructions.
 
 ## How is this Module versioned?
 
@@ -123,6 +124,7 @@ MINOR, and PATCH versions on each release to indicate any incompatibilities.
 
 ## License
 
-Please see [LICENSE](/LICENSE) for how the code in this repo is licensed.
+Please see [LICENSE](https://github.com/gruntwork-io/terraform-google-gke/blob/master/LICENSE) for how the code in this
+repo is licensed.
 
 Copyright &copy; 2019 Gruntwork, Inc.
