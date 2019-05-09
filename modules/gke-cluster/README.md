@@ -10,10 +10,13 @@ to the cluster module.
 
 ## How do you use this module?
 
-* See the [root README](/README.md) for instructions on using Terraform modules.
-* See the [examples](/examples) folder for example usage.
-* See [variables.tf](./variables.tf) for all the variables you can set on this module.
-* See [outputs.tf](./outputs.tf) for all the variables that are outputed by this module.
+* See the [root README](https://github.com/gruntwork-io/terraform-google-gke/blob/master/README.md) for instructions on
+using Terraform modules.
+* See the [examples](https://github.com/gruntwork-io/terraform-google-gke/tree/master/examples) folder for example usage.
+* See [variables.tf](https://github.com/gruntwork-io/terraform-google-gke/blob/master/modules/gke-cluster/variables.tf) for all the
+variables you can set on this module.
+* See [outputs.tf](https://github.com/gruntwork-io/terraform-google-gke/blob/master/modules/gke-cluster/outputs.tf) for all the variables
+that are outputted by this module.
 
 ## What is a GKE Cluster?
 
