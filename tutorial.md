@@ -83,3 +83,6 @@ terraform destroy
 ```bash
 yes
 ```
+
+Because this removes your GKE cluster, it will also delete the nginx load
+balancer that was provisioned.
