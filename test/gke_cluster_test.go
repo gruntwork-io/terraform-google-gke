@@ -1,22 +1,22 @@
 package test
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
+	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/gruntwork-io/terratest/modules/test-structure"
+	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGKECluster(t *testing.T) {
-	// We are temporarily stopping the tests from running in parallel due to conflicting
-	// kubectl configs. This is a limitation in the current Terratest functions and will
-	// be fixed in a later release.
-	//t.Parallel()
+	t.Parallel()
 
 	var testcases = []struct {
 		testName      string
@@ -38,10 +38,7 @@ func TestGKECluster(t *testing.T) {
 		testCase := testCase
 
 		t.Run(testCase.testName, func(t *testing.T) {
-			// We are temporarily stopping the tests from running in parallel due to conflicting
-			// kubectl configs. This is a limitation in the current Terratest functions and will
-			// be fixed in a later release.
-			//t.Parallel()
+			t.Parallel()
 
 			// Uncomment any of the following to skip that section during the test
 			//os.Setenv("SKIP_create_test_copy_of_examples", "true")
@@ -63,19 +60,27 @@ func TestGKECluster(t *testing.T) {
 
 			test_structure.RunTestStage(t, "create_terratest_options", func() {
 				gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
+				tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
+				kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath)
 				uniqueID := random.UniqueId()
 				project := gcp.GetGoogleProjectIDFromEnvVar(t)
 				region := gcp.GetRandomRegion(t, project, nil, nil)
-				gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region, gkeClusterTerraformModulePath)
+				gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region,
+					gkeClusterTerraformModulePath, tmpKubeConfigPath)
 				test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 				test_structure.SaveString(t, workingDir, "project", project)
 				test_structure.SaveString(t, workingDir, "region", region)
 				test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)
+				test_structure.SaveKubectlOptions(t, workingDir, kubectlOptions)
 			})
 
 			defer test_structure.RunTestStage(t, "cleanup", func() {
 				gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 				terraform.Destroy(t, gkeClusterTerratestOptions)
+
+				kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
+				err := os.Remove(kubectlOptions.ConfigPath)
+				require.NoError(t, err)
 			})
 
 			test_structure.RunTestStage(t, "terraform_apply", func() {
@@ -85,6 +90,7 @@ func TestGKECluster(t *testing.T) {
 
 			test_structure.RunTestStage(t, "configure_kubectl", func() {
 				gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
+				kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 				project := test_structure.LoadString(t, workingDir, "project")
 				region := test_structure.LoadString(t, workingDir, "region")
 				clusterName := gkeClusterTerratestOptions.Vars["cluster_name"].(string)
@@ -93,13 +99,17 @@ func TestGKECluster(t *testing.T) {
 				cmd := shell.Command{
 					Command: "gcloud",
 					Args:    []string{"beta", "container", "clusters", "get-credentials", clusterName, "--region", region, "--project", project},
+					Env: map[string]string{
+						"KUBECONFIG": kubectlOptions.ConfigPath,
+					},
 				}
 
 				shell.RunCommand(t, cmd)
 			})
 
 			test_structure.RunTestStage(t, "wait_for_workers", func() {
-				verifyGkeNodesAreReady(t)
+				kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
+				verifyGkeNodesAreReady(t, kubectlOptions)
 			})
 		})
 	}

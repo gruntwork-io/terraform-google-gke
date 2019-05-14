@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -9,19 +10,17 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/helm"
-	"github.com/gruntwork-io/terratest/modules/http-helper"
+	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/gruntwork-io/terratest/modules/test-structure"
+	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGKEBasicTiller(t *testing.T) {
-	// We are temporarily stopping the tests from running in parallel due to conflicting
-	// kubectl configs. This is a limitation in the current Terratest functions and will
-	// be fixed in a later release.
-	//t.Parallel()
+	t.Parallel()
 
 	// Uncomment any of the following to skip that section during the test
 	// os.Setenv("SKIP_create_test_copy_of_examples", "true")
@@ -43,19 +42,27 @@ func TestGKEBasicTiller(t *testing.T) {
 
 	test_structure.RunTestStage(t, "create_terratest_options", func() {
 		gkeBasicTillerTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeBasicTillerTerraformModulePath")
+		tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
+		kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath)
 		uniqueID := random.UniqueId()
 		project := gcp.GetGoogleProjectIDFromEnvVar(t)
 		region := gcp.GetRandomRegion(t, project, nil, nil)
-		gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region, gkeBasicTillerTerraformModulePath)
+		gkeClusterTerratestOptions := createGKEClusterTerraformOptions(t, uniqueID, project, region,
+			gkeBasicTillerTerraformModulePath, tmpKubeConfigPath)
 		test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 		test_structure.SaveString(t, workingDir, "project", project)
 		test_structure.SaveString(t, workingDir, "region", region)
 		test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)
+		test_structure.SaveKubectlOptions(t, workingDir, kubectlOptions)
 	})
 
 	defer test_structure.RunTestStage(t, "cleanup", func() {
 		gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 		terraform.Destroy(t, gkeClusterTerratestOptions)
+
+		kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
+		err := os.Remove(kubectlOptions.ConfigPath)
+		require.NoError(t, err)
 	})
 
 	test_structure.RunTestStage(t, "terraform_apply", func() {
@@ -64,18 +71,17 @@ func TestGKEBasicTiller(t *testing.T) {
 	})
 
 	test_structure.RunTestStage(t, "wait_for_workers", func() {
-		verifyGkeNodesAreReady(t)
+		kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
+		verifyGkeNodesAreReady(t, kubectlOptions)
 	})
 
 	test_structure.RunTestStage(t, "helm_install", func() {
 		// Path to the helm chart we will test
 		helmChartPath := "charts/minimal-pod"
 
-		// Setup the kubectl config and context. Here we choose to use the defaults, which is:
-		// - HOME/.kube/config for the kubectl config file
-		// - Current context of the kubectl config file
+		// Load the temporary kubectl config file and use its current context
 		// We also specify that we are working in the default namespace (required to get the Pod)
-		kubectlOptions := k8s.NewKubectlOptions("", "")
+		kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 		kubectlOptions.Namespace = "default"
 
 		// We generate a unique release name so that we can refer to after deployment.
