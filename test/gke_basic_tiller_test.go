@@ -103,6 +103,7 @@ func TestGKEBasicTiller(t *testing.T) {
 				"HELM_TLS_VERIFY": "true",
 				"HELM_TLS_ENABLE": "true",
 			},
+			KubectlOptions: kubectlOptions,
 		}
 
 		// Deploy the chart using `helm install`. Note that we use the version without `E`, since we want to assert the
