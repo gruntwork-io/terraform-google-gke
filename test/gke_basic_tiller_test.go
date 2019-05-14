@@ -14,7 +14,6 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
-	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/require"
@@ -27,7 +26,6 @@ func TestGKEBasicTiller(t *testing.T) {
 	// os.Setenv("SKIP_create_test_copy_of_examples", "true")
 	// os.Setenv("SKIP_create_terratest_options", "true")
 	// os.Setenv("SKIP_terraform_apply", "true")
-	// os.Setenv("SKIP_configure_kubectl", "true")
 	// os.Setenv("SKIP_wait_for_workers", "true")
 	// os.Setenv("SKIP_helm_install", "true")
 	// os.Setenv("SKIP_cleanup", "true")
@@ -70,25 +68,6 @@ func TestGKEBasicTiller(t *testing.T) {
 	test_structure.RunTestStage(t, "terraform_apply", func() {
 		gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 		terraform.InitAndApply(t, gkeClusterTerratestOptions)
-	})
-
-	test_structure.RunTestStage(t, "configure_kubectl", func() {
-		gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
-		kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-		project := test_structure.LoadString(t, workingDir, "project")
-		region := test_structure.LoadString(t, workingDir, "region")
-		clusterName := gkeClusterTerratestOptions.Vars["cluster_name"].(string)
-
-		// gcloud beta container clusters get-credentials example-cluster --region australia-southeast1 --project dev-sandbox-123456
-		cmd := shell.Command{
-			Command: "gcloud",
-			Args:    []string{"beta", "container", "clusters", "get-credentials", clusterName, "--region", region, "--project", project},
-			Env: map[string]string{
-				"KUBECONFIG": kubectlOptions.ConfigPath,
-			},
-		}
-
-		shell.RunCommand(t, cmd)
 	})
 
 	test_structure.RunTestStage(t, "wait_for_workers", func() {
