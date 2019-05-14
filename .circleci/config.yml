@@ -95,6 +95,11 @@ jobs:
           sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
           sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update beta kubectl
     - run:
+        name: configure kubectl
+        comand: |
+          mkdir -p ${HOME}/.kube
+          touch ${HOME}/.kube/config
+    - run:
         name: run tests
         command: |
           mkdir -p /tmp/logs
