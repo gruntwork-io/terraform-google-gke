@@ -18,7 +18,7 @@
   version = "v0.35.1"
 
 [[projects]]
-  digest = "1:f0ca0b3256cfe939f5b5d7fb9980d3805f0a9c0d7e2ce5c990112627e77018d7"
+  digest = "1:6fee3887aa799d9c2c2017d2738c5532b9cbee3fa94589232f11db00ff1e6ec3"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -60,6 +60,7 @@
     "service/autoscaling",
     "service/cloudwatchlogs",
     "service/ec2",
+    "service/ecs",
     "service/iam",
     "service/kms",
     "service/rds",
@@ -230,7 +231,7 @@
   version = "v0.4.2"
 
 [[projects]]
-  digest = "1:12cf87df04f335d94d1346edd77536ca505a4dda0afd5137150cd440e5c2d32c"
+  digest = "1:9caaf503201ab0dfd178194b54306c45e72b6ea1dc7de5e432d933418149f9aa"
   name = "github.com/gruntwork-io/terratest"
   packages = [
     "modules/aws",
@@ -252,8 +253,8 @@
     "modules/test-structure",
   ]
   pruneopts = "UT"
-  revision = "b6077c8c1ecfd290ee1f37e1e51472a34d30cb38"
-  version = "v0.13.29"
+  revision = "54393d85e00e2614efa6bd22e963fe174cc128d5"
+  version = "v0.14.6"
 
 [[projects]]
   digest = "1:a0cefd27d12712af4b5018dc7046f245e1e3b5760e2e848c30b171b570708f9b"
@@ -496,7 +497,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d586ebbd814cf4a680afbac35457f94a4ec9ae8305d9831b7a290c32baa0bb31"
+  digest = "1:a4df62df5ca682765882afdd14d4c904f2841a2fa455b044f4b04545f66cbd74"
   name = "google.golang.org/api"
   packages = [
     "compute/v1",
@@ -507,6 +508,7 @@
     "internal",
     "iterator",
     "option",
+    "oslogin/v1",
     "storage/v1",
     "transport/http",
     "transport/http/internal/propagation",
@@ -777,10 +779,10 @@
     "github.com/gruntwork-io/terratest/modules/logger",
     "github.com/gruntwork-io/terratest/modules/random",
     "github.com/gruntwork-io/terratest/modules/retry",
-    "github.com/gruntwork-io/terratest/modules/shell",
     "github.com/gruntwork-io/terratest/modules/terraform",
     "github.com/gruntwork-io/terratest/modules/test-structure",
     "github.com/stretchr/testify/assert",
+    "github.com/stretchr/testify/require",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

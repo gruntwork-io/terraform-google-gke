@@ -14,7 +14,7 @@ import (
 
 // kubeWaitUntilNumNodes continuously polls the Kubernetes cluster until there are the expected number of nodes
 // registered (regardless of readiness).
-func kubeWaitUntilNumNodes(t *testing.T, numNodes int, retries int, sleepBetweenRetries time.Duration) {
+func kubeWaitUntilNumNodes(t *testing.T, kubectlOptions *k8s.KubectlOptions, numNodes int, retries int, sleepBetweenRetries time.Duration) {
 	statusMsg := fmt.Sprintf("Wait for %d Kube Nodes to be registered.", numNodes)
 	message, err := retry.DoWithRetryE(
 		t,
@@ -22,7 +22,7 @@ func kubeWaitUntilNumNodes(t *testing.T, numNodes int, retries int, sleepBetween
 		retries,
 		sleepBetweenRetries,
 		func() (string, error) {
-			nodes, err := k8s.GetNodesE(t)
+			nodes, err := k8s.GetNodesE(t, kubectlOptions)
 			if err != nil {
 				return "", err
 			}
@@ -40,9 +40,9 @@ func kubeWaitUntilNumNodes(t *testing.T, numNodes int, retries int, sleepBetween
 }
 
 // Verify that all the nodes in the cluster reach the Ready state.
-func verifyGkeNodesAreReady(t *testing.T) {
-	kubeWaitUntilNumNodes(t, 3, 30, 10*time.Second)
-	k8s.WaitUntilAllNodesReady(t, 30, 10*time.Second)
-	readyNodes := k8s.GetReadyNodes(t)
+func verifyGkeNodesAreReady(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
+	kubeWaitUntilNumNodes(t, kubectlOptions, 3, 30, 10*time.Second)
+	k8s.WaitUntilAllNodesReady(t, kubectlOptions, 30, 10*time.Second)
+	readyNodes := k8s.GetReadyNodes(t, kubectlOptions)
 	assert.Equal(t, len(readyNodes), 3)
 }

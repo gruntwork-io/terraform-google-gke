@@ -35,6 +35,13 @@ variable "cluster_service_account_description" {
   default     = "Example GKE Cluster Service Account managed by Terraform"
 }
 
+# Kubectl options
+
+variable "kubectl_config_path" {
+  description = "Path to the kubectl config file. Defaults to $HOME/.kube/config"
+  default     = ""
+}
+
 # Tiller TLS  settings
 
 variable "tls_subject" {

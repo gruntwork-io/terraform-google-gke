@@ -3,7 +3,7 @@ defaults: &defaults
   environment:
     GRUNTWORK_INSTALLER_VERSION: v0.0.21
     TERRATEST_LOG_PARSER_VERSION: v0.13.13
-    KUBERGRUNT_VERSION: v0.3.8
+    KUBERGRUNT_VERSION: v0.3.9
     HELM_VERSION: v2.11.0
     MODULE_CI_VERSION: v0.13.3
     TERRAFORM_VERSION: 0.11.8
@@ -94,6 +94,11 @@ jobs:
           sudo apt-get remove -y google-cloud-sdk
           sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
           sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update beta kubectl
+    - run:
+        name: configure kubectl
+        command: |
+          mkdir -p ${HOME}/.kube
+          touch ${HOME}/.kube/config
     - run:
         name: run tests
         command: |

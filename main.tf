@@ -56,8 +56,9 @@ data "google_client_config" "client" {}
 data "google_client_openid_userinfo" "terraform_user" {}
 
 provider "kubernetes" {
-  load_config_file = false
+  version = "~> 1.5.2"
 
+  load_config_file       = false
   host                   = "${data.template_file.gke_host_endpoint.rendered}"
   token                  = "${data.template_file.access_token.rendered}"
   cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
@@ -224,6 +225,11 @@ module "vpc_network" {
 resource "null_resource" "configure_kubectl" {
   provisioner "local-exec" {
     command = "gcloud beta container clusters get-credentials ${module.gke_cluster.name} --region ${var.region} --project ${var.project}"
+
+    # Use environment variables to allow custom kubectl config paths
+    environment = {
+      KUBECONFIG = "${var.kubectl_config_path != "" ? "${var.kubectl_config_path}" : ""}"
+    }
   }
 
   depends_on = ["google_container_node_pool.node_pool"]
@@ -347,6 +353,13 @@ resource "null_resource" "grant_and_configure_helm" {
 
     kubergrunt helm configure --helm-home ${pathexpand("~/.helm")} --tiller-namespace ${local.tiller_namespace} --resource-namespace ${local.resource_namespace} --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
     EOF
+
+    # Use environment variables for Kubernetes credentials to avoid leaking into the logs
+    environment = {
+      KUBECTL_SERVER_ENDPOINT = "${data.template_file.gke_host_endpoint.rendered}"
+      KUBECTL_CA_DATA         = "${base64encode(data.template_file.cluster_ca_certificate.rendered)}"
+      KUBECTL_TOKEN           = "${data.template_file.access_token.rendered}"
+    }
   }
 
   depends_on = ["null_resource.wait_for_tiller"]
