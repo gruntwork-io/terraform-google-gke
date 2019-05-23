@@ -14,7 +14,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 provider "google" {
-  version = "~> 2.3.0"
+  version = "~> 2.7.0"
   project = "${var.project}"
   region  = "${var.region}"
 
@@ -32,7 +32,7 @@ provider "google" {
 }
 
 provider "google-beta" {
-  version = "~> 2.3.0"
+  version = "~> 2.7.0"
   project = "${var.project}"
   region  = "${var.region}"
 
@@ -56,7 +56,7 @@ data "google_client_config" "client" {}
 data "google_client_openid_userinfo" "terraform_user" {}
 
 provider "kubernetes" {
-  version = "~> 1.5.2"
+  version = "~> 1.7.0"
 
   load_config_file       = false
   host                   = "${data.template_file.gke_host_endpoint.rendered}"
