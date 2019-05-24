@@ -87,13 +87,6 @@ resource "google_container_cluster" "cluster" {
       start_time = "${var.maintenance_start_time}"
     }
   }
-
-  # Version 2.0.0 will set the default timeouts to these values.
-  timeouts {
-    create = "30m"
-    update = "30m"
-    delete = "30m"
-  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
