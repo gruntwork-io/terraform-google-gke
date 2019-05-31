@@ -43,13 +43,13 @@ variable "kubernetes_version" {
 }
 
 variable "logging_service" {
-  description = "The logging service that the cluster should write logs to. Available options include logging.googleapis.com, logging.googleapis.com/kubernetes (beta), and none"
-  default     = "logging.googleapis.com"
+  description = "The logging service that the cluster should write logs to. Available options include logging.googleapis.com/kubernetes, logging.googleapis.com (legacy), and none"
+  default     = "logging.googleapis.com/kubernetes"
 }
 
 variable "monitoring_service" {
-  description = "The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Stackdriver Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting Available options include monitoring.googleapis.com, monitoring.googleapis.com/kubernetes (beta) and none"
-  default     = "monitoring.googleapis.com"
+  description = "The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Stackdriver Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting. Available options include monitoring.googleapis.com/kubernetes, monitoring.googleapis.com (legacy), and none"
+  default     = "monitoring.googleapis.com/kubernetes"
 }
 
 variable "horizontal_pod_autoscaling" {

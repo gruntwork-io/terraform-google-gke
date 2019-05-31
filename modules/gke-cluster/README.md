@@ -96,6 +96,23 @@ region as your private cluster, can use the private endpoint.
 
 You can relax the restrictions by authorizing certain address ranges to access the endpoints with the input variable
 `master_authorized_networks_config`.
+
+### How do I configure logging and monitoring with Stackdriver for my cluster?
+
+Stackdriver Kubernetes Engine Monitoring is enabled by default using this module. It provides improved support for both
+Stackdriver Monitoring and Stackdriver Logging in your cluster, including a GKE-customized Stackdriver Console with
+fine-grained breakdown of resources including namespaces and pods. Learn more with the [official documentation](https://cloud.google.com/monitoring/kubernetes-engine/#about-skm)
+
+Although Stackdriver Kubernetes Engine Monitoring is enabled by default, you can use the legacy Stackdriver options by
+modifying your configuration. See the [differences between GKE Stackdriver versions](https://cloud.google.com/monitoring/kubernetes-engine/#version)
+for the differences between legacy Stackdriver and Stackdriver Kubernetes Engine Monitoring.
+
+#### How do I use Prometheus for monitoring?
+
+Prometheus monitoring for your cluster is ready to go through GCP's Stackdriver Kubernetes Engine Monitoring service. If
+you've configured your GKE cluster with Stackdriver Kubernetes Engine Monitoring, you can follow Google's guide to
+[using Prometheus](https://cloud.google.com/monitoring/kubernetes-engine/prometheus) to configure your cluster with
+Prometheus.
  
 ### Private cluster restrictions and limitations
 
