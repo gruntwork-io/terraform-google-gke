@@ -85,7 +85,7 @@ provider "helm" {
 module "gke_cluster" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  # source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.1.0"
+  # source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.1.0"
   source = "./modules/gke-cluster"
 
   name = "${var.cluster_name}"
@@ -188,7 +188,7 @@ resource "google_container_node_pool" "node_pool" {
 module "gke_service_account" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  # source = "git::git@github.com:gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
+  # source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
   source = "./modules/gke-service-account"
 
   name        = "${var.cluster_service_account_name}"
@@ -207,7 +207,7 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "git::git@github.com:gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.1.0"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.1.0"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
   project     = "${var.project}"
@@ -309,7 +309,7 @@ resource "null_resource" "tiller_tls_certs" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "tiller" {
-  source = "git::git@github.com:gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.3.0"
+  source = "github.com/gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.3.0"
 
   tiller_service_account_name              = "${kubernetes_service_account.tiller.metadata.0.name}"
   tiller_service_account_token_secret_name = "${kubernetes_service_account.tiller.default_secret_name}"
