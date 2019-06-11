@@ -292,7 +292,7 @@ resource "null_resource" "tiller_tls_certs" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "tiller" {
-  source = "github.com/gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.3.0"
+  source = "github.com/gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.5.0"
 
   tiller_service_account_name              = "${kubernetes_service_account.tiller.metadata.0.name}"
   tiller_service_account_token_secret_name = "${kubernetes_service_account.tiller.default_secret_name}"

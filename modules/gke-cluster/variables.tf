@@ -83,7 +83,7 @@ variable "network_project" {
 }
 
 variable "master_authorized_networks_config" {
-  type = list(string)
+  type = list(any)
 
   description = <<EOF
   The desired configuration options for master authorized networks. Omit the nested cidr_blocks attribute to disallow external access (except the cluster node IPs, which GKE automatically whitelists)

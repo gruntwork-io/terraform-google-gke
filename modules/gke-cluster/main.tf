@@ -48,19 +48,19 @@ resource "google_container_cluster" "cluster" {
 
   addons_config {
     http_load_balancing {
-      disabled = var.http_load_balancing ? 0 : 1
+      disabled = var.http_load_balancing ? false : true
     }
 
     horizontal_pod_autoscaling {
-      disabled = var.horizontal_pod_autoscaling ? 0 : 1
+      disabled = var.horizontal_pod_autoscaling ? false : true
     }
 
     kubernetes_dashboard {
-      disabled = var.enable_kubernetes_dashboard ? 0 : 1
+      disabled = var.enable_kubernetes_dashboard ? false : true
     }
 
     network_policy_config {
-      disabled = var.enable_network_policy ? 0 : 1
+      disabled = var.enable_network_policy ? false : true
     }
   }
 
