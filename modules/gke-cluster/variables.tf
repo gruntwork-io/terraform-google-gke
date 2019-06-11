@@ -162,4 +162,3 @@ variable "enable_client_certificate_authentication" {
   description = "Whether to enable authentication by x509 certificates. With ABAC disabled, these certificates are effectively useless."
   default = false
 }
-
