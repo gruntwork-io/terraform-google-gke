@@ -77,13 +77,13 @@ variable "http_load_balancing" {
 variable "enable_private_nodes" {
   description = "Control whether nodes have internal IP addresses only. If enabled, all nodes are given only RFC 1918 private addresses and communicate with the master via private networking."
   type        = bool
-  default     = "false"
+  default     = false
 }
 
 variable "disable_public_endpoint" {
   description = "Control whether the master's internal IP address is used as the cluster endpoint. If set to 'true', the master can only be accessed from internal IP addresses."
   type        = bool
-  default     = "false"
+  default     = false
 }
 
 variable "master_ipv4_cidr_block" {
@@ -141,7 +141,7 @@ variable "ip_masq_resync_interval" {
 variable "ip_masq_link_local" {
   description = "Whether to masquerade traffic to the link-local prefix (169.254.0.0/16)."
   type = bool
-  default = "false"
+  default = false
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
