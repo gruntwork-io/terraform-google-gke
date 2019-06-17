@@ -4,10 +4,10 @@
 # Load Balancer in front of it.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# Use Terraform 0.10.x so that we can take advantage of Terraform GCP functionality as a separate provider via
-# https://github.com/terraform-providers/terraform-provider-google
 terraform {
-  required_version = ">= 0.10.3"
+  # The modules used in this example have been updated with 0.12 syntax, which means the example is no longer
+  # compatible with any versions below 0.12.
+  required_version = ">= 0.12"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -16,13 +16,12 @@ terraform {
 
 provider "google" {
   version = "~> 2.7.0"
-  project = "${var.project}"
-  region  = "${var.region}"
+  project = var.project
+  region  = var.region
 
   scopes = [
     # Default scopes
     "https://www.googleapis.com/auth/compute",
-
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
     "https://www.googleapis.com/auth/devstorage.full_control",
@@ -34,13 +33,12 @@ provider "google" {
 
 provider "google-beta" {
   version = "~> 2.7.0"
-  project = "${var.project}"
-  region  = "${var.region}"
+  project = var.project
+  region  = var.region
 
   scopes = [
     # Default scopes
     "https://www.googleapis.com/auth/compute",
-
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
     "https://www.googleapis.com/auth/devstorage.full_control",
@@ -60,9 +58,9 @@ provider "kubernetes" {
   version = "~> 1.7.0"
 
   load_config_file       = false
-  host                   = "${data.template_file.gke_host_endpoint.rendered}"
-  token                  = "${data.template_file.access_token.rendered}"
-  cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
+  host                   = data.template_file.gke_host_endpoint.rendered
+  token                  = data.template_file.access_token.rendered
+  cluster_ca_certificate = data.template_file.cluster_ca_certificate.rendered
 }
 
 provider "helm" {
@@ -73,9 +71,9 @@ provider "helm" {
   enable_tls = true
 
   kubernetes {
-    host                   = "${data.template_file.gke_host_endpoint.rendered}"
-    token                  = "${data.template_file.access_token.rendered}"
-    cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
+    host                   = data.template_file.gke_host_endpoint.rendered
+    token                  = data.template_file.access_token.rendered
+    cluster_ca_certificate = data.template_file.cluster_ca_certificate.rendered
   }
 }
 
@@ -89,18 +87,18 @@ module "gke_cluster" {
   # source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.2.0"
   source = "../../modules/gke-cluster"
 
-  name = "${var.cluster_name}"
+  name = var.cluster_name
 
-  project  = "${var.project}"
-  location = "${var.location}"
+  project  = var.project
+  location = var.location
 
   # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
-  network = "${module.vpc_network.network}"
+  network = module.vpc_network.network
 
-  subnetwork                   = "${module.vpc_network.public_subnetwork}"
-  cluster_secondary_range_name = "${module.vpc_network.public_subnetwork_secondary_range_name}"
+  subnetwork                   = module.vpc_network.public_subnetwork
+  cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -108,12 +106,12 @@ module "gke_cluster" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "google_container_node_pool" "node_pool" {
-  provider = "google-beta"
+  provider = google-beta
 
   name     = "main-pool"
-  project  = "${var.project}"
-  location = "${var.location}"
-  cluster  = "${module.gke_cluster.name}"
+  project  = var.project
+  location = var.location
+  cluster  = module.gke_cluster.name
 
   initial_node_count = "1"
 
@@ -138,7 +136,7 @@ resource "google_container_node_pool" "node_pool" {
     # Add a public tag to the instances. See the network access tier table for full details:
     # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
     tags = [
-      "${module.vpc_network.public}",
+      module.vpc_network.public,
       "tiller-example",
     ]
 
@@ -146,7 +144,7 @@ resource "google_container_node_pool" "node_pool" {
     disk_type    = "pd-standard"
     preemptible  = false
 
-    service_account = "${module.gke_service_account.email}"
+    service_account = module.gke_service_account.email
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
@@ -154,7 +152,7 @@ resource "google_container_node_pool" "node_pool" {
   }
 
   lifecycle {
-    ignore_changes = ["initial_node_count"]
+    ignore_changes = [initial_node_count]
   }
 
   timeouts {
@@ -174,9 +172,9 @@ module "gke_service_account" {
   # source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.2.0"
   source = "../../modules/gke-service-account"
 
-  name        = "${var.cluster_service_account_name}"
-  project     = "${var.project}"
-  description = "${var.cluster_service_account_description}"
+  name        = var.cluster_service_account_name
+  project     = var.project
+  description = var.cluster_service_account_description
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -190,14 +188,14 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.1.2"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.1"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
-  project     = "${var.project}"
-  region      = "${var.region}"
+  project     = var.project
+  region      = var.region
 
-  cidr_block           = "${var.vpc_cidr_block}"
-  secondary_cidr_block = "${var.vpc_secondary_cidr_block}"
+  cidr_block           = var.vpc_cidr_block
+  secondary_cidr_block = var.vpc_secondary_cidr_block
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -211,18 +209,18 @@ resource "null_resource" "configure_kubectl" {
 
     # Use environment variables to allow custom kubectl config paths
     environment = {
-      KUBECONFIG = "${var.kubectl_config_path != "" ? "${var.kubectl_config_path}" : ""}"
+      KUBECONFIG = var.kubectl_config_path != "" ? var.kubectl_config_path : ""
     }
   }
 
-  depends_on = ["google_container_node_pool.node_pool"]
+  depends_on = [google_container_node_pool.node_pool]
 }
 
 # Create a ServiceAccount for Tiller
 resource "kubernetes_service_account" "tiller" {
   metadata {
     name      = "tiller"
-    namespace = "${local.tiller_namespace}"
+    namespace = local.tiller_namespace
   }
 }
 
@@ -239,7 +237,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 
   subject {
     kind      = "User"
-    name      = "${data.google_client_openid_userinfo.terraform_user.email}"
+    name      = data.google_client_openid_userinfo.terraform_user.email
     api_group = "rbac.authorization.k8s.io"
   }
 
@@ -251,8 +249,8 @@ resource "kubernetes_cluster_role_binding" "user" {
     api_group = ""
 
     kind      = "ServiceAccount"
-    name      = "${kubernetes_service_account.tiller.metadata.0.name}"
-    namespace = "${local.tiller_namespace}"
+    name      = kubernetes_service_account.tiller.metadata[0].name
+    namespace = local.tiller_namespace
   }
 
   subject {
@@ -280,9 +278,9 @@ resource "null_resource" "tiller_tls_certs" {
 
     # Use environment variables for Kubernetes credentials to avoid leaking into the logs
     environment = {
-      KUBECTL_SERVER_ENDPOINT = "${data.template_file.gke_host_endpoint.rendered}"
-      KUBECTL_CA_DATA         = "${base64encode(data.template_file.cluster_ca_certificate.rendered)}"
-      KUBECTL_TOKEN           = "${data.template_file.access_token.rendered}"
+      KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
+      KUBECTL_CA_DATA = base64encode(data.template_file.cluster_ca_certificate.rendered)
+      KUBECTL_TOKEN = data.template_file.access_token.rendered
     }
   }
 }
@@ -292,19 +290,20 @@ resource "null_resource" "tiller_tls_certs" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "tiller" {
-  source = "github.com/gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.3.0"
+  source = "github.com/gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.5.0"
 
-  tiller_service_account_name              = "${kubernetes_service_account.tiller.metadata.0.name}"
-  tiller_service_account_token_secret_name = "${kubernetes_service_account.tiller.default_secret_name}"
-  tiller_tls_secret_name                   = "${local.tls_secret_name}"
-  namespace                                = "${local.tiller_namespace}"
-  tiller_image_version                     = "${local.tiller_version}"
+  tiller_tls_gen_method = "none"
+  tiller_service_account_name = kubernetes_service_account.tiller.metadata[0].name
+  tiller_service_account_token_secret_name = kubernetes_service_account.tiller.default_secret_name
+  tiller_tls_secret_name = local.tls_secret_name
+  namespace = local.tiller_namespace
+  tiller_image_version = local.tiller_version
 
   # Kubergrunt will store the private key under the key "tls.pem" in the corresponding Secret resource, which will be
   # accessed as a file when mounted into the container.
   tiller_tls_key_file_name = "tls.pem"
 
-  dependencies = ["${null_resource.tiller_tls_certs.id}", "${kubernetes_cluster_role_binding.user.id}"]
+  dependencies = [null_resource.tiller_tls_certs.id, kubernetes_cluster_role_binding.user.id]
 }
 
 # The Deployment resources created in the module call to `k8s-tiller` will be complete creation before the rollout is
@@ -316,9 +315,9 @@ resource "null_resource" "wait_for_tiller" {
 
     # Use environment variables for Kubernetes credentials to avoid leaking into the logs
     environment = {
-      KUBECTL_SERVER_ENDPOINT = "${data.template_file.gke_host_endpoint.rendered}"
-      KUBECTL_CA_DATA         = "${base64encode(data.template_file.cluster_ca_certificate.rendered)}"
-      KUBECTL_TOKEN           = "${data.template_file.access_token.rendered}"
+      KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
+      KUBECTL_CA_DATA = base64encode(data.template_file.cluster_ca_certificate.rendered)
+      KUBECTL_TOKEN = data.template_file.access_token.rendered
     }
   }
 }
@@ -337,15 +336,16 @@ resource "null_resource" "grant_and_configure_helm" {
     kubergrunt helm configure --helm-home ${pathexpand("~/.helm")} --tiller-namespace ${local.tiller_namespace} --resource-namespace ${local.resource_namespace} --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
     EOF
 
+
     # Use environment variables for Kubernetes credentials to avoid leaking into the logs
     environment = {
-      KUBECTL_SERVER_ENDPOINT = "${data.template_file.gke_host_endpoint.rendered}"
-      KUBECTL_CA_DATA         = "${base64encode(data.template_file.cluster_ca_certificate.rendered)}"
-      KUBECTL_TOKEN           = "${data.template_file.access_token.rendered}"
+      KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
+      KUBECTL_CA_DATA         = base64encode(data.template_file.cluster_ca_certificate.rendered)
+      KUBECTL_TOKEN           = data.template_file.access_token.rendered
     }
   }
 
-  depends_on = ["null_resource.wait_for_tiller"]
+  depends_on = [null_resource.wait_for_tiller]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -383,13 +383,13 @@ locals {
 # This is a workaround for the Kubernetes and Helm providers as Terraform doesn't currently support passing in module
 # outputs to providers directly.
 data "template_file" "gke_host_endpoint" {
-  template = "${module.gke_cluster.endpoint}"
+  template = module.gke_cluster.endpoint
 }
 
 data "template_file" "access_token" {
-  template = "${data.google_client_config.client.access_token}"
+  template = data.google_client_config.client.access_token
 }
 
 data "template_file" "cluster_ca_certificate" {
-  template = "${module.gke_cluster.cluster_ca_certificate}"
+  template = module.gke_cluster.cluster_ca_certificate
 }
