@@ -105,7 +105,8 @@ resource "google_container_cluster" "cluster" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 locals {
-  kubernetes_version = var.kubernetes_version != "latest" ? var.kubernetes_version : data.google_container_engine_versions.location.latest_node_version
+  latest_version     = data.google_container_engine_versions.location.latest_node_version
+  kubernetes_version = var.kubernetes_version != "latest" ? var.kubernetes_version : local.latest_version
   network_project    = var.network_project != "" ? var.network_project : var.project
 }
 
