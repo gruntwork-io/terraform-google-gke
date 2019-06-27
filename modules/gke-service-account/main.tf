@@ -22,3 +22,9 @@ resource "google_project_iam_member" "service_account-monitoring_viewer" {
   role    = "roles/monitoring.viewer"
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
+
+resource "google_project_iam_member" "service_account-resource-metadata-writer" {
+  project = google_project_iam_member.service_account-monitoring_viewer.project
+  role    = "roles/stackdriver.resourceMetadata.writer"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+}
