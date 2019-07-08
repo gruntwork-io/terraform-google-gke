@@ -37,7 +37,7 @@ Currently, you cannot use a proxy to reach the cluster master of a regional clus
 
 ## How do you run these examples?
 
-1. Install [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) v0.10.3 or later.
+1. Install [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) v0.12.0 or later.
 1. Open `variables.tf` and fill in any required variables that don't have a default.
 1. Run `terraform get`.
 1. Run `terraform plan`.

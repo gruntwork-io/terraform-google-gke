@@ -51,7 +51,7 @@ your new zones are within the region your cluster is present in.
 
 ## How do you run these examples?
 
-1. Install [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) v0.10.3 or later.
+1. Install [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) v0.12.0 or later.
 1. Open `variables.tf`, and fill in any required variables that don't have a default.
 1. Run `terraform get`.
 1. Run `terraform plan`.
