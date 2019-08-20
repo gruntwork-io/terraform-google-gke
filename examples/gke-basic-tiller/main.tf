@@ -279,8 +279,8 @@ resource "null_resource" "tiller_tls_certs" {
     # Use environment variables for Kubernetes credentials to avoid leaking into the logs
     environment = {
       KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
-      KUBECTL_CA_DATA = base64encode(data.template_file.cluster_ca_certificate.rendered)
-      KUBECTL_TOKEN = data.template_file.access_token.rendered
+      KUBECTL_CA_DATA         = base64encode(data.template_file.cluster_ca_certificate.rendered)
+      KUBECTL_TOKEN           = data.template_file.access_token.rendered
     }
   }
 }
@@ -292,12 +292,12 @@ resource "null_resource" "tiller_tls_certs" {
 module "tiller" {
   source = "github.com/gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.5.0"
 
-  tiller_tls_gen_method = "none"
-  tiller_service_account_name = kubernetes_service_account.tiller.metadata[0].name
+  tiller_tls_gen_method                    = "none"
+  tiller_service_account_name              = kubernetes_service_account.tiller.metadata[0].name
   tiller_service_account_token_secret_name = kubernetes_service_account.tiller.default_secret_name
-  tiller_tls_secret_name = local.tls_secret_name
-  namespace = local.tiller_namespace
-  tiller_image_version = local.tiller_version
+  tiller_tls_secret_name                   = local.tls_secret_name
+  namespace                                = local.tiller_namespace
+  tiller_image_version                     = local.tiller_version
 
   # Kubergrunt will store the private key under the key "tls.pem" in the corresponding Secret resource, which will be
   # accessed as a file when mounted into the container.
@@ -316,8 +316,8 @@ resource "null_resource" "wait_for_tiller" {
     # Use environment variables for Kubernetes credentials to avoid leaking into the logs
     environment = {
       KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
-      KUBECTL_CA_DATA = base64encode(data.template_file.cluster_ca_certificate.rendered)
-      KUBECTL_TOKEN = data.template_file.access_token.rendered
+      KUBECTL_CA_DATA         = base64encode(data.template_file.cluster_ca_certificate.rendered)
+      KUBECTL_TOKEN           = data.template_file.access_token.rendered
     }
   }
 }
