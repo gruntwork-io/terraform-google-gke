@@ -31,6 +31,21 @@ resource "google_container_cluster" "cluster" {
 
   initial_node_count = 1
 
+  # If we have an alternative default service account to use, set on the node_config so that the default node pool can
+  # be created successfully.
+  dynamic "node_config" {
+    # Ideally we can do `for_each = var.alternative_default_service_account != null ? [object] : []`, but due to a
+    # terraform bug, this doesn't work. See https://github.com/hashicorp/terraform/issues/21465. So we simulate it using
+    # a for expression.
+    for_each = [
+      for x in [var.alternative_default_service_account] : x if var.alternative_default_service_account != null
+    ]
+
+    content {
+      service_account = node_config.value
+    }
+  }
+
   # ip_allocation_policy.use_ip_aliases defaults to true, since we define the block `ip_allocation_policy`
   ip_allocation_policy {
     // Choose the range, but let GCP pick the IPs within the range

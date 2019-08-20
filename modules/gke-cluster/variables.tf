@@ -110,38 +110,44 @@ variable "master_authorized_networks_config" {
   }]
   
 EOF
-  type = list(any)
-  default = []
+  type        = list(any)
+  default     = []
 }
 
 variable "maintenance_start_time" {
   description = "Time window specified for daily maintenance operations in RFC3339 format"
-  type = string
-  default = "05:00"
+  type        = string
+  default     = "05:00"
 }
 
 variable "stub_domains" {
   description = "Map of stub domains and their resolvers to forward DNS queries for a certain domain to an external DNS server"
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 }
 
 variable "non_masquerade_cidrs" {
   description = "List of strings in CIDR notation that specify the IP address ranges that do not use IP masquerading."
-  type = list(string)
-  default = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+  type        = list(string)
+  default     = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
 }
 
 variable "ip_masq_resync_interval" {
   description = "The interval at which the agent attempts to sync its ConfigMap file from the disk."
-  type = string
-  default = "60s"
+  type        = string
+  default     = "60s"
 }
 
 variable "ip_masq_link_local" {
   description = "Whether to masquerade traffic to the link-local prefix (169.254.0.0/16)."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
+}
+
+variable "alternative_default_service_account" {
+  description = "Alternative Service Account to be used by the Node VMs. If not specified, the default compute Service Account will be used. Provide if the default Service Account is no longer available."
+  type        = string
+  default     = null
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -151,36 +157,36 @@ variable "ip_masq_link_local" {
 
 variable "enable_kubernetes_dashboard" {
   description = "Whether to enable the Kubernetes Web UI (Dashboard). The Web UI requires a highly privileged security account."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "enable_legacy_abac" {
   description = "Whether to enable legacy Attribute-Based Access Control (ABAC). RBAC has significant security advantages over ABAC."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "enable_network_policy" {
   description = "Whether to enable Kubernetes NetworkPolicy on the master, which is required to be enabled to be used on Nodes."
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "basic_auth_username" {
   description = "The username used for basic auth; set both this and `basic_auth_password` to \"\" to disable basic auth."
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "basic_auth_password" {
   description = "The password used for basic auth; set both this and `basic_auth_username` to \"\" to disable basic auth."
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "enable_client_certificate_authentication" {
   description = "Whether to enable authentication by x509 certificates. With ABAC disabled, these certificates are effectively useless."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
