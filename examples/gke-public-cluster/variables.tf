@@ -56,3 +56,14 @@ variable "vpc_secondary_cidr_block" {
   type        = string
   default     = "10.7.0.0/16"
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# TEST PARAMETERS
+# These parameters are only used during testing and should not be touched.
+# ---------------------------------------------------------------------------------------------------------------------
+
+variable "override_default_node_pool_service_account" {
+  description = "When true, this will use the service account that is created for use with the default node pool that comes with all GKE clusters"
+  type        = bool
+  default     = false
+}

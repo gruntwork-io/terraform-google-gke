@@ -19,16 +19,24 @@ func TestGKECluster(t *testing.T) {
 	t.Parallel()
 
 	var testcases = []struct {
-		testName      string
-		exampleFolder string
+		testName          string
+		exampleFolder     string
+		overrideDefaultSA bool
 	}{
 		{
 			"PublicCluster",
 			"gke-public-cluster",
+			false,
 		},
 		{
 			"PrivateCluster",
 			"gke-private-cluster",
+			false,
+		},
+		{
+			"PublicClusterWithCustomSA",
+			"gke-public-cluster",
+			true,
 		},
 	}
 
@@ -65,7 +73,10 @@ func TestGKECluster(t *testing.T) {
 				uniqueID := random.UniqueId()
 				project := gcp.GetGoogleProjectIDFromEnvVar(t)
 				region := gcp.GetRandomRegion(t, project, nil, nil)
-				gkeClusterTerratestOptions := createTestGKEClusterTerraformOptions(t, uniqueID, project, region,gkeClusterTerraformModulePath)
+				gkeClusterTerratestOptions := createTestGKEClusterTerraformOptions(t, uniqueID, project, region, gkeClusterTerraformModulePath)
+				if testCase.overrideDefaultSA {
+					gkeClusterTerratestOptions.Vars["override_default_node_pool_service_account"] = "1"
+				}
 				test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 				test_structure.SaveString(t, workingDir, "project", project)
 				test_structure.SaveString(t, workingDir, "region", region)
