@@ -23,8 +23,15 @@ resource "google_project_iam_member" "service_account-monitoring_viewer" {
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
 
-resource "google_project_iam_member" "service_account-resource-metadata-writer" {
+resource "google_project_iam_member" "service_account-resource_metadata_writer" {
   project = google_project_iam_member.service_account-monitoring_viewer.project
   role    = "roles/stackdriver.resourceMetadata.writer"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+}
+
+# Necessary for pulling images from the Container Registry
+resource "google_project_iam_member" "service_account-storage_object_viewer" {
+  project = google_project_iam_member.service_account-resource_metadata_writer.project
+  role    = "roles/storage.objectViewer"
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
