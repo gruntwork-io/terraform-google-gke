@@ -23,3 +23,9 @@ variable "description" {
   type        = string
   default     = ""
 }
+
+variable "service_account_roles" {
+  description = "Additional roles to be added to the service account."
+  type        = list(string)
+  default     = []
+}
