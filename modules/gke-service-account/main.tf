@@ -1,14 +1,26 @@
+# ----------------------------------------------------------------------------------------------------------------------
+# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
+# This module uses terraform 0.12 syntax and features that are available only
+# since version 0.12.6
+# ----------------------------------------------------------------------------------------------------------------------
 terraform {
   required_version = ">= 0.12.6"
 }
 
+# ----------------------------------------------------------------------------------------------------------------------
+# CREATE SERVICE ACCOUNT
+# ----------------------------------------------------------------------------------------------------------------------
 resource "google_service_account" "service_account" {
   project      = var.project
   account_id   = var.name
   display_name = var.description
 }
 
+# ----------------------------------------------------------------------------------------------------------------------
+# ADD ROLES TO SERVICE ACCOUNT
 # Grant the service account the minimum necessary roles and permissions in order to run the GKE cluster
+# plus any other roles added through the 'service_account_roles' variable
+# ----------------------------------------------------------------------------------------------------------------------
 locals {
   all_service_account_roles = concat(var.service_account_roles, [
     "roles/logging.logWriter",
