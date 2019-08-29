@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.12.6"
+}
+
 resource "google_service_account" "service_account" {
   project      = var.project
   account_id   = var.name
