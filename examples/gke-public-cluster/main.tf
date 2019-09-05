@@ -15,13 +15,13 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 provider "google" {
-  version = "~> 2.7.0"
+  version = "~> 2.10.0"
   project = var.project
   region  = var.region
 }
 
 provider "google-beta" {
-  version = "~> 2.7.0"
+  version = "~> 2.10.0"
   project = var.project
   region  = var.region
 }
@@ -139,7 +139,7 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.1"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.4"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
   project     = var.project

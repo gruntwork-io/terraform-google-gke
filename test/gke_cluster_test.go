@@ -73,12 +73,13 @@ func TestGKECluster(t *testing.T) {
 				uniqueID := random.UniqueId()
 				project := gcp.GetGoogleProjectIDFromEnvVar(t)
 				region := gcp.GetRandomRegion(t, project, nil, nil)
-				gkeClusterTerratestOptions := createTestGKEClusterTerraformOptions(t, uniqueID, project, region, gkeClusterTerraformModulePath)
+				gkeClusterTerratestOptions := createTestGKEClusterTerraformOptions(t, uniqueID, project, region, region, gkeClusterTerraformModulePath)
 				if testCase.overrideDefaultSA {
 					gkeClusterTerratestOptions.Vars["override_default_node_pool_service_account"] = "1"
 				}
 				test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 				test_structure.SaveString(t, workingDir, "project", project)
+				test_structure.SaveString(t, workingDir, "location", region)
 				test_structure.SaveString(t, workingDir, "region", region)
 				test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)
 				test_structure.SaveKubectlOptions(t, workingDir, kubectlOptions)
@@ -102,13 +103,13 @@ func TestGKECluster(t *testing.T) {
 				gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 				kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 				project := test_structure.LoadString(t, workingDir, "project")
-				region := test_structure.LoadString(t, workingDir, "region")
+				location := test_structure.LoadString(t, workingDir, "location")
 				clusterName := gkeClusterTerratestOptions.Vars["cluster_name"].(string)
 
 				// gcloud beta container clusters get-credentials example-cluster --region australia-southeast1 --project dev-sandbox-123456
 				cmd := shell.Command{
 					Command: "gcloud",
-					Args:    []string{"beta", "container", "clusters", "get-credentials", clusterName, "--region", region, "--project", project},
+					Args:    []string{"beta", "container", "clusters", "get-credentials", clusterName, "--region", location, "--project", project},
 					Env: map[string]string{
 						"KUBECONFIG": kubectlOptions.ConfigPath,
 					},

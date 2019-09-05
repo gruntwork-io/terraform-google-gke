@@ -20,9 +20,9 @@ func createTestGKEBasicTillerTerraformOptions(
 	gkeServiceAccountName := strings.ToLower(fmt.Sprintf("gke-cluster-sa-%s", uniqueID))
 
 	terraformVars := map[string]interface{}{
-		"region":                       region,
-		"location":                     region,
 		"project":                      project,
+		"location":                     region,
+		"region":                       region,
 		"cluster_name":                 gkeClusterName,
 		"cluster_service_account_name": gkeServiceAccountName,
 		"tls_subject": map[string]string{
@@ -50,6 +50,7 @@ func createTestGKEClusterTerraformOptions(
 	t *testing.T,
 	uniqueID,
 	project string,
+	location string,
 	region string,
 	templatePath string,
 ) *terraform.Options {
@@ -57,9 +58,9 @@ func createTestGKEClusterTerraformOptions(
 	gkeServiceAccountName := strings.ToLower(fmt.Sprintf("gke-cluster-sa-%s", uniqueID))
 
 	terraformVars := map[string]interface{}{
-		"region":                       region,
-		"location":                     region,
 		"project":                      project,
+		"location":                     location,
+		"region":                       region,
 		"cluster_name":                 gkeClusterName,
 		"cluster_service_account_name": gkeServiceAccountName,
 	}
