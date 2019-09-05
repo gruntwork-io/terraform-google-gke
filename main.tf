@@ -14,7 +14,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 provider "google" {
-  version = "~> 2.7.0"
+  version = "~> 2.10.0"
   project = var.project
   region  = var.region
 
@@ -31,7 +31,7 @@ provider "google" {
 }
 
 provider "google-beta" {
-  version = "~> 2.7.0"
+  version = "~> 2.10.0"
   project = var.project
   region  = var.region
 
@@ -209,7 +209,7 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.1"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.4"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
   project     = var.project
@@ -226,7 +226,7 @@ module "vpc_network" {
 # configure kubectl with the credentials of the GKE cluster
 resource "null_resource" "configure_kubectl" {
   provisioner "local-exec" {
-    command = "gcloud beta container clusters get-credentials ${module.gke_cluster.name} --region ${var.region} --project ${var.project}"
+    command = "gcloud beta container clusters get-credentials ${module.gke_cluster.name} ${local.is_zonal ? "--zone" : "--region"} ${var.location} --project ${var.project}"
 
     # Use environment variables to allow custom kubectl config paths
     environment = {
@@ -372,6 +372,9 @@ resource "null_resource" "grant_and_configure_helm" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 locals {
+  # Whether or not the cluster is zonal (or regional)
+  is_zonal = length(regexall("(.+)-(.+)-(.+)", var.location)) > 0
+
   # For this example, we hardcode our tiller namespace to kube-system. In production, you might want to consider using a
   # different Namespace.
   tiller_namespace = "kube-system"
