@@ -1,10 +1,10 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module uses terraform 0.12 syntax and features that are available only
-# since version 0.12.6
+# This module uses terraform 0.12 syntax and features that are available only since version 0.12.6, however
+# we now depend on a bug fix released in 0.12.7.
 # ----------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 0.12.6"
+  required_version = ">= 0.12.7"
 }
 
 # ----------------------------------------------------------------------------------------------------------------------

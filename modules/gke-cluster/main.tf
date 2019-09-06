@@ -3,6 +3,15 @@
 # This module deploys a GKE cluster, a managed, production-ready environment for deploying containerized applications.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# ----------------------------------------------------------------------------------------------------------------------
+# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
+# This module uses terraform 0.12 syntax and features that are available only since version 0.12.6, however
+# we now depend on a bug fix released in 0.12.7.
+# ----------------------------------------------------------------------------------------------------------------------
+terraform {
+  required_version = ">= 0.12.7"
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Create the GKE Cluster
 # We want to make a cluster with no node pools, and manage them all with the fine-grained google_container_node_pool resource
