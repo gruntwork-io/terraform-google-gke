@@ -12,11 +12,22 @@ import (
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGKECluster(t *testing.T) {
 	t.Parallel()
+
+	// For convenience - uncomment these when doing local testing if you need to skip any sections.
+	//os.Setenv("SKIP_", "true")  // Does not skip any sections, but avoids copying to a temp dir
+	//os.Setenv("SKIP_create_test_copy_of_examples", "true")
+	//os.Setenv("SKIP_create_terratest_options", "true")
+	//os.Setenv("SKIP_terraform_apply", "true")
+	//os.Setenv("SKIP_configure_kubectl", "true")
+	//os.Setenv("SKIP_wait_for_workers", "true")
+	//os.Setenv("SKIP_terraform_verify_plan_noop", "true")
+	//os.Setenv("SKIP_cleanup", "true")
 
 	var testcases = []struct {
 		testName          string
@@ -47,14 +58,6 @@ func TestGKECluster(t *testing.T) {
 
 		t.Run(testCase.testName, func(t *testing.T) {
 			t.Parallel()
-
-			// Uncomment any of the following to skip that section during the test
-			//os.Setenv("SKIP_create_test_copy_of_examples", "true")
-			//os.Setenv("SKIP_create_terratest_options", "true")
-			//os.Setenv("SKIP_terraform_apply", "true")
-			//os.Setenv("SKIP_configure_kubectl", "true")
-			//os.Setenv("SKIP_wait_for_workers", "true")
-			//os.Setenv("SKIP_cleanup", "true")
 
 			// Create a directory path that won't conflict
 			workingDir := filepath.Join(".", "stages", testCase.testName)
@@ -120,6 +123,12 @@ func TestGKECluster(t *testing.T) {
 			test_structure.RunTestStage(t, "wait_for_workers", func() {
 				kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 				verifyGkeNodesAreReady(t, kubectlOptions)
+			})
+
+			test_structure.RunTestStage(t, "terraform_verify_plan_noop", func() {
+				gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
+				exitCode := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
+				assert.Equal(t, exitCode, 0)
 			})
 		})
 	}
