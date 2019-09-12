@@ -331,7 +331,7 @@ resource "null_resource" "wait_for_tiller" {
 resource "null_resource" "grant_and_configure_helm" {
   provisioner "local-exec" {
     command = <<-EOF
-    kubergrunt helm grant --tiller-namespace ${local.tiller_namespace} --tls-subject-json '${jsonencode(var.client_tls_subject)}' --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
+    kubergrunt helm grant --tiller-namespace ${local.tiller_namespace} --tls-subject-json '${jsonencode(var.client_tls_subject)}' --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.tls_algorithm_config} ${local.kubectl_auth_config}
 
     kubergrunt helm configure --helm-home ${pathexpand("~/.helm")} --tiller-namespace ${local.tiller_namespace} --resource-namespace ${local.resource_namespace} --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
     EOF
