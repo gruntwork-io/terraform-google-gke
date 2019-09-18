@@ -125,3 +125,12 @@ Private clusters have the following restrictions and limitations:
 * Deleting the VPC peering between the cluster master and the cluster nodes, deleting the firewall rules that allow 
 ingress traffic from the cluster master to nodes on port 10250, or deleting the default route to the default 
 Internet gateway, causes a private cluster to stop functioning.
+
+## How do I configure the cluster to use Google Groups for GKE?
+
+If you want to enable Google Groups for use with RBAC, you have to provide a G Suite domain name using input variable `var.gsuite_domain_name`. If a 
+value is provided, the cluster will be initialised with a security group `gke-security-groups@[yourdomain.com]`. After the 
+cluster has been created, you are ready to create Roles, ClusterRoles, RoleBindings, and ClusterRoleBindings that reference 
+your G Suite Google Groups. Note that you cannot enable this feature on existing clusters.
+
+For more information, see https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#google-groups-for-gke.
