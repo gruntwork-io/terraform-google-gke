@@ -129,8 +129,15 @@ Internet gateway, causes a private cluster to stop functioning.
 ## How do I configure the cluster to use Google Groups for GKE?
 
 If you want to enable Google Groups for use with RBAC, you have to provide a G Suite domain name using input variable `var.gsuite_domain_name`. If a 
-value is provided, the cluster will be initialised with a security group `gke-security-groups@[yourdomain.com]`. After the 
-cluster has been created, you are ready to create Roles, ClusterRoles, RoleBindings, and ClusterRoleBindings that reference 
-your G Suite Google Groups. Note that you cannot enable this feature on existing clusters.
+value is provided, the cluster will be initialised with a security group `gke-security-groups@[yourdomain.com]`. 
+
+In G Suite, you will have to:
+
+1. Create a G Suite Google Group in your domain, named gke-security-groups@[yourdomain.com]. The group must be named exactly gke-security-groups.
+1. Create groups, if they do not already exist, that represent groups of users or groups who should have different permissions on your clusters.
+1. Add these groups (not users) to the membership of gke-security-groups@[yourdomain.com].
+
+After the cluster has been created, you are ready to create Roles, ClusterRoles, RoleBindings, and ClusterRoleBindings 
+that reference your G Suite Google Groups. Note that you cannot enable this feature on existing clusters. 
 
 For more information, see https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#google-groups-for-gke.
