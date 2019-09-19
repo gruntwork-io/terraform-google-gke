@@ -18,6 +18,8 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "google_container_cluster" "cluster" {
+  provider = "google-beta"
+
   name        = var.name
   description = var.description
 
@@ -129,6 +131,17 @@ resource "google_container_cluster" "cluster" {
       # the GKE cluster in the initial creation. As such, any changes to the `node_config` should be ignored.
       "node_config",
     ]
+  }
+
+  # If a var.gsuite_domain_name is non-empty, initialize the cluster with a G Suite security group
+  dynamic "authenticator_groups_config" {
+    for_each = [
+      for x in [var.gsuite_domain_name] : x if var.gsuite_domain_name != null
+    ]
+
+    content {
+      security_group = "gke-security-groups@${authenticator_groups_config.value}"
+    }
   }
 }
 
