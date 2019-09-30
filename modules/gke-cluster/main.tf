@@ -133,7 +133,7 @@ resource "google_container_cluster" "cluster" {
     ]
   }
 
-  # If a var.gsuite_domain_name is non-empty, initialize the cluster with a G Suite security group
+  # If var.gsuite_domain_name is non-empty, initialize the cluster with a G Suite security group
   dynamic "authenticator_groups_config" {
     for_each = [
       for x in [var.gsuite_domain_name] : x if var.gsuite_domain_name != null
@@ -141,6 +141,18 @@ resource "google_container_cluster" "cluster" {
 
     content {
       security_group = "gke-security-groups@${authenticator_groups_config.value}"
+    }
+  }
+
+  # If var.secrets_encryption_kms_key is non-empty, create ´database_encryption´ -block to encrypt secrets at rest in etcd
+  dynamic "database_encryption" {
+    for_each = [
+      for x in [var.secrets_encryption_kms_key] : x if var.secrets_encryption_kms_key != null
+    ]
+
+    content {
+      state    = "ENCRYPTED"
+      key_name = database_encryption.value
     }
   }
 }
