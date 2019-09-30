@@ -199,7 +199,7 @@ variable "gsuite_domain_name" {
 }
 
 variable "secrets_encryption_kms_key" {
-  description = "The CloudKMS key to use for the encryption of secrets in etcd, ex. projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key"
+  description = "The Cloud KMS key to use for the encryption of secrets in etcd, e.g: projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key"
   type        = string
   default     = null
 }
