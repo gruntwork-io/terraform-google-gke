@@ -88,6 +88,12 @@ resource "google_container_cluster" "cluster" {
     network_policy_config {
       disabled = ! var.enable_network_policy
     }
+
+    istio_config {
+      disabled = ! var.enable_istio
+      auth = var.istio_auth
+    }
+
   }
 
   network_policy {

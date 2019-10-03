@@ -67,3 +67,10 @@ variable "override_default_node_pool_service_account" {
   type        = bool
   default     = false
 }
+
+variable "enable_istio" {
+  description = "The status of the Istio addon."
+  type        = bool
+  default     = true
+}
+

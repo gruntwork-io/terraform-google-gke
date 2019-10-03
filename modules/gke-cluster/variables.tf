@@ -150,6 +150,18 @@ variable "alternative_default_service_account" {
   default     = null
 }
 
+variable "enable_istio" {
+  description = "The status of the Istio addon, which makes it easy to set up Istio for services in a cluster. It is disabled by default."
+  type        = bool
+  default     = false
+}
+
+variable "istio_auth" {
+  description = "(Optional) The authentication type between services in Istio. Available options include AUTH_MUTUAL_TLS"
+  type        = string
+  default     = null
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS - RECOMMENDED DEFAULTS
 # These values shouldn't be changed; they're following the best practices defined at https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster
