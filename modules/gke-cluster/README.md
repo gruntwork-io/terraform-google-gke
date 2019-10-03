@@ -141,3 +141,9 @@ After the cluster has been created, you are ready to create Roles, ClusterRoles,
 that reference your G Suite Google Groups. Note that you cannot enable this feature on existing clusters. 
 
 For more information, see https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#google-groups-for-gke.
+
+## Experimental features
+
+### ISTIO addon
+
+Please be aware that enabling istio on the cluster disables all cross pod network access by default. Network policies for GKE should be configured separetly.
