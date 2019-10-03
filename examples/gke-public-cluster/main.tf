@@ -48,7 +48,6 @@ module "gke_cluster" {
 
   subnetwork                          = module.vpc_network.public_subnetwork
   cluster_secondary_range_name        = module.vpc_network.public_subnetwork_secondary_range_name
-  enable_istio                        = var.enable_istio
   alternative_default_service_account = var.override_default_node_pool_service_account ? module.gke_service_account.email : null
 }
 
