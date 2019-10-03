@@ -150,18 +150,6 @@ variable "alternative_default_service_account" {
   default     = null
 }
 
-variable "enable_istio" {
-  description = "The status of the Istio addon, which makes it easy to set up Istio for services in a cluster. It is disabled by default."
-  type        = bool
-  default     = false
-}
-
-variable "istio_auth" {
-  description = "(Optional) The authentication type between services in Istio. Available options include AUTH_MUTUAL_TLS"
-  type        = string
-  default     = null
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS - RECOMMENDED DEFAULTS
 # These values shouldn't be changed; they're following the best practices defined at https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster
@@ -212,6 +200,23 @@ variable "gsuite_domain_name" {
 
 variable "secrets_encryption_kms_key" {
   description = "The Cloud KMS key to use for the encryption of secrets in etcd, e.g: projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key"
+  type        = string
+  default     = null
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# OPTIONAL PARAMETERS - Experimental FEATURES
+# These values sholdn't be changed unless you know what you are doing
+# ---------------------------------------------------------------------------------------------------------------------
+
+variable "enable_istio" {
+  description = "The status of the Istio addon, which makes it easy to set up Istio for services in a cluster. It is disabled by default."
+  type        = bool
+  default     = false
+}
+
+variable "istio_auth" {
+  description = "(Optional) The authentication type between services in Istio. Available options include AUTH_MUTUAL_TLS"
   type        = string
   default     = null
 }
