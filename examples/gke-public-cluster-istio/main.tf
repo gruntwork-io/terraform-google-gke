@@ -41,6 +41,9 @@ module "gke_cluster" {
   project  = var.project
   location = var.location
 
+  # enable istio
+  enable_istio = var.enable_istio
+
   # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier

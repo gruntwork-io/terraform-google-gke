@@ -35,6 +35,11 @@ func TestGKECluster(t *testing.T) {
 		overrideDefaultSA bool
 	}{
 		{
+			"PublicCluster-istio",
+			"gke-public-cluster-istio",
+			false,
+		},
+		{
 			"PublicCluster",
 			"gke-public-cluster",
 			false,
