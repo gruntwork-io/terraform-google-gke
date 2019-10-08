@@ -67,16 +67,3 @@ variable "override_default_node_pool_service_account" {
   type        = bool
   default     = false
 }
-
-# ---------------------------------------------------------------------------------------------------------------------
-# OPTIONAL PARAMETERS - Experimental FEATURES
-# These values sholdn't be changed unless you know what you are doing
-# ---------------------------------------------------------------------------------------------------------------------
-
-variable "enable_istio" {
-  description = "The status of the Istio addon, which makes it easy to set up Istio for services in a cluster. It is disabled by default."
-  type        = bool
-  default     = true
-}
-
-
