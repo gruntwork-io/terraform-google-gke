@@ -26,13 +26,13 @@ variable "region" {
 variable "cluster_name" {
   description = "The name of the Kubernetes cluster."
   type        = string
-  default     = "example-cluster"
+  default     = "example-cluster-istio"
 }
 
 variable "cluster_service_account_name" {
   description = "The name of the custom service account used for the GKE cluster. This parameter is limited to a maximum of 28 characters."
   type        = string
-  default     = "example-cluster-sa"
+  default     = "example-cluster-sa-istio"
 }
 
 variable "cluster_service_account_description" {
@@ -46,7 +46,7 @@ variable "cluster_service_account_description" {
 variable "vpc_cidr_block" {
   description = "The IP address range of the VPC in CIDR notation. A prefix of /16 is recommended. Do not use a prefix higher than /27."
   type        = string
-  default     = "10.6.0.0/16"
+  default     = "10.12.0.0/16"
 }
 
 # For the example, we recommend a /16 network for the secondary range. Note that when changing the size of the network,
@@ -54,7 +54,7 @@ variable "vpc_cidr_block" {
 variable "vpc_secondary_cidr_block" {
   description = "The IP address range of the VPC's secondary address range in CIDR notation. A prefix of /16 is recommended. Do not use a prefix higher than /27."
   type        = string
-  default     = "10.7.0.0/16"
+  default     = "10.11.0.0/16"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
