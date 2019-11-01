@@ -11,7 +11,6 @@ component of Helm.
 We strongly recommend reading [our guide on Helm](https://github.com/gruntwork-io/kubergrunt/blob/master/HELM_GUIDE.md)
 before continuing with this guide for a background on Helm, Tiller, and the security model backing it.
 
-
 ## Overview
 
 In this guide we will walk through the steps necessary to get up and running with deploying Tiller on GKE using this
@@ -30,7 +29,7 @@ we use `kubergrunt` to manage the TLS certificate key pairs for Tiller. You can 
 approach in [the Appendix](#appendix-a-why-kubergrunt) of this guide.
 
 This means that your system needs to be configured to be able to find `terraform`, `gcloud`, `kubectl`, `kubergrunt`,
-and `helm` client utilities on the system `PATH`. Here are the installation guide for each tool:
+and `helm` client utilities on the system `PATH`. Here are the installation guides for each tool:
 
 1. [`gcloud`](https://cloud.google.com/sdk/gcloud/)
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
@@ -49,16 +48,16 @@ Windows.
 Now that all the prerequisite tools are installed, we are ready to deploy the GKE cluster with Tiller installed!
 
 1. If you haven't already, clone this repo:
-    - `git clone https://github.com/gruntwork-io/terraform-google-gke.git`
+   - `git clone https://github.com/gruntwork-io/terraform-google-gke.git`
 1. Make sure you are in the `gke-basic-tiller` example folder:
-    - `cd examples/gke-basic-tiller`
+   - `cd examples/gke-basic-tiller`
 1. Initialize terraform:
-    - `terraform init`
+   - `terraform init`
 1. Check the terraform plan:
-    - `terraform plan`
+   - `terraform plan`
 1. Apply the terraform code:
-    - `terraform apply`
-    - Fill in the required variables based on your needs. <!-- TODO: show example inputs here -->
+   - `terraform apply`
+   - Fill in the required variables based on your needs. <!-- TODO: show example inputs here -->
 
 **Note:** For simplicity this example installs Tiller into the `kube-system` namespace. However in a production
 deployment we strongly recommend you segregate the Tiller resources into a separate namespace.
@@ -67,28 +66,32 @@ This Terraform code will:
 
 - Deploy a publicly accessible GKE cluster
 - Use `kubergrunt` to:
-    - Create a new TLS certificate key pair to use as the CA and upload it to Kubernetes as a `Secret` in the
-      `kube-system` namespace.
-    - Using the generated CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the
-      Tiller server and upload it to Kubernetes as a `Secret` in `kube-system`.
+
+  - Create a new TLS certificate key pair to use as the CA and upload it to Kubernetes as a `Secret` in the
+    `kube-system` namespace.
+  - Using the generated CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the
+    Tiller server and upload it to Kubernetes as a `Secret` in `kube-system`.
 
 - Create a new `ServiceAccount` for Tiller in the `kube-system` namespace and bind admin permissions to it.
 - Deploy Tiller with the following configurations turned on:
-    - TLS verification
-    - `Secrets` as the storage engine
-    - Provisioned in the `kube-system` namespace using the `default` service account.
+
+  - TLS verification
+  - `Secrets` as the storage engine
+  - Provisioned in the `kube-system` namespace using the `default` service account.
 
 - Once Tiller is deployed, once again call out to `kubergrunt` to grant access to the provided RBAC entity and configure
   the local helm client to use those credentials:
-    - Using the CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the client.
-    - Upload the certificate key pair to the `kube-system`.
-    - Grant the RBAC entity access to:
-        - Get the client certificate `Secret` (`kubergrunt helm configure` uses this to install the client certificate
-          key pair locally)
-        - Get and List pods in `kube-system` namespace (the `helm` client uses this to find the Tiller pod)
-        - Create a port forward to the Tiller pod (the `helm` client uses this to make requests to the Tiller pod)
 
-    - Install the client certificate key pair to the helm home directory so the client can use it.
+  - Using the CA TLS certificate key pair, create a signed TLS certificate key pair to use to identify the client.
+  - Upload the certificate key pair to the `kube-system`.
+  - Grant the RBAC entity access to:
+
+    - Get the client certificate `Secret` (`kubergrunt helm configure` uses this to install the client certificate
+      key pair locally)
+    - Get and List pods in `kube-system` namespace (the `helm` client uses this to find the Tiller pod)
+    - Create a port forward to the Tiller pod (the `helm` client uses this to make requests to the Tiller pod)
+
+  - Install the client certificate key pair to the helm home directory so the client can use it.
 
 At the end of the `terraform apply`, you should now have a working Tiller deployment with your helm client configured to
 access it. So let's verify that in the next step!
