@@ -9,20 +9,20 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_cluster" {
-  source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.1.0"
+  source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-cluster?ref=v0.3.9"
 
-  name = "${var.cluster_name}"
+  name = var.cluster_name
 
-  project  = "${var.project}"
-  location = "${var.location}"
+  project  = var.project
+  location = var.location
 
   # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
-  network = "${module.vpc_network.network}"
+  network = module.vpc_network.network
 
-  subnetwork                   = "${module.vpc_network.public_subnetwork}"
-  cluster_secondary_range_name = "${module.vpc_network.public_subnetwork_secondary_range_name}"
+  subnetwork                   = module.vpc_network.public_subnetwork
+  cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -30,12 +30,12 @@ module "gke_cluster" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "google_container_node_pool" "node_pool" {
-  provider = "google-beta"
+  provider = google-beta
 
   name     = "main-pool"
-  project  = "${var.project}"
-  location = "${var.location}"
-  cluster  = "${module.gke_cluster.name}"
+  project  = var.project
+  location = var.location
+  cluster  = module.gke_cluster.name
 
   initial_node_count = "1"
 
@@ -60,7 +60,7 @@ resource "google_container_node_pool" "node_pool" {
     # Add a public tag to the instances. See the network access tier table for full details:
     # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
     tags = [
-      "${module.vpc_network.public}",
+      module.vpc_network.public,
       "tiller-example",
     ]
 
@@ -68,7 +68,7 @@ resource "google_container_node_pool" "node_pool" {
     disk_type    = "pd-standard"
     preemptible  = false
 
-    service_account = "${module.gke_service_account.email}"
+    service_account = module.gke_service_account.email
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
@@ -76,7 +76,7 @@ resource "google_container_node_pool" "node_pool" {
   }
 
   lifecycle {
-    ignore_changes = ["initial_node_count"]
+    ignore_changes = [initial_node_count]
   }
 
   timeouts {
@@ -91,11 +91,11 @@ resource "google_container_node_pool" "node_pool" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "gke_service_account" {
-  source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.1.0"
+  source = "github.com/gruntwork-io/terraform-google-gke.git//modules/gke-service-account?ref=v0.3.9"
 
-  name        = "${var.cluster_service_account_name}"
-  project     = "${var.project}"
-  description = "${var.cluster_service_account_description}"
+  name        = var.cluster_service_account_name
+  project     = var.project
+  description = var.cluster_service_account_description
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -109,14 +109,14 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.1.0"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.8"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
-  project     = "${var.project}"
-  region      = "${var.region}"
+  project     = var.project
+  region      = var.region
 
-  cidr_block           = "${var.vpc_cidr_block}"
-  secondary_cidr_block = "${var.vpc_secondary_cidr_block}"
+  cidr_block           = var.vpc_cidr_block
+  secondary_cidr_block = var.vpc_secondary_cidr_block
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -132,9 +132,9 @@ data "google_client_openid_userinfo" "terraform_user" {}
 provider "kubernetes" {
   load_config_file = false
 
-  host                   = "${data.template_file.gke_host_endpoint.rendered}"
-  token                  = "${data.template_file.access_token.rendered}"
-  cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
+  host                   = data.template_file.gke_host_endpoint.rendered
+  token                  = data.template_file.access_token.rendered
+  cluster_ca_certificate = data.template_file.cluster_ca_certificate.rendered
 }
 
 provider "helm" {
@@ -146,15 +146,15 @@ provider "helm" {
 
   # We can remove the following parameters after Yori's PR is released:
   # https://github.com/terraform-providers/terraform-provider-helm/pull/210
-  client_key = "${pathexpand("~/.helm/key.pem")}"
+  client_key = pathexpand("~/.helm/key.pem")
 
-  client_certificate = "${pathexpand("~/.helm/cert.pem")}"
-  ca_certificate     = "${pathexpand("~/.helm/ca.pem")}"
+  client_certificate = pathexpand("~/.helm/cert.pem")
+  ca_certificate     = pathexpand("~/.helm/ca.pem")
 
   kubernetes {
-    host                   = "${data.template_file.gke_host_endpoint.rendered}"
-    token                  = "${data.template_file.access_token.rendered}"
-    cluster_ca_certificate = "${data.template_file.cluster_ca_certificate.rendered}"
+    host                   = data.template_file.gke_host_endpoint.rendered
+    token                  = data.template_file.access_token.rendered
+    cluster_ca_certificate = data.template_file.cluster_ca_certificate.rendered
   }
 }
 
@@ -168,7 +168,7 @@ resource "null_resource" "configure_kubectl" {
     command = "gcloud beta container clusters get-credentials ${module.gke_cluster.name} --region ${var.region} --project ${var.project}"
   }
 
-  depends_on = ["google_container_node_pool.node_pool"]
+  depends_on = [google_container_node_pool.node_pool]
 }
 
 resource "kubernetes_cluster_role_binding" "user" {
@@ -184,7 +184,7 @@ resource "kubernetes_cluster_role_binding" "user" {
 
   subject {
     kind      = "User"
-    name      = "${data.google_client_openid_userinfo.terraform_user.email}"
+    name      = data.google_client_openid_userinfo.terraform_user.email
     api_group = "rbac.authorization.k8s.io"
   }
 
@@ -217,10 +217,10 @@ resource "null_resource" "tiller" {
 
   provisioner "local-exec" {
     command = "./kubergrunt helm undeploy --force --helm-home ${pathexpand("~/.helm")} --tiller-namespace kube-system ${local.undeploy_args}"
-    when    = "destroy"
+    when    = destroy
   }
 
-  depends_on = ["null_resource.configure_kubectl", "kubernetes_cluster_role_binding.user"]
+  depends_on = [null_resource.configure_kubectl, kubernetes_cluster_role_binding.user]
 }
 
 # Interpolate and construct kubergrunt deploy command args
@@ -237,13 +237,13 @@ locals {
 # This is a workaround for the Kubernetes and Helm providers as Terraform doesn't currently support passing in module
 # outputs to providers directly.
 data "template_file" "gke_host_endpoint" {
-  template = "${module.gke_cluster.endpoint}"
+  template = module.gke_cluster.endpoint
 }
 
 data "template_file" "access_token" {
-  template = "${data.google_client_config.client.access_token}"
+  template = data.google_client_config.client.access_token
 }
 
 data "template_file" "cluster_ca_certificate" {
-  template = "${module.gke_cluster.cluster_ca_certificate}"
+  template = module.gke_cluster.cluster_ca_certificate
 }

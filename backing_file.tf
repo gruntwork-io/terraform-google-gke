@@ -10,9 +10,9 @@ terraform {
 }
 
 provider "google" {
-  version = "~> 2.6.0"
-  project = "${var.project}"
-  region  = "${var.region}"
+  version = "~> 2.9.0"
+  project = var.project
+  region  = var.region
 
   scopes = [
     # Default scopes
@@ -28,9 +28,9 @@ provider "google" {
 }
 
 provider "google-beta" {
-  version = "~> 2.6.0"
-  project = "${var.project}"
-  region  = "${var.region}"
+  version = "~> 2.9.0"
+  project = var.project
+  region  = var.region
 
   scopes = [
     # Default scopes
