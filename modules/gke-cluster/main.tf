@@ -18,7 +18,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "google_container_cluster" "cluster" {
-  provider = "google-beta"
+  provider = google-beta
 
   name        = var.name
   description = var.description
@@ -129,7 +129,7 @@ resource "google_container_cluster" "cluster" {
     ignore_changes = [
       # Since we provide `remove_default_node_pool = true`, the `node_config` is only relevant for a valid construction of
       # the GKE cluster in the initial creation. As such, any changes to the `node_config` should be ignored.
-      "node_config",
+      node_config,
     ]
   }
 
