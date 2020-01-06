@@ -81,10 +81,6 @@ resource "google_container_cluster" "cluster" {
       disabled = ! var.horizontal_pod_autoscaling
     }
 
-    kubernetes_dashboard {
-      disabled = ! var.enable_kubernetes_dashboard
-    }
-
     network_policy_config {
       disabled = ! var.enable_network_policy
     }
@@ -100,10 +96,6 @@ resource "google_container_cluster" "cluster" {
   master_auth {
     username = var.basic_auth_username
     password = var.basic_auth_password
-
-    client_certificate_config {
-      issue_client_certificate = var.enable_kubernetes_dashboard
-    }
   }
 
   dynamic "master_authorized_networks_config" {

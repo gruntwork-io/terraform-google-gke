@@ -155,12 +155,6 @@ variable "alternative_default_service_account" {
 # These values shouldn't be changed; they're following the best practices defined at https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "enable_kubernetes_dashboard" {
-  description = "Whether to enable the Kubernetes Web UI (Dashboard). The Web UI requires a highly privileged security account."
-  type        = bool
-  default     = false
-}
-
 variable "enable_legacy_abac" {
   description = "Whether to enable legacy Attribute-Based Access Control (ABAC). RBAC has significant security advantages over ABAC."
   type        = bool
