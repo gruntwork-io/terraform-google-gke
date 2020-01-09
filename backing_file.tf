@@ -3,16 +3,14 @@
 # to create your Terraform resources.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# Use Terraform 0.10.x so that we can take advantage of Terraform GCP functionality as a separate provider via
-# https://github.com/terraform-providers/terraform-provider-google
 terraform {
-  required_version = ">= 0.10.3"
+  required_version = ">= 0.12.7"
 }
 
 provider "google" {
-  version = "~> 2.6.0"
-  project = "${var.project}"
-  region  = "${var.region}"
+  version = "~> 2.9.0"
+  project = var.project
+  region  = var.region
 
   scopes = [
     # Default scopes
@@ -28,9 +26,9 @@ provider "google" {
 }
 
 provider "google-beta" {
-  version = "~> 2.6.0"
-  project = "${var.project}"
-  region  = "${var.region}"
+  version = "~> 2.9.0"
+  project = var.project
+  region  = var.region
 
   scopes = [
     # Default scopes
