@@ -57,6 +57,12 @@ variable "vpc_secondary_cidr_block" {
   default     = "10.7.0.0/16"
 }
 
+variable "enable_vertical_pod_autoscaling" {
+  description = "Enable vertical pod autoscaling"
+  type        = string
+  default     = true
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # TEST PARAMETERS
 # These parameters are only used during testing and should not be touched.
