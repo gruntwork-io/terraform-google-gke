@@ -108,7 +108,6 @@ variable "master_authorized_networks_config" {
       display_name = "example_network"
     }],
   }]
-  
 EOF
   type        = list(any)
   default     = []
@@ -196,4 +195,11 @@ variable "secrets_encryption_kms_key" {
   description = "The Cloud KMS key to use for the encryption of secrets in etcd, e.g: projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key"
   type        = string
   default     = null
+}
+
+# See https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler
+variable "enable_vertical_pod_autoscaling" {
+  description = "Whether to enable Vertical Pod Autoscaling"
+  type        = string
+  default     = false
 }
