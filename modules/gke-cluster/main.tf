@@ -42,6 +42,9 @@ resource "google_container_cluster" "cluster" {
 
   initial_node_count = 1
 
+  # Support shielded nodes, requires google-beta version 2.18.0
+  enable_shielded_nodes = var.enable_shielded_nodes
+
   # If we have an alternative default service account to use, set on the node_config so that the default node pool can
   # be created successfully.
   dynamic "node_config" {

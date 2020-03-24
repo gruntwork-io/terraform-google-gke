@@ -108,7 +108,7 @@ variable "master_authorized_networks_config" {
       display_name = "example_network"
     }],
   }]
-  
+
 EOF
   type        = list(any)
   default     = []
@@ -148,6 +148,12 @@ variable "alternative_default_service_account" {
   description = "Alternative Service Account to be used by the Node VMs. If not specified, the default compute Service Account will be used. Provide if the default Service Account is no longer available."
   type        = string
   default     = null
+}
+
+variable "enable_shielded_nodes" {
+  description = "Enable Shielded Nodes features on all nodes in this cluster."
+  type        = bool
+  default     = false
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
