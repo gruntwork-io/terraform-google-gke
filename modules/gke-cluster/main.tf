@@ -32,6 +32,9 @@ resource "google_container_cluster" "cluster" {
   monitoring_service = var.monitoring_service
   min_master_version = local.kubernetes_version
 
+  # Whether to enable legacy Attribute-Based Access Control (ABAC). RBAC has significant security advantages over ABAC.
+  enable_legacy_abac = var.enable_legacy_abac
+
   # The API requires a node pool or an initial count to be defined; that initial count creates the
   # "default node pool" with that # of nodes.
   # So, we need to set an initial_node_count of 1. This will make a default node
