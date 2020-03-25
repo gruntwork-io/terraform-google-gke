@@ -62,3 +62,9 @@ variable "vpc_secondary_cidr_block" {
   type        = string
   default     = "10.4.0.0/16"
 }
+
+variable "enable_vertical_pod_autoscaling" {
+  description = "Enable vertical pod autoscaling"
+  type        = string
+  default     = true
+}

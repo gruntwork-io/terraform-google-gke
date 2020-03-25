@@ -50,6 +50,8 @@ module "gke_cluster" {
   cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
 
   alternative_default_service_account = var.override_default_node_pool_service_account ? module.gke_service_account.email : null
+
+  enable_vertical_pod_autoscaling = var.enable_vertical_pod_autoscaling
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

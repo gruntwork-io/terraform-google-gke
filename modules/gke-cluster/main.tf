@@ -93,6 +93,10 @@ resource "google_container_cluster" "cluster" {
     provider = "CALICO"
   }
 
+  vertical_pod_autoscaling {
+    enabled = var.enable_vertical_pod_autoscaling
+  }
+
   master_auth {
     username = var.basic_auth_username
     password = var.basic_auth_password
