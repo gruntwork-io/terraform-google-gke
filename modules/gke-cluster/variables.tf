@@ -207,5 +207,5 @@ variable "enable_vertical_pod_autoscaling" {
 variable "services_secondary_range_name" {
   description = "The name of the secondary range within the subnetwork for the services to use"
   type        = string
-  default     = ""
+  default     = null
 }
