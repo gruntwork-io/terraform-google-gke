@@ -64,7 +64,7 @@ resource "google_container_cluster" "cluster" {
   ip_allocation_policy {
     // Choose the range, but let GCP pick the IPs within the range
     cluster_secondary_range_name  = var.cluster_secondary_range_name
-    services_secondary_range_name = var.cluster_secondary_range_name
+    services_secondary_range_name = var.services_secondary_range_name != null ? var.services_secondary_range_name : var.cluster_secondary_range_name
   }
 
   # We can optionally control access to the cluster
