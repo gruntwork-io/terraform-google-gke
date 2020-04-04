@@ -23,7 +23,6 @@ install_gruntwork_utils: &install_gruntwork_utils
       --terraform-version ${TERRAFORM_VERSION} \
       --terragrunt-version ${TERRAGRUNT_VERSION} \
       --packer-version ${PACKER_VERSION} \
-      --use-go-dep \
       --go-version ${GOLANG_VERSION} \
       --go-src-path test
 
@@ -44,16 +43,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - dep-v1-{{ checksum "test/Gopkg.lock" }}
+            - gomod-{{ checksum "go.sum" }}
 
       # Install gruntwork utilities
       - run:
           <<: *install_gruntwork_utils
 
       - save_cache:
-          key: dep-v1-{{ checksum "test/Gopkg.lock" }}
+          key: gomod-{{ checksum "go.sum" }}
           paths:
-          - ./test/vendor
+            - $HOME/go/src/
 
       # Fail the build if the pre-commit hooks don't pass. Note: if you run pre-commit install locally, these hooks will
       # execute automatically every time before you commit, ensuring the build never fails at this step!
