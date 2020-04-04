@@ -49,88 +49,12 @@ variable "kubectl_config_path" {
   default     = ""
 }
 
-# Tiller TLS  settings
-
-variable "tls_subject" {
-  description = "The issuer information that contains the identifying information for the Tiller server. Used to generate the TLS certificate keypairs."
-  type        = map(string)
-
-  default = {
-    common_name = "tiller"
-    org         = "Gruntwork"
-  }
-  # Expects the following keys
-  # - common_name (required)
-  # - org (required)
-  # - org_unit
-  # - city
-  # - state
-  # - country
-}
-
-variable "client_tls_subject" {
-  description = "The issuer information that contains the identifying information for the helm client of the operator. Used to generate the TLS certificate keypairs."
-  type        = map(string)
-
-  default = {
-    common_name = "admin"
-    org         = "Gruntwork"
-  }
-  # Expects the following keys
-  # - common_name (required)
-  # - org (required)
-  # - org_unit
-  # - city
-  # - state
-  # - country
-}
-
-# TLS algorithm configuration
-
-variable "private_key_algorithm" {
-  description = "The name of the algorithm to use for private keys. Must be one of: RSA or ECDSA."
-  type        = string
-  default     = "ECDSA"
-}
-
-variable "private_key_ecdsa_curve" {
-  description = "The name of the elliptic curve to use. Should only be used if var.private_key_algorithm is ECDSA. Must be one of P224, P256, P384 or P521."
-  type        = string
-  default     = "P256"
-}
-
-variable "private_key_rsa_bits" {
-  description = "The size of the generated RSA key in bits. Should only be used if var.private_key_algorithm is RSA."
-  type        = number
-  default     = 2048
-}
-
-# Tiller undeploy options
-
-variable "force_undeploy" {
-  description = "If true, will remove the Tiller server resources even if there are releases deployed."
-  type        = bool
-  default     = false
-}
-
-variable "undeploy_releases" {
-  description = "If true, will delete deployed releases from the Tiller instance before undeploying Tiller."
-  type        = bool
-  default     = false
-}
-
-variable "master_ipv4_cidr_block" {
-  description = "The IP range in CIDR notation (size must be /28) to use for the hosted master network. This range will be used for assigning internal IP addresses to the master or set of masters, as well as the ILB VIP. This range must not overlap with any other ranges in use within the cluster's network."
-  type        = string
-  default     = "10.5.0.0/28"
-}
-
 # For the example, we recommend a /16 network for the VPC. Note that when changing the size of the network,
 # you will have to adjust the 'cidr_subnetwork_width_delta' in the 'vpc_network' -module accordingly.
 variable "vpc_cidr_block" {
   description = "The IP address range of the VPC in CIDR notation. A prefix of /16 is recommended. Do not use a prefix higher than /27."
   type        = string
-  default     = "10.3.0.0/16"
+  default     = "10.1.0.0/16"
 }
 
 # For the example, we recommend a /16 network for the secondary range. Note that when changing the size of the network,
@@ -138,5 +62,5 @@ variable "vpc_cidr_block" {
 variable "vpc_secondary_cidr_block" {
   description = "The IP address range of the VPC's secondary address range in CIDR notation. A prefix of /16 is recommended. Do not use a prefix higher than /27."
   type        = string
-  default     = "10.4.0.0/16"
+  default     = "10.2.0.0/16"
 }

@@ -9,8 +9,8 @@ using [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engin
 
 ## Quickstart
 
-If you want to quickly spin up a GKE Private Cluster with Tiller, you can run the example that is in the root of this
-repo. Check out the [gke-private-tiller example documentation](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-private-tiller)
+If you want to quickly spin up a GKE Public Cluster, you can run the example that is in the root of this
+repo. Check out the [gke-basic-helm example documentation](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-basic-helm)
 for instructions.
 
 ## What's in this repo
@@ -18,7 +18,7 @@ for instructions.
 This repo has the following folder structure:
 
 * [root](https://github.com/gruntwork-io/terraform-google-gke/tree/master): The root folder contains an example of how
-  to deploy a GKE Private Cluster with Tiller. See [gke-private-tiller](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-private-tiller)
+  to deploy a GKE Public Cluster with and an example chart with [Helm](https://helm.sh/). See [gke-basic-helm](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-basic-helm)
   for the documentation.
 
 * [modules](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules): This folder contains the

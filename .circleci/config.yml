@@ -3,13 +3,12 @@ defaults: &defaults
   environment:
     GRUNTWORK_INSTALLER_VERSION: v0.0.21
     TERRATEST_LOG_PARSER_VERSION: v0.13.13
-    KUBERGRUNT_VERSION: v0.3.9
-    HELM_VERSION: v2.11.0
+    HELM_VERSION: v3.1.0
     MODULE_CI_VERSION: v0.13.3
     TERRAFORM_VERSION: 0.12.7
     TERRAGRUNT_VERSION: NONE
     PACKER_VERSION: NONE
-    GOLANG_VERSION: 1.11.2
+    GOLANG_VERSION: 1.14
     K8S_VERSION: v1.10.0
     KUBECONFIG: /home/circleci/.kube/config
 
@@ -86,11 +85,6 @@ jobs:
     # Install helm
     - run:
         <<: *install_helm_client
-
-    # Install kubergrunt
-    - run:
-        name: Install kubergrunt
-        command: gruntwork-install --binary-name "kubergrunt" --repo "https://github.com/gruntwork-io/kubergrunt" --tag "${KUBERGRUNT_VERSION}"
 
     - run:
         name: update gcloud

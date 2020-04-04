@@ -72,11 +72,11 @@ func TestGKECluster(t *testing.T) {
 			test_structure.RunTestStage(t, "create_terratest_options", func() {
 				gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 				tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
-				kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath)
+				kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
 				uniqueID := random.UniqueId()
 				project := gcp.GetGoogleProjectIDFromEnvVar(t)
 				region := gcp.GetRandomRegion(t, project, nil, nil)
-				gkeClusterTerratestOptions := createTestGKEClusterTerraformOptions(t, uniqueID, project, region, gkeClusterTerraformModulePath)
+				gkeClusterTerratestOptions := createTestGKEClusterTerraformOptions(uniqueID, project, region, gkeClusterTerraformModulePath)
 				if testCase.overrideDefaultSA {
 					gkeClusterTerratestOptions.Vars["override_default_node_pool_service_account"] = "1"
 				}

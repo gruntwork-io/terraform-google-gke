@@ -19,36 +19,37 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGKEBasicTiller(t *testing.T) {
+func TestGKEBasicHelm(t *testing.T) {
 	t.Parallel()
 
 	// Uncomment any of the following to skip that section during the test
-	// os.Setenv("SKIP_create_test_copy_of_examples", "true")
-	// os.Setenv("SKIP_create_terratest_options", "true")
-	// os.Setenv("SKIP_terraform_apply", "true")
-	// os.Setenv("SKIP_wait_for_workers", "true")
-	// os.Setenv("SKIP_helm_install", "true")
-	// os.Setenv("SKIP_cleanup", "true")
+	os.Setenv("SKIP_create_test_copy_of_examples", "true")
+	os.Setenv("SKIP_create_terratest_options", "true")
+	os.Setenv("SKIP_terraform_apply", "true")
+	os.Setenv("SKIP_wait_for_workers", "true")
+	os.Setenv("SKIP_helm_install", "true")
+	//os.Setenv("SKIP_cleanup", "true")
 
 	// Create a directory path that won't conflict
 	workingDir := filepath.Join(".", "stages", t.Name())
 
 	test_structure.RunTestStage(t, "create_test_copy_of_examples", func() {
-		testFolder := test_structure.CopyTerraformFolderToTemp(t, "..", "examples")
+		// The example is the root example
+		testFolder := test_structure.CopyTerraformFolderToTemp(t, "../", ".")
 		logger.Logf(t, "path to test folder %s\n", testFolder)
-		terraformModulePath := filepath.Join(testFolder, "gke-basic-tiller")
-		test_structure.SaveString(t, workingDir, "gkeBasicTillerTerraformModulePath", terraformModulePath)
+		terraformModulePath := filepath.Join(testFolder, ".")
+		test_structure.SaveString(t, workingDir, "gkeBasicHelmTerraformModulePath", terraformModulePath)
 	})
 
 	test_structure.RunTestStage(t, "create_terratest_options", func() {
-		gkeBasicTillerTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeBasicTillerTerraformModulePath")
+		gkeBasicHelmTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeBasicHelmTerraformModulePath")
 		tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
-		kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath)
+		kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
 		uniqueID := random.UniqueId()
 		project := gcp.GetGoogleProjectIDFromEnvVar(t)
 		region := gcp.GetRandomRegion(t, project, nil, nil)
-		gkeClusterTerratestOptions := createTestGKEBasicTillerTerraformOptions(t, uniqueID, project, region,
-			gkeBasicTillerTerraformModulePath, tmpKubeConfigPath)
+		gkeClusterTerratestOptions := createTestGKEBasicHelmTerraformOptions(uniqueID, project, region,
+			gkeBasicHelmTerraformModulePath, tmpKubeConfigPath)
 		test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 		test_structure.SaveString(t, workingDir, "project", project)
 		test_structure.SaveString(t, workingDir, "region", region)
@@ -60,6 +61,7 @@ func TestGKEBasicTiller(t *testing.T) {
 		gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 		terraform.Destroy(t, gkeClusterTerratestOptions)
 
+		// Delete the kubectl entry we created
 		kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 		err := os.Remove(kubectlOptions.ConfigPath)
 		require.NoError(t, err)
@@ -75,6 +77,7 @@ func TestGKEBasicTiller(t *testing.T) {
 		verifyGkeNodesAreReady(t, kubectlOptions)
 	})
 
+	// Do an additional helm install
 	test_structure.RunTestStage(t, "helm_install", func() {
 		// Path to the helm chart we will test
 		helmChartPath := "charts/minimal-pod"
@@ -98,10 +101,6 @@ func TestGKEBasicTiller(t *testing.T) {
 			SetValues: map[string]string{
 				"image":            "nginx:1.15.8",
 				"fullnameOverride": podName,
-			},
-			EnvVars: map[string]string{
-				"HELM_TLS_VERIFY": "true",
-				"HELM_TLS_ENABLE": "true",
 			},
 			KubectlOptions: kubectlOptions,
 		}
@@ -134,6 +133,7 @@ func verifyNginxPod(t *testing.T, kubectlOptions *k8s.KubectlOptions, podName st
 	http_helper.HttpGetWithRetryWithCustomValidation(
 		t,
 		endpoint,
+		nil,
 		retries,
 		sleep,
 		func(statusCode int, body string) bool {

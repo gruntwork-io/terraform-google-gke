@@ -2,14 +2,11 @@ package test
 
 import (
 	"fmt"
-	"strings"
-	"testing"
-
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"strings"
 )
 
-func createTestGKEBasicTillerTerraformOptions(
-	t *testing.T,
+func createTestGKEBasicHelmTerraformOptions(
 	uniqueID,
 	project string,
 	region string,
@@ -25,17 +22,7 @@ func createTestGKEBasicTillerTerraformOptions(
 		"project":                      project,
 		"cluster_name":                 gkeClusterName,
 		"cluster_service_account_name": gkeServiceAccountName,
-		"tls_subject": map[string]string{
-			"common_name": "tiller",
-			"org":         "Gruntwork",
-		},
-		"client_tls_subject": map[string]string{
-			"common_name": "helm",
-			"org":         "Gruntwork",
-		},
-		"force_undeploy":      true,
-		"undeploy_releases":   true,
-		"kubectl_config_path": kubeConfigPath,
+		"kubectl_config_path":          kubeConfigPath,
 	}
 
 	terratestOptions := terraform.Options{
@@ -47,7 +34,6 @@ func createTestGKEBasicTillerTerraformOptions(
 }
 
 func createTestGKEClusterTerraformOptions(
-	t *testing.T,
 	uniqueID,
 	project string,
 	region string,
