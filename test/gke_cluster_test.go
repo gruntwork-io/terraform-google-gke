@@ -127,8 +127,10 @@ func TestGKECluster(t *testing.T) {
 
 			test_structure.RunTestStage(t, "terraform_verify_plan_noop", func() {
 				gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
-				exitCode := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
-				assert.Equal(t, exitCode, 0)
+				planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
+				resourceCount := terraform.GetResourceCount(t, planResult)
+				assert.Equal(t, 0, resourceCount.Change)
+				assert.Equal(t, 0, resourceCount.Add)
 			})
 		})
 	}
