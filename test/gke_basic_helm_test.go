@@ -23,11 +23,11 @@ func TestGKEBasicHelm(t *testing.T) {
 	t.Parallel()
 
 	// Uncomment any of the following to skip that section during the test
-	os.Setenv("SKIP_create_test_copy_of_examples", "true")
-	os.Setenv("SKIP_create_terratest_options", "true")
-	os.Setenv("SKIP_terraform_apply", "true")
-	os.Setenv("SKIP_wait_for_workers", "true")
-	os.Setenv("SKIP_helm_install", "true")
+	//os.Setenv("SKIP_create_test_copy_of_examples", "true")
+	//os.Setenv("SKIP_create_terratest_options", "true")
+	//os.Setenv("SKIP_terraform_apply", "true")
+	//os.Setenv("SKIP_wait_for_workers", "true")
+	//os.Setenv("SKIP_helm_install", "true")
 	//os.Setenv("SKIP_cleanup", "true")
 
 	// Create a directory path that won't conflict
