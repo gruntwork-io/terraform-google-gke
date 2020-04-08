@@ -240,6 +240,8 @@ resource "kubernetes_cluster_role_binding" "user" {
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY A SAMPLE CHART
+# A chart repository is a location where packaged charts can be stored and shared. Pull Bitnami Helm repository data,
+# so Helm can install the nginx chart.
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "helm_repository" "bitnami" {
