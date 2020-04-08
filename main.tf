@@ -91,10 +91,10 @@ module "gke_cluster" {
   location = var.location
   network  = module.vpc_network.network
 
-  # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
+  # Deploy the cluster in the 'private' subnetwork, outbound internet access will be provided by NAT
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
-  subnetwork = module.vpc_network.public_subnetwork
+  subnetwork = module.vpc_network.private_subnetwork
 
   # When creating a private cluster, the 'master_ipv4_cidr_block' has to be defined and the size must be /28
   master_ipv4_cidr_block = var.master_ipv4_cidr_block
@@ -118,7 +118,7 @@ module "gke_cluster" {
     },
   ]
 
-  cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
+  cluster_secondary_range_name = module.vpc_network.private_subnetwork_secondary_range_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -262,20 +262,16 @@ resource "kubernetes_cluster_role_binding" "user" {
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY A SAMPLE CHART
-# A chart repository is a location where packaged charts can be stored and shared. Pull Bitnami Helm repository data,
+# A chart repository is a location where packaged charts can be stored and shared. Define Bitnami Helm repository location,
 # so Helm can install the nginx chart.
 # ---------------------------------------------------------------------------------------------------------------------
-
-data "helm_repository" "bitnami" {
-  name = "bitnami"
-  url  = "https://charts.bitnami.com/bitnami"
-}
 
 resource "helm_release" "nginx" {
   depends_on = [google_container_node_pool.node_pool]
 
-  name  = "nginx"
-  chart = "bitnami/nginx"
+  repository = "https://charts.bitnami.com/bitnami"
+  name       = "nginx"
+  chart      = "nginx"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
