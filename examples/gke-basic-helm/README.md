@@ -81,7 +81,7 @@ Forwarding from 127.0.0.1:8080 -> 8080
 Forwarding from [::1]:8080 -> 8080
 ```
 
-You can now access the deployed service by opening your web browser to `http://localhost:8088`.
+You can now access the deployed service by opening your web browser to `http://localhost:8080`.
 
 ## Destroy the deployed resources
 
