@@ -1,6 +1,6 @@
 # GKE Basic Helm Example
 
-The root folder contains an example of how to deploy a GKE Public Cluster with and an example chart 
+The root folder contains an example of how to deploy a GKE Public Cluster with an example chart 
 with [Helm](https://helm.sh/). 
 
 ## Overview
