@@ -64,3 +64,9 @@ variable "vpc_secondary_cidr_block" {
   type        = string
   default     = "10.2.0.0/16"
 }
+
+variable "master_ipv4_cidr_block" {
+  description = "The IP range in CIDR notation (size must be /28) to use for the hosted master network. This range will be used for assigning internal IP addresses to the master or set of masters, as well as the ILB VIP. This range must not overlap with any other ranges in use within the cluster's network."
+  type        = string
+  default     = "10.5.0.0/28"
+}
