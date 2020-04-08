@@ -1,14 +1,14 @@
 defaults: &defaults
   machine: true
   environment:
-    GRUNTWORK_INSTALLER_VERSION: v0.0.21
+    GRUNTWORK_INSTALLER_VERSION: v0.0.23
     TERRATEST_LOG_PARSER_VERSION: v0.13.13
-    HELM_VERSION: v3.1.0
-    MODULE_CI_VERSION: v0.13.3
-    TERRAFORM_VERSION: 0.12.7
+    HELM_VERSION: v3.1.2
+    MODULE_CI_VERSION: v0.18.4
+    TERRAFORM_VERSION: 0.12.20
     TERRAGRUNT_VERSION: NONE
     PACKER_VERSION: NONE
-    GOLANG_VERSION: 1.14
+    GOLANG_VERSION: 1.13.8
     K8S_VERSION: v1.10.0
     KUBECONFIG: /home/circleci/.kube/config
 
@@ -43,14 +43,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - gomod-{{ checksum "go.sum" }}
+            - gomod-{{ checksum "test/go.sum" }}
 
       # Install gruntwork utilities
       - run:
           <<: *install_gruntwork_utils
 
       - save_cache:
-          key: gomod-{{ checksum "go.sum" }}
+          key: gomod-{{ checksum "test/go.sum" }}
           paths:
             - $HOME/go/src/
 
