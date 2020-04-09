@@ -1,6 +1,6 @@
 module github.com/gruntwork-io/terraform-google-gke/test
 
-go 1.14
+go 1.13
 
 require (
 	github.com/gruntwork-io/terratest v0.26.1
