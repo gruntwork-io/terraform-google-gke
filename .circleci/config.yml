@@ -19,7 +19,6 @@ install_gruntwork_utils: &install_gruntwork_utils
     gruntwork-install --module-name "gruntwork-module-circleci-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "${MODULE_CI_VERSION}"
     gruntwork-install --binary-name "terratest_log_parser" --repo "https://github.com/gruntwork-io/terratest" --tag "${TERRATEST_LOG_PARSER_VERSION}"
     configure-environment-for-gruntwork-module \
-      --circle-ci-2-machine-executor \
       --terraform-version ${TERRAFORM_VERSION} \
       --terragrunt-version ${TERRAGRUNT_VERSION} \
       --packer-version ${PACKER_VERSION} \
