@@ -209,3 +209,10 @@ variable "services_secondary_range_name" {
   type        = string
   default     = null
 }
+
+# See https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
+variable "enable_workload_identity_config" {
+  description = "Workload Identity is the recommended way to access Google Cloud services from within GKE due to its improved security properties and manageability."
+  default     = false
+  type        = bool
+}

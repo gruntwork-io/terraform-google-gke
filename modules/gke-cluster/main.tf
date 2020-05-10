@@ -89,6 +89,14 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
+  dynamic "workload_identity_config" {
+    for_each = toset(var.enable_workload_identity_config ? [var.project] : [])
+    iterator = each
+    content {
+      identity_namespace = "${each.key}.svc.id.goog"
+    }
+  }
+
   network_policy {
     enabled = var.enable_network_policy
 
