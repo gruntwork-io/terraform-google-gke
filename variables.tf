@@ -70,3 +70,9 @@ variable "vpc_secondary_cidr_block" {
   type        = string
   default     = "10.4.0.0/16"
 }
+
+variable "enable_resource_monitoring" {
+  description = "When enabled, will create a BigQuery dataset to monitor cluster resource usage."
+  type    = bool
+  default = false
+}

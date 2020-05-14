@@ -91,6 +91,9 @@ module "gke_cluster" {
   location = var.location
   network  = module.vpc_network.network
 
+  # Use BigQuery to monitor cluster resource usage
+  create_bigquery_dataset = var.enable_resource_monitoring
+
   # Deploy the cluster in the 'private' subnetwork, outbound internet access will be provided by NAT
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
