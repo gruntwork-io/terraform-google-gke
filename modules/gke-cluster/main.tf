@@ -154,6 +154,28 @@ resource "google_container_cluster" "cluster" {
       key_name = database_encryption.value
     }
   }
+
+  # If var.create_bigquery_dataset is enabled, attach the created dataset to the cluster
+  dynamic "resource_usage_export_config" {
+    for_each = var.create_bigquery_dataset == true ? [google_bigquery_dataset.bigquery_dataset.0.dataset_id] : []
+
+    content {
+      bigquery_destination {
+        dataset_id = resource_usage_export_config.value
+      }
+    }
+  }
+}
+
+resource "google_bigquery_dataset" "bigquery_dataset" {
+  provider                    = google-beta
+  count                       = var.create_bigquery_dataset == true ? 1 : 0
+
+  dataset_id                  = var.bigquery_dataset_name != "" ? var.bigquery_dataset_name : "${replace(var.name, "-", "_")}_usage_metering"
+  location                    = var.bigquery_dataset_location
+  project                     = var.project
+  delete_contents_on_destroy  = true
+  default_table_expiration_ms = 2592000000 # 30 days
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

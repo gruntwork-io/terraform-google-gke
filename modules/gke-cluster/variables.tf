@@ -149,6 +149,24 @@ variable "alternative_default_service_account" {
   default     = null
 }
 
+variable "create_bigquery_dataset" {
+  description = "Enable usage monitoring via a BigQuery dataset. Requires the BigQuery API enabled."
+  type        = bool
+  default     = false
+}
+
+variable "bigquery_dataset_name" {
+  description = "Name of the BigQuery dataset to collect cluster usage data."
+  type        = string
+  default     = ""
+}
+
+variable "bigquery_dataset_location" {
+  description = "Location of the BigQuery dataset."
+  type        = string
+  default     = "EU"
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS - RECOMMENDED DEFAULTS
 # These values shouldn't be changed; they're following the best practices defined at https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster
