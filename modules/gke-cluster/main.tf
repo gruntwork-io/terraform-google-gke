@@ -48,15 +48,17 @@ resource "google_container_cluster" "cluster" {
   # If we have an alternative default service account to use, set on the node_config so that the default node pool can
   # be created successfully.
   dynamic "node_config" {
-    # Ideally we can do `for_each = var.alternative_default_service_account != null ? [object] : []`, but due to a
-    # terraform bug, this doesn't work. See https://github.com/hashicorp/terraform/issues/21465. So we simulate it using
-    # a for expression.
-    for_each = [
-      for x in [var.alternative_default_service_account] : x if var.alternative_default_service_account != null
-    ]
+    for_each = toset(var.alternative_default_service_account == null ? [] : [var.alternative_default_service_account])
 
     content {
       service_account = node_config.value
+
+      dynamic "workload_metadata_config" {
+        for_each = toset(var.enable_workload_identity_config ? ["GKE_METADATA_SERVER"] : [])
+        content {
+          node_metadata = workload_metadata_config.value
+        }
+      }
     }
   }
 
