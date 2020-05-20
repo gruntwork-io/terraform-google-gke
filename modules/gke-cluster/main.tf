@@ -51,12 +51,12 @@ resource "google_container_cluster" "cluster" {
     for_each = toset(var.alternative_default_service_account == null ? [] : [var.alternative_default_service_account])
 
     content {
-      service_account = node_config.value
+      service_account = node_config.key
 
       dynamic "workload_metadata_config" {
         for_each = toset(var.enable_workload_identity_config ? ["GKE_METADATA_SERVER"] : [])
         content {
-          node_metadata = workload_metadata_config.value
+          node_metadata = workload_metadata_config.key
         }
       }
     }
