@@ -93,9 +93,8 @@ resource "google_container_cluster" "cluster" {
 
   dynamic "workload_identity_config" {
     for_each = toset(var.enable_workload_identity_config ? [var.project] : [])
-    iterator = each
     content {
-      identity_namespace = "${each.key}.svc.id.goog"
+      identity_namespace = "${workload_identity_config.key}.svc.id.goog"
     }
   }
 
