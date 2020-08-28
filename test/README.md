@@ -26,18 +26,17 @@ clean up.
 ### Prerequisites
 
 - Install the latest version of [Go](https://golang.org/).
-- Install [dep](https://github.com/golang/dep) for Go dependency management.
 - Install [Terraform](https://www.terraform.io/downloads.html).
 - Configure your GCP credentials using one of the [options supported by the Google Cloud SDK](https://cloud.google.com/sdk/docs/authorizing).
 
 
 ### One-time setup
 
-Download Go dependencies using dep:
+Download Go dependencies:
 
 ```
 cd test
-dep ensure
+go mod download
 ```
 
 

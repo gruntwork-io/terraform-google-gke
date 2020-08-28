@@ -1,15 +1,14 @@
 defaults: &defaults
   machine: true
   environment:
-    GRUNTWORK_INSTALLER_VERSION: v0.0.21
+    GRUNTWORK_INSTALLER_VERSION: v0.0.23
     TERRATEST_LOG_PARSER_VERSION: v0.13.13
-    KUBERGRUNT_VERSION: v0.3.9
-    HELM_VERSION: v2.11.0
-    MODULE_CI_VERSION: v0.13.3
-    TERRAFORM_VERSION: 0.12.7
+    HELM_VERSION: v3.1.2
+    MODULE_CI_VERSION: v0.18.4
+    TERRAFORM_VERSION: 0.12.20
     TERRAGRUNT_VERSION: NONE
     PACKER_VERSION: NONE
-    GOLANG_VERSION: 1.11.2
+    GOLANG_VERSION: 1.13.8
     K8S_VERSION: v1.10.0
     KUBECONFIG: /home/circleci/.kube/config
 
@@ -20,19 +19,17 @@ install_gruntwork_utils: &install_gruntwork_utils
     gruntwork-install --module-name "gruntwork-module-circleci-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "${MODULE_CI_VERSION}"
     gruntwork-install --binary-name "terratest_log_parser" --repo "https://github.com/gruntwork-io/terratest" --tag "${TERRATEST_LOG_PARSER_VERSION}"
     configure-environment-for-gruntwork-module \
-      --circle-ci-2-machine-executor \
       --terraform-version ${TERRAFORM_VERSION} \
       --terragrunt-version ${TERRAGRUNT_VERSION} \
       --packer-version ${PACKER_VERSION} \
-      --use-go-dep \
       --go-version ${GOLANG_VERSION} \
-      --go-src-path test
+      --go-src-path ./test/
 
 install_helm_client: &install_helm_client
   name: install helm client
   command: |
     # install helm client
-    curl -Lo helm.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz
+    curl -Lo helm.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz
     tar -xvf helm.tar.gz
     chmod +x linux-amd64/helm
     sudo mv linux-amd64/helm /usr/local/bin/
@@ -45,16 +42,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - dep-v1-{{ checksum "test/Gopkg.lock" }}
+            - gomod-{{ checksum "test/go.sum" }}
 
       # Install gruntwork utilities
       - run:
           <<: *install_gruntwork_utils
 
       - save_cache:
-          key: dep-v1-{{ checksum "test/Gopkg.lock" }}
+          key: gomod-{{ checksum "test/go.sum" }}
           paths:
-          - ./test/vendor
+            - $HOME/go/src/
 
       # Fail the build if the pre-commit hooks don't pass. Note: if you run pre-commit install locally, these hooks will
       # execute automatically every time before you commit, ensuring the build never fails at this step!
@@ -86,11 +83,6 @@ jobs:
     # Install helm
     - run:
         <<: *install_helm_client
-
-    # Install kubergrunt
-    - run:
-        name: Install kubergrunt
-        command: gruntwork-install --binary-name "kubergrunt" --repo "https://github.com/gruntwork-io/kubergrunt" --tag "${KUBERGRUNT_VERSION}"
 
     - run:
         name: update gcloud

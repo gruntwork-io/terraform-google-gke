@@ -1,6 +1,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY A GKE PRIVATE CLUSTER W/ TILLER IN GOOGLE CLOUD PLATFORM
-# This is an example of how to use the gke-cluster module to deploy a private Kubernetes cluster in GCP
+# DEPLOY A GKE PRIVATE CLUSTER IN GOOGLE CLOUD PLATFORM
+# This is an example of how to use the gke-cluster module to deploy a private Kubernetes cluster in GCP.
+# Load Balancer in front of it.
 # ---------------------------------------------------------------------------------------------------------------------
 
 terraform {
@@ -14,7 +15,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 provider "google" {
-  version = "~> 2.9.0"
+  version = "~> 3.1.0"
   project = var.project
   region  = var.region
 
@@ -31,7 +32,7 @@ provider "google" {
 }
 
 provider "google-beta" {
-  version = "~> 2.9.0"
+  version = "~> 3.1.0"
   project = var.project
   region  = var.region
 
@@ -63,16 +64,14 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  # We don't install Tiller automatically, but instead use Kubergrunt as it sets up the TLS certificates much easier.
-  install_tiller = false
-
-  # Enable TLS so Helm can communicate with Tiller securely.
-  enable_tls = true
+  # Use provider with Helm 3.x support
+  version = "~> 1.1.1"
 
   kubernetes {
     host                   = data.template_file.gke_host_endpoint.rendered
     token                  = data.template_file.access_token.rendered
     cluster_ca_certificate = data.template_file.cluster_ca_certificate.rendered
+    load_config_file       = false
   }
 }
 
@@ -92,10 +91,10 @@ module "gke_cluster" {
   location = var.location
   network  = module.vpc_network.network
 
-  # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
+  # Deploy the cluster in the 'private' subnetwork, outbound internet access will be provided by NAT
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
-  subnetwork = module.vpc_network.public_subnetwork
+  subnetwork = module.vpc_network.private_subnetwork
 
   # When creating a private cluster, the 'master_ipv4_cidr_block' has to be defined and the size must be /28
   master_ipv4_cidr_block = var.master_ipv4_cidr_block
@@ -119,7 +118,7 @@ module "gke_cluster" {
     },
   ]
 
-  cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
+  cluster_secondary_range_name = module.vpc_network.private_subnetwork_secondary_range_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -129,7 +128,7 @@ module "gke_cluster" {
 resource "google_container_node_pool" "node_pool" {
   provider = google-beta
 
-  name     = "private-pool"
+  name     = "main-pool"
   project  = var.project
   location = var.location
   cluster  = module.gke_cluster.name
@@ -151,14 +150,14 @@ resource "google_container_node_pool" "node_pool" {
     machine_type = "n1-standard-1"
 
     labels = {
-      private-pools-example = "true"
+      all-pools-example = "true"
     }
 
     # Add a private tag to the instances. See the network access tier table for full details:
     # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
     tags = [
       module.vpc_network.private,
-      "private-pool-example",
+      "helm-example",
     ]
 
     disk_size_gb = "30"
@@ -209,7 +208,7 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.1"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.4.0"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
   project     = var.project
@@ -237,14 +236,6 @@ resource "null_resource" "configure_kubectl" {
   depends_on = [google_container_node_pool.node_pool]
 }
 
-# Create a ServiceAccount for Tiller
-resource "kubernetes_service_account" "tiller" {
-  metadata {
-    name      = "tiller"
-    namespace = local.tiller_namespace
-  }
-}
-
 resource "kubernetes_cluster_role_binding" "user" {
   metadata {
     name = "admin-user"
@@ -262,18 +253,6 @@ resource "kubernetes_cluster_role_binding" "user" {
     api_group = "rbac.authorization.k8s.io"
   }
 
-  # We give the Tiller ServiceAccount cluster admin status so that we can deploy anything in any namespace using this
-  # Tiller instance for testing purposes. In production, you might want to use a more restricted role.
-  subject {
-    # this is a workaround for https://github.com/terraform-providers/terraform-provider-kubernetes/issues/204.
-    # we have to set an empty api_group or the k8s call will fail. It will be fixed in v1.5.2 of the k8s provider.
-    api_group = ""
-
-    kind      = "ServiceAccount"
-    name      = kubernetes_service_account.tiller.metadata[0].name
-    namespace = local.tiller_namespace
-  }
-
   subject {
     kind      = "Group"
     name      = "system:masters"
@@ -281,117 +260,18 @@ resource "kubernetes_cluster_role_binding" "user" {
   }
 }
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# GENERATE TLS CERTIFICATES FOR USE WITH TILLER
-# This will use kubergrunt to generate TLS certificates, and upload them as Kubernetes Secrets that can then be used by
-# Tiller.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-resource "null_resource" "tiller_tls_certs" {
-  provisioner "local-exec" {
-    command = <<-EOF
-      kubergrunt tls gen --ca --namespace kube-system --secret-name ${local.tls_ca_secret_name} --secret-label gruntwork.io/tiller-namespace=${local.tiller_namespace} --secret-label gruntwork.io/tiller-credentials=true --secret-label gruntwork.io/tiller-credentials-type=ca --tls-subject-json '${jsonencode(var.tls_subject)}' ${local.tls_algorithm_config} ${local.kubectl_auth_config}
-
-      kubergrunt tls gen --namespace ${local.tiller_namespace} --ca-secret-name ${local.tls_ca_secret_name} --ca-namespace kube-system --secret-name ${local.tls_secret_name} --secret-label gruntwork.io/tiller-namespace=${local.tiller_namespace} --secret-label gruntwork.io/tiller-credentials=true --secret-label gruntwork.io/tiller-credentials-type=server --tls-subject-json '${jsonencode(var.tls_subject)}' ${local.tls_algorithm_config} ${local.kubectl_auth_config}
-    EOF
-
-    # Use environment variables for Kubernetes credentials to avoid leaking into the logs
-    environment = {
-      KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
-      KUBECTL_CA_DATA         = base64encode(data.template_file.cluster_ca_certificate.rendered)
-      KUBECTL_TOKEN           = data.template_file.access_token.rendered
-    }
-  }
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY TILLER TO THE GKE CLUSTER
+# DEPLOY A SAMPLE CHART
+# A chart repository is a location where packaged charts can be stored and shared. Define Bitnami Helm repository location,
+# so Helm can install the nginx chart.
 # ---------------------------------------------------------------------------------------------------------------------
 
-module "tiller" {
-  source = "github.com/gruntwork-io/terraform-kubernetes-helm.git//modules/k8s-tiller?ref=v0.5.0"
+resource "helm_release" "nginx" {
+  depends_on = [google_container_node_pool.node_pool]
 
-  tiller_tls_gen_method                    = "none"
-  tiller_service_account_name              = kubernetes_service_account.tiller.metadata[0].name
-  tiller_service_account_token_secret_name = kubernetes_service_account.tiller.default_secret_name
-  tiller_tls_secret_name                   = local.tls_secret_name
-  namespace                                = local.tiller_namespace
-  tiller_image_version                     = local.tiller_version
-
-  # Kubergrunt will store the private key under the key "tls.pem" in the corresponding Secret resource, which will be
-  # accessed as a file when mounted into the container.
-  tiller_tls_key_file_name = "tls.pem"
-
-  dependencies = [null_resource.tiller_tls_certs.id, kubernetes_cluster_role_binding.user.id]
-}
-
-# The Deployment resources created in the module call to `k8s-tiller` will be complete creation before the rollout is
-# complete. We use kubergrunt here to wait for the deployment to complete, so that when this resource is done creating,
-# any resources that depend on this can assume Tiller is successfully deployed and up at that point.
-resource "null_resource" "wait_for_tiller" {
-  provisioner "local-exec" {
-    command = "kubergrunt helm wait-for-tiller --tiller-namespace ${local.tiller_namespace} --tiller-deployment-name ${module.tiller.deployment_name} --expected-tiller-version ${local.tiller_version} ${local.kubectl_auth_config}"
-
-    # Use environment variables for Kubernetes credentials to avoid leaking into the logs
-    environment = {
-      KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
-      KUBECTL_CA_DATA         = base64encode(data.template_file.cluster_ca_certificate.rendered)
-      KUBECTL_TOKEN           = data.template_file.access_token.rendered
-    }
-  }
-}
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# CONFIGURE OPERATOR HELM CLIENT
-# To allow usage of the helm client immediately, we grant access to the admin RBAC user and configure the local helm
-# client.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-resource "null_resource" "grant_and_configure_helm" {
-  provisioner "local-exec" {
-    command = <<-EOF
-    kubergrunt helm grant --tiller-namespace ${local.tiller_namespace} --tls-subject-json '${jsonencode(var.client_tls_subject)}' --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
-
-    kubergrunt helm configure --helm-home ${pathexpand("~/.helm")} --tiller-namespace ${local.tiller_namespace} --resource-namespace ${local.resource_namespace} --rbac-user ${data.google_client_openid_userinfo.terraform_user.email} ${local.kubectl_auth_config}
-    EOF
-
-    # Use environment variables for Kubernetes credentials to avoid leaking into the logs
-    environment = {
-      KUBECTL_SERVER_ENDPOINT = data.template_file.gke_host_endpoint.rendered
-      KUBECTL_CA_DATA         = base64encode(data.template_file.cluster_ca_certificate.rendered)
-      KUBECTL_TOKEN           = data.template_file.access_token.rendered
-    }
-  }
-
-  depends_on = [null_resource.wait_for_tiller]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# COMPUTATIONS
-# These locals set constants and compute various useful information used throughout this Terraform module.
-# ---------------------------------------------------------------------------------------------------------------------
-
-locals {
-  # For this example, we hardcode our tiller namespace to kube-system. In production, you might want to consider using a
-  # different Namespace.
-  tiller_namespace = "kube-system"
-
-  # For this example, we setup Tiller to manage the default Namespace.
-  resource_namespace = "default"
-
-  # We install an older version of Tiller to match the Helm library version used in the Terraform helm provider.
-  tiller_version = "v2.11.0"
-
-  # We store the CA Secret in the kube-system Namespace, given that only cluster admins should access these.
-  tls_ca_secret_namespace = "kube-system"
-
-  # We name the TLS Secrets to be compatible with the `kubergrunt helm grant` command
-  tls_ca_secret_name   = "${local.tiller_namespace}-namespace-tiller-ca-certs"
-  tls_secret_name      = "tiller-certs"
-  tls_algorithm_config = "--tls-private-key-algorithm ${var.private_key_algorithm} ${var.private_key_algorithm == "ECDSA" ? "--tls-private-key-ecdsa-curve ${var.private_key_ecdsa_curve}" : "--tls-private-key-rsa-bits ${var.private_key_rsa_bits}"}"
-
-  # These will be filled in by the shell environment
-  kubectl_auth_config = "--kubectl-server-endpoint \"$KUBECTL_SERVER_ENDPOINT\" --kubectl-certificate-authority \"$KUBECTL_CA_DATA\" --kubectl-token \"$KUBECTL_TOKEN\""
+  repository = "https://charts.bitnami.com/bitnami"
+  name       = "nginx"
+  chart      = "nginx"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
