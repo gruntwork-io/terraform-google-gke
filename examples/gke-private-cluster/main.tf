@@ -71,6 +71,10 @@ module "gke_cluster" {
   cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
 
   enable_vertical_pod_autoscaling = var.enable_vertical_pod_autoscaling
+
+  resource_labels = {
+    environment = "testing"
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
