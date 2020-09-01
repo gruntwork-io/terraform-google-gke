@@ -93,7 +93,7 @@ resource "google_container_cluster" "cluster" {
     enabled = var.enable_network_policy
 
     # Tigera (Calico Felix) is the only provider
-    provider = "CALICO"
+    provider = var.enable_network_policy ? "CALICO" : "PROVIDER_UNSPECIFIED"
   }
 
   vertical_pod_autoscaling {
