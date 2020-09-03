@@ -149,6 +149,12 @@ variable "alternative_default_service_account" {
   default     = null
 }
 
+variable "resource_labels" {
+  description = "The GCE resource labels (a map of key/value pairs) to be applied to the cluster."
+  type        = map
+  default     = {}
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS - RECOMMENDED DEFAULTS
 # These values shouldn't be changed; they're following the best practices defined at https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster

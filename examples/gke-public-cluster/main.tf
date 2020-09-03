@@ -52,6 +52,10 @@ module "gke_cluster" {
   alternative_default_service_account = var.override_default_node_pool_service_account ? module.gke_service_account.email : null
 
   enable_vertical_pod_autoscaling = var.enable_vertical_pod_autoscaling
+
+  resource_labels = {
+    environment = "testing"
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
