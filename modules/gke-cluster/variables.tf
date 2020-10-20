@@ -50,6 +50,11 @@ variable "kubernetes_version" {
   default     = "latest"
 }
 
+variable "gke_release_channel" {
+  description = "GKE release channel feature"
+  type        = string
+}
+
 variable "logging_service" {
   description = "The logging service that the cluster should write logs to. Available options include logging.googleapis.com/kubernetes, logging.googleapis.com (legacy), and none"
   type        = string
@@ -60,6 +65,12 @@ variable "monitoring_service" {
   description = "The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Stackdriver Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting. Available options include monitoring.googleapis.com/kubernetes, monitoring.googleapis.com (legacy), and none"
   type        = string
   default     = "monitoring.googleapis.com/kubernetes"
+}
+
+variable "disable_istio" {
+  description = "Whether or not to disable the Istio addon"
+  type        = bool
+  default     = true
 }
 
 variable "horizontal_pod_autoscaling" {

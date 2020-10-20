@@ -28,6 +28,10 @@ resource "google_container_cluster" "cluster" {
   network    = var.network
   subnetwork = var.subnetwork
 
+  release_channel {
+    channel = var.gke_release_channel
+  }
+
   logging_service    = var.logging_service
   monitoring_service = var.monitoring_service
   min_master_version = local.kubernetes_version
@@ -76,6 +80,10 @@ resource "google_container_cluster" "cluster" {
   }
 
   addons_config {
+    istio_config {
+      disabled = var.disable_istio
+    }
+
     http_load_balancing {
       disabled = ! var.http_load_balancing
     }
