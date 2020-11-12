@@ -3,13 +3,11 @@
 # This module deploys a GKE cluster, a managed, production-ready environment for deploying containerized applications.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# ----------------------------------------------------------------------------------------------------------------------
-# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module uses terraform 0.12 syntax and features that are available only since version 0.12.6, however
-# we now depend on a bug fix released in 0.12.7.
-# ----------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 0.12.7"
+  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
+  # forwards compatible with 0.13.x code.
+  required_version = ">= 0.12.26"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
