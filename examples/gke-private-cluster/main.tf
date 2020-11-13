@@ -159,7 +159,7 @@ module "gke_service_account" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.2.1"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=tf13"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
   project     = var.project
