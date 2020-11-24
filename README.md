@@ -1,6 +1,6 @@
 [![Maintained by Gruntwork.io](https://img.shields.io/badge/maintained%20by-gruntwork.io-%235849a6.svg)](https://gruntwork.io/?ref=repo_google_gke)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/gruntwork-io/terraform-google-gke.svg?label=latest)](https://github.com/gruntwork-io/terraform-google-gke/releases/latest)
-![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.12.0-blue.svg)
+![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.13.0-blue.svg)
 
 # Google Kubernetes Engine (GKE) Module
 
@@ -17,28 +17,28 @@ for instructions.
 
 This repo has the following folder structure:
 
-* [root](https://github.com/gruntwork-io/terraform-google-gke/tree/master): The root folder contains an example of how
+- [root](https://github.com/gruntwork-io/terraform-google-gke/tree/master): The root folder contains an example of how
   to deploy a GKE Public Cluster with and an example chart with [Helm](https://helm.sh/). See [gke-basic-helm](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-basic-helm)
   for the documentation.
 
-* [modules](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules): This folder contains the
+- [modules](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules): This folder contains the
   main implementation code for this Module, broken down into multiple standalone submodules.
 
   The primary module is:
 
-    * [gke-cluster](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules/gke-cluster): The GKE Cluster module is used to
+  - [gke-cluster](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules/gke-cluster): The GKE Cluster module is used to
     administer the [cluster master](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture)
     for a [GKE Cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-admin-overview).
 
-    There are also several supporting modules that add extra functionality on top of `gke-cluster`:
+  There are also several supporting modules that add extra functionality on top of `gke-cluster`:
 
-    * [gke-service-account](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules/gke-service-account):
+  - [gke-service-account](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules/gke-service-account):
     Used to configure a GCP service account for use with a GKE cluster.
 
-* [examples](https://github.com/gruntwork-io/terraform-google-gke/tree/master/examples): This folder contains
+- [examples](https://github.com/gruntwork-io/terraform-google-gke/tree/master/examples): This folder contains
   examples of how to use the submodules.
 
-* [test](https://github.com/gruntwork-io/terraform-google-gke/tree/master/test): Automated tests for the submodules
+- [test](https://github.com/gruntwork-io/terraform-google-gke/tree/master/test): Automated tests for the submodules
   and examples.
 
 ## What is Kubernetes?
@@ -104,11 +104,11 @@ commercial support, send an email to
 
 Gruntwork can help with:
 
-* Setup, customization, and support for this Module.
-* Modules and submodules for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous
+- Setup, customization, and support for this Module.
+- Modules and submodules for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous
   integration.
-* Modules and Submodules that meet compliance requirements, such as HIPAA.
-* Consulting & Training on AWS, Terraform, and DevOps.
+- Modules and Submodules that meet compliance requirements, such as HIPAA.
+- Consulting & Training on AWS, Terraform, and DevOps.
 
 ## How do I contribute to this Module?
 
@@ -129,4 +129,4 @@ MINOR, and PATCH versions on each release to indicate any incompatibilities.
 Please see [LICENSE](https://github.com/gruntwork-io/terraform-google-gke/blob/master/LICENSE) for how the code in this
 repo is licensed.
 
-Copyright &copy; 2019 Gruntwork, Inc.
+Copyright &copy; 2020 Gruntwork, Inc.
