@@ -215,3 +215,15 @@ variable "services_secondary_range_name" {
   type        = string
   default     = null
 }
+
+variable "enable_workload_identity" {
+  description = "Enable Workload Identity on the cluster"
+  default     = false
+  type        = bool
+}
+
+variable "identity_namespace" {
+  description = "Workload Identity Namespace. Default sets project based namespace [project_id].svc.id.goog"
+  default     = null
+  type        = string
+}
