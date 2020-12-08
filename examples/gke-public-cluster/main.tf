@@ -53,6 +53,7 @@ module "gke_cluster" {
   alternative_default_service_account = var.override_default_node_pool_service_account ? module.gke_service_account.email : null
 
   enable_vertical_pod_autoscaling = var.enable_vertical_pod_autoscaling
+  enable_workload_identity        = var.enable_workload_identity
 
   resource_labels = {
     environment = "testing"
@@ -103,6 +104,10 @@ resource "google_container_node_pool" "node_pool" {
     preemptible  = false
 
     service_account = module.gke_service_account.email
+
+    workload_metadata_config {
+      node_metadata = "GKE_METADATA_SERVER"
+    }
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
