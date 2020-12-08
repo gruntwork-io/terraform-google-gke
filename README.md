@@ -18,7 +18,7 @@ for instructions.
 This repo has the following folder structure:
 
 - [root](https://github.com/gruntwork-io/terraform-google-gke/tree/master): The root folder contains an example of how
-  to deploy a GKE Public Cluster with and an example chart with [Helm](https://helm.sh/). See [gke-basic-helm](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-basic-helm)
+  to deploy a GKE Public Cluster with an example chart with [Helm](https://helm.sh/). See [gke-basic-helm](https://github.com/gruntwork-io/terraform-google-gke/blob/master/examples/gke-basic-helm)
   for the documentation.
 
 - [modules](https://github.com/gruntwork-io/terraform-google-gke/tree/master/modules): This folder contains the
