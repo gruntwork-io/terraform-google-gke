@@ -50,6 +50,12 @@ variable "kubernetes_version" {
   default     = "latest"
 }
 
+variable "min_master_version" {
+  description = "Minimum version for the masters"
+  type        = string
+  default     = "latest"
+}
+
 variable "logging_service" {
   description = "The logging service that the cluster should write logs to. Available options include logging.googleapis.com/kubernetes, logging.googleapis.com (legacy), and none"
   type        = string
