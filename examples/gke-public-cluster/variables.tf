@@ -63,6 +63,12 @@ variable "enable_vertical_pod_autoscaling" {
   default     = true
 }
 
+variable "enable_workload_identity" {
+  description = "Enable Workload Identity on the cluster"
+  default     = true
+  type        = bool
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # TEST PARAMETERS
 # These parameters are only used during testing and should not be touched.
