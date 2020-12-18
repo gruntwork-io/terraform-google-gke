@@ -36,8 +36,8 @@ Now that all the prerequisite tools are installed, we are ready to deploy the GK
 
 1. If you haven't already, clone this repo:
    - `git clone https://github.com/gruntwork-io/terraform-google-gke.git`
-1. Make sure you are in the `gke-basic-helm` example folder:
-   - `cd examples/gke-basic-helm`
+1. Make sure you are in the root project folder:
+   - `cd terraform-google-gke`
 1. Fill in the required variables in `variables.tf` based on your needs
 1. Authenticate to GCP:
    - `gcloud auth login`
