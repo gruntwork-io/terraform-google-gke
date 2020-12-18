@@ -109,17 +109,18 @@ workflows:
   version: 2
   test:
     jobs:
-      # We have to explicitly tell CircleCI to run on all tags and branches, or tag commits/pushes will not trigger
-      # builds: https://circleci.com/docs/2.0/workflows/#git-tag-job-execution.
       - precommit:
+          context:
+            - Gruntwork GCP
+      - test:
+          context:
+            - Gruntwork GCP
+          requires:
+            - precommit
+          # We have to explicitly tell CircleCi to run on all tags and branches, or tag commits/pushes will not trigger
+          # builds: https://circleci.com/docs/2.0/workflows/#git-tag-job-execution.
           filters:
             branches:
               only: /.*/
             tags:
               only: /.*/
-      - test:
-          requires:
-            - precommit
-          filters:
-            tags:
-              only: /^v.*/
