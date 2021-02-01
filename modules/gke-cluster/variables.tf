@@ -190,6 +190,12 @@ variable "enable_client_certificate_authentication" {
   default     = false
 }
 
+variable "enable_shielded_nodes" {
+  description = "Enable Shielded Nodes features on all nodes in this cluster."
+  type        = bool
+  default     = true
+}
+
 # See https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#google-groups-for-gke
 variable "gsuite_domain_name" {
   description = "The domain name for use with Google security groups in Kubernetes RBAC. If a value is provided, the cluster will be initialized with security group `gke-security-groups@[yourdomain.com]`."
