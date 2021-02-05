@@ -91,6 +91,10 @@ resource "google_container_cluster" "cluster" {
     network_policy_config {
       disabled = ! var.enable_network_policy
     }
+
+    config_connector_config {
+      enabled = var.enable_config_connector
+    }
   }
 
   network_policy {
