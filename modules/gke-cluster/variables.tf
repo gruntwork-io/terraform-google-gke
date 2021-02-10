@@ -151,7 +151,7 @@ variable "alternative_default_service_account" {
 
 variable "resource_labels" {
   description = "The GCE resource labels (a map of key/value pairs) to be applied to the cluster."
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -225,5 +225,11 @@ variable "enable_workload_identity" {
 variable "identity_namespace" {
   description = "Workload Identity Namespace. Default sets project based namespace [project_id].svc.id.goog"
   default     = null
+  type        = string
+}
+
+variable "release_channel" {
+  default     = null
+  description = "(Optional) The release channel to get upgrades of your GKE clusters from"
   type        = string
 }
