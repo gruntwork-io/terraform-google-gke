@@ -45,7 +45,9 @@ module "gke_cluster" {
   # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
-  subnetwork = module.vpc_network.public_subnetwork
+  subnetwork                    = module.vpc_network.public_subnetwork
+  cluster_secondary_range_name  = module.vpc_network.public_subnetwork_secondary_range_name
+  services_secondary_range_name = module.vpc_network.public_services_secondary_range_name
 
   # When creating a private cluster, the 'master_ipv4_cidr_block' has to be defined and the size must be /28
   master_ipv4_cidr_block = var.master_ipv4_cidr_block
@@ -68,8 +70,6 @@ module "gke_cluster" {
       ]
     },
   ]
-
-  cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
 
   enable_vertical_pod_autoscaling = var.enable_vertical_pod_autoscaling
 
@@ -159,7 +159,7 @@ module "gke_service_account" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.6.0"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.7.1"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
   project     = var.project
@@ -167,6 +167,13 @@ module "vpc_network" {
 
   cidr_block           = var.vpc_cidr_block
   secondary_cidr_block = var.vpc_secondary_cidr_block
+
+  public_subnetwork_secondary_range_name = var.public_subnetwork_secondary_range_name
+  public_services_secondary_range_name   = var.public_services_secondary_range_name
+  public_services_secondary_cidr_block   = var.public_services_secondary_cidr_block
+  private_services_secondary_cidr_block  = var.private_services_secondary_cidr_block
+  secondary_cidr_subnetwork_width_delta  = var.secondary_cidr_subnetwork_width_delta
+  secondary_cidr_subnetwork_spacing      = var.secondary_cidr_subnetwork_spacing
 }
 
 # Use a random suffix to prevent overlap in network names
