@@ -48,7 +48,7 @@ module "gke_cluster" {
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
   subnetwork                    = module.vpc_network.public_subnetwork
   cluster_secondary_range_name  = module.vpc_network.public_subnetwork_secondary_range_name
-  services_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
+  services_secondary_range_name = module.vpc_network.public_services_secondary_range_name
 
   alternative_default_service_account = var.override_default_node_pool_service_account ? module.gke_service_account.email : null
 
