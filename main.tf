@@ -5,10 +5,29 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 terraform {
-  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # This module is now only being tested with Terraform 0.14.x. However, to make upgrading easier, we are setting
   # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
-  # forwards compatible with 0.13.x code.
+  # forwards compatible with 0.14.x code.
   required_version = ">= 0.12.26"
+
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 3.43.0"
+    }
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = "~> 3.43.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 1.7.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 1.1.1"
+    }
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -16,7 +35,6 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 provider "google" {
-  version = "~> 3.43.0"
   project = var.project
   region  = var.region
 
@@ -33,7 +51,6 @@ provider "google" {
 }
 
 provider "google-beta" {
-  version = "~> 3.43.0"
   project = var.project
   region  = var.region
 
@@ -56,7 +73,6 @@ data "google_client_config" "client" {}
 data "google_client_openid_userinfo" "terraform_user" {}
 
 provider "kubernetes" {
-  version = "~> 1.7.0"
 
   load_config_file       = false
   host                   = data.template_file.gke_host_endpoint.rendered
@@ -65,8 +81,6 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  # Use provider with Helm 3.x support
-  version = "~> 1.1.1"
 
   kubernetes {
     host                   = data.template_file.gke_host_endpoint.rendered
