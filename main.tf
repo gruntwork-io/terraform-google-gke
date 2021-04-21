@@ -90,11 +90,11 @@ module "gke_cluster" {
 
   project  = var.project
   location = var.location
-  network  = module.vpc_network.network
 
   # We're deploying the cluster in the 'public' subnetwork to allow outbound internet access
   # See the network access tier table for full details:
   # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
+  network                      = module.vpc_network.network
   subnetwork                   = module.vpc_network.public_subnetwork
   cluster_secondary_range_name = module.vpc_network.public_subnetwork_secondary_range_name
 
@@ -194,7 +194,7 @@ resource "random_string" "suffix" {
 }
 
 module "vpc_network" {
-  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.6.0"
+  source = "github.com/gruntwork-io/terraform-google-network.git//modules/vpc-network?ref=v0.7.1"
 
   name_prefix = "${var.cluster_name}-network-${random_string.suffix.result}"
   project     = var.project
@@ -202,6 +202,13 @@ module "vpc_network" {
 
   cidr_block           = var.vpc_cidr_block
   secondary_cidr_block = var.vpc_secondary_cidr_block
+
+  public_subnetwork_secondary_range_name = var.public_subnetwork_secondary_range_name
+  public_services_secondary_range_name   = var.public_services_secondary_range_name
+  public_services_secondary_cidr_block   = var.public_services_secondary_cidr_block
+  private_services_secondary_cidr_block  = var.private_services_secondary_cidr_block
+  secondary_cidr_subnetwork_width_delta  = var.secondary_cidr_subnetwork_width_delta
+  secondary_cidr_subnetwork_spacing      = var.secondary_cidr_subnetwork_spacing
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
