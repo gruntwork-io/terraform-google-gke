@@ -4,14 +4,14 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 terraform {
-  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # This module is now only being tested with Terraform 0.14.x. However, to make upgrading easier, we are setting
   # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
-  # forwards compatible with 0.13.x code.
+  # forwards compatible with 0.14.x code.
   required_version = ">= 0.12.26"
 }
 
 locals {
-  workload_identity_config = ! var.enable_workload_identity ? [] : var.identity_namespace == null ? [{
+  workload_identity_config = !var.enable_workload_identity ? [] : var.identity_namespace == null ? [{
     identity_namespace = "${var.project}.svc.id.goog" }] : [{ identity_namespace = var.identity_namespace
   }]
 }
@@ -81,15 +81,15 @@ resource "google_container_cluster" "cluster" {
 
   addons_config {
     http_load_balancing {
-      disabled = ! var.http_load_balancing
+      disabled = !var.http_load_balancing
     }
 
     horizontal_pod_autoscaling {
-      disabled = ! var.horizontal_pod_autoscaling
+      disabled = !var.horizontal_pod_autoscaling
     }
 
     network_policy_config {
-      disabled = ! var.enable_network_policy
+      disabled = !var.enable_network_policy
     }
   }
 

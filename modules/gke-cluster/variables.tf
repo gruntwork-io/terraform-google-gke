@@ -151,7 +151,7 @@ variable "alternative_default_service_account" {
 
 variable "resource_labels" {
   description = "The GCE resource labels (a map of key/value pairs) to be applied to the cluster."
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
