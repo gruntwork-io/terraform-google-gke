@@ -1,7 +1,8 @@
 version: 2.1
 
 defaults: &defaults
-  machine: true
+  machine:
+    image: ubuntu-2004:202104-01
 
 env: &env
   environment:
@@ -68,14 +69,12 @@ jobs:
             tar -xvf helm.tar.gz
             chmod +x linux-amd64/helm
             sudo mv linux-amd64/helm /usr/local/bin/
-
+            
       # Install external dependencies
       - run:
-          name: update gcloud
+          name: install gcloud dependencies
           command: |
-            sudo apt-get remove -y google-cloud-sdk
-            sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
-            sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update beta kubectl
+            gcloud --quiet components update beta kubectl
 
       - run:
           name: configure kubectl
