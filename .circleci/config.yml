@@ -67,6 +67,12 @@ jobs:
             tar -xvf helm.tar.gz
             chmod +x linux-amd64/helm
             sudo mv linux-amd64/helm /usr/local/bin/
+            
+      # Install external dependencies
+      - run:
+          name: install gcloud dependencies
+          command: |
+            gcloud --quiet components update beta kubectl
 
       - run:
           name: configure kubectl
