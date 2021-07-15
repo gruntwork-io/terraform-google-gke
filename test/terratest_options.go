@@ -2,8 +2,9 @@ package test
 
 import (
 	"fmt"
-	"github.com/gruntwork-io/terratest/modules/terraform"
 	"strings"
+
+	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
 func createTestGKEBasicHelmTerraformOptions(
