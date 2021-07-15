@@ -227,3 +227,9 @@ variable "identity_namespace" {
   default     = null
   type        = string
 }
+
+variable "release_channel" {
+  default     = null
+  description = "(Optional) The release channel to get upgrades of your GKE clusters from"
+  type        = string
+}

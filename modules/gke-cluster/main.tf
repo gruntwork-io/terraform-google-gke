@@ -34,7 +34,15 @@ resource "google_container_cluster" "cluster" {
 
   logging_service    = var.logging_service
   monitoring_service = var.monitoring_service
-  min_master_version = local.kubernetes_version
+  min_master_version = var.release_channel != null ? null : local.kubernetes_version
+
+  dynamic "release_channel" {
+    for_each = local.release_channel
+
+    content {
+      channel = release_channel.value.channel
+    }
+  }
 
   # Whether to enable legacy Attribute-Based Access Control (ABAC). RBAC has significant security advantages over ABAC.
   enable_legacy_abac = var.enable_legacy_abac
@@ -178,6 +186,7 @@ locals {
   latest_version     = data.google_container_engine_versions.location.latest_master_version
   kubernetes_version = var.kubernetes_version != "latest" ? var.kubernetes_version : local.latest_version
   network_project    = var.network_project != "" ? var.network_project : var.project
+  release_channel    = var.release_channel != null ? [{ channel : var.release_channel }] : []
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
