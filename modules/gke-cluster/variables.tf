@@ -227,3 +227,10 @@ variable "identity_namespace" {
   default     = null
   type        = string
 }
+
+variable "enable_config_connector" {
+  description = "Enable ConfigConnector addon (requires workload identity)"
+  default     = false
+  type        = bool
+}
+
