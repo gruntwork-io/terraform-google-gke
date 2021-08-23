@@ -1,6 +1,6 @@
 [![Maintained by Gruntwork.io](https://img.shields.io/badge/maintained%20by-gruntwork.io-%235849a6.svg)](https://gruntwork.io/?ref=repo_google_gke)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/gruntwork-io/terraform-google-gke.svg?label=latest)](https://github.com/gruntwork-io/terraform-google-gke/releases/latest)
-![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.14.0-blue.svg)
+![Terraform Version](https://img.shields.io/badge/tf-%3E%3D1.0.x-blue.svg)
 
 # Google Kubernetes Engine (GKE) Module
 
