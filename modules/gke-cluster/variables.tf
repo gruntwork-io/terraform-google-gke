@@ -242,9 +242,8 @@ variable "enable_shielded_nodes" {
   type        = bool
   default     = true
 }
-
-variable "enable_filestore_csi_driver" {
-  description = "Enables Google Filestore driver."
+variable "enable_persistent_disk_csi_driver_config" {
+  description = "Enables Google compute engine CSI driver."
   type        = bool
-  default     = false
+  default     = true
 }
