@@ -227,3 +227,24 @@ variable "identity_namespace" {
   default     = null
   type        = string
 }
+variable "enable_config_connector" {
+  description = "Enable ConfigConnector addon (requires workload identity)"
+  default     = false
+  type        = bool
+}
+variable "enable_dns_cache_config" {
+  description = "Enable NodeLocal DNSCache on the cluster. Changing this property on an existing cluster is a disruptive process"
+  default     = false
+  type        = bool
+}
+variable "enable_shielded_nodes" {
+  description = "Enable Shielded Nodes features on all nodes in this cluster."
+  type        = bool
+  default     = true
+}
+
+variable "enable_filestore_csi_driver" {
+  description = "Enables Google Filestore driver."
+  type        = bool
+  default     = false
+}
