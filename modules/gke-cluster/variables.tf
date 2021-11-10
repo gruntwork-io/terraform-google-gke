@@ -172,18 +172,6 @@ variable "enable_network_policy" {
   default     = true
 }
 
-variable "basic_auth_username" {
-  description = "The username used for basic auth; set both this and `basic_auth_password` to \"\" to disable basic auth."
-  type        = string
-  default     = ""
-}
-
-variable "basic_auth_password" {
-  description = "The password used for basic auth; set both this and `basic_auth_username` to \"\" to disable basic auth."
-  type        = string
-  default     = ""
-}
-
 variable "enable_client_certificate_authentication" {
   description = "Whether to enable authentication by x509 certificates. With ABAC disabled, these certificates are effectively useless."
   type        = bool
@@ -222,8 +210,14 @@ variable "enable_workload_identity" {
   type        = bool
 }
 
-variable "identity_namespace" {
+variable "workload_pool" {
   description = "Workload Identity Namespace. Default sets project based namespace [project_id].svc.id.goog"
   default     = null
   type        = string
+}
+
+variable "enable_shielded_nodes" {
+  description = "Enable shielded nodes features on all nodes in this cluster. Default is set to true"
+  default     = true
+  type        = bool
 }

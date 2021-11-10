@@ -11,8 +11,8 @@ terraform {
 }
 
 locals {
-  workload_identity_config = !var.enable_workload_identity ? [] : var.identity_namespace == null ? [{
-    identity_namespace = "${var.project}.svc.id.goog" }] : [{ identity_namespace = var.identity_namespace
+  workload_identity_config = !var.enable_workload_identity ? [] : var.workload_pool == null ? [{
+    workload_pool = "${var.project}.svc.id.goog" }] : [{ workload_pool = var.workload_pool
   }]
 }
 
@@ -35,6 +35,8 @@ resource "google_container_cluster" "cluster" {
   logging_service    = var.logging_service
   monitoring_service = var.monitoring_service
   min_master_version = local.kubernetes_version
+
+  enable_shielded_nodes = var.enable_shielded_nodes
 
   # Whether to enable legacy Attribute-Based Access Control (ABAC). RBAC has significant security advantages over ABAC.
   enable_legacy_abac = var.enable_legacy_abac
@@ -105,8 +107,9 @@ resource "google_container_cluster" "cluster" {
   }
 
   master_auth {
-    username = var.basic_auth_username
-    password = var.basic_auth_password
+    client_certificate_config {
+      issue_client_certificate = false
+    }
   }
 
   dynamic "master_authorized_networks_config" {
@@ -163,7 +166,7 @@ resource "google_container_cluster" "cluster" {
     for_each = local.workload_identity_config
 
     content {
-      identity_namespace = workload_identity_config.value.identity_namespace
+      workload_pool = workload_identity_config.value.workload_pool
     }
   }
 
