@@ -100,11 +100,20 @@ resource "google_container_cluster" "cluster" {
     dns_cache_config {
       enabled = var.enable_dns_cache_config
     }
-    
+
     gce_persistent_disk_csi_driver_config {
       enabled = var.enable_persistent_disk_csi_driver_config
     }
 
+  }
+
+  resource_usage_export_config {
+    enable_network_egress_metering       = var.enable_network_egress_metering
+    enable_resource_consumption_metering = var.enable_resource_consumption_metering
+
+    bigquery_destination {
+      dataset_id = var.dataset_id
+    }
   }
 
   network_policy {

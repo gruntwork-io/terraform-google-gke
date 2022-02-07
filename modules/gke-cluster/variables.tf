@@ -232,18 +232,39 @@ variable "enable_config_connector" {
   default     = false
   type        = bool
 }
+
 variable "enable_dns_cache_config" {
   description = "Enable NodeLocal DNSCache on the cluster. Changing this property on an existing cluster is a disruptive process"
   default     = false
   type        = bool
 }
+
 variable "enable_shielded_nodes" {
   description = "Enable Shielded Nodes features on all nodes in this cluster."
   type        = bool
   default     = true
 }
+
 variable "enable_persistent_disk_csi_driver_config" {
   description = "Enables Google compute engine CSI driver."
   type        = bool
   default     = true
+}
+
+variable "enable_network_egress_metering" {
+  description = "Enable network egress metering."
+  type        = bool
+  default     = false
+}
+
+variable "enable_resource_consumption_metering" {
+  description = "Enable resource consumption metering."
+  type        = bool
+  default     = false
+}
+
+variable "dataset_id" {
+  description = "dataset id of the bigquery cluster"
+  type        = string
+  default     = "cluster_resource_usage"
 }
