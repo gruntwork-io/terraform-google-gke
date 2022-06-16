@@ -33,6 +33,11 @@ variable "cluster_secondary_range_name" {
   type        = string
 }
 
+variable "release_channel" {
+  description = "The release channel for k8s cluster for regular upgrades"
+  type        = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # Generally, these values won't need to be changed.
