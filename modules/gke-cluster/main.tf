@@ -91,6 +91,10 @@ resource "google_container_cluster" "cluster" {
     network_policy_config {
       disabled = !var.enable_network_policy
     }
+
+    dns_cache_config {
+      enabled = var.enable_dns_cache_config
+    }
   }
 
   network_policy {
