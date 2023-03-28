@@ -113,13 +113,15 @@ workflows:
     jobs:
       - precommit:
           context:
-            - Gruntwork GCP
+            - GCP__automated-tests
+            - GITHUB__PAT__gruntwork-ci
           filters:
             tags:
               only: /^v.*/
       - test:
           context:
-            - Gruntwork GCP
+            - GCP__automated-tests
+            - GITHUB__PAT__gruntwork-ci
           requires:
             - precommit
           filters:
